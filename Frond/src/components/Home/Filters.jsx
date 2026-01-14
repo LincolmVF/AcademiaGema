@@ -28,11 +28,10 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
           <button
             key={idx}
             onClick={() => setActiveDay(idx)}
-            className={`min-w-[100px] flex-1 border rounded-xl p-3 transition-all text-center ${
-              activeDay === idx 
-                ? 'border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600' 
+            className={`min-w-[100px] flex-1 border rounded-xl p-3 transition-all text-center ${activeDay === idx
+                ? 'border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600'
                 : 'border-slate-200 bg-white text-slate-500 hover:border-blue-300 hover:bg-slate-50'
-            }`}
+              }`}
           >
             <span className="block text-xs font-bold uppercase tracking-wider mb-1 opacity-70">{day.name}</span>
             <span className="block text-lg font-bold">{day.date}</span>
@@ -40,18 +39,17 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
         ))}
       </div>
 
-      {/* Selector de Categorías (Píldoras) */}
+      {/* Selector de Categorías*/}
       <div className="flex items-center gap-3 overflow-x-auto pb-1">
         <Filter size={18} className="text-slate-400 min-w-[18px]" />
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-              activeCategory === cat
+            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === cat
                 ? 'bg-slate-900 text-white'
                 : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-            }`}
+              }`}
           >
             {cat}
           </button>

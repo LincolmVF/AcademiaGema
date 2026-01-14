@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import Filters from '../components/Filters';
-import ClassCard from '../components/ClassCard';
-import Hero from '../components/Hero';
+import Filters from '../components/Home/Filters';
+import ClassCard from '../components/Home/ClassCard';
+import Hero from '../components/Home/Hero';
 
 function Home() {
   const [activeDay, setActiveDay] = useState(0);
@@ -21,20 +21,20 @@ function Home() {
 
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-900 flex flex-col">
-      
+
       <Navbar />
 
       <Hero />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
-        
+
         <div className="mb-10">
           <h2 className="text-2xl font-bold text-slate-900 mb-6">Programación Semanal</h2>
-          <Filters 
-            activeDay={activeDay} 
-            setActiveDay={setActiveDay} 
-            activeCategory={activeCategory} 
-            setActiveCategory={setActiveCategory} 
+          <Filters
+            activeDay={activeDay}
+            setActiveDay={setActiveDay}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
           />
         </div>
 
@@ -45,7 +45,7 @@ function Home() {
         */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {classes.map((clase) => (
-            <ClassCard 
+            <ClassCard
               key={clase.id}
               {...clase} // Pasamos todas las propiedades del objeto a la tarjeta
             />

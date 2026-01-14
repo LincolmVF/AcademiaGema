@@ -1,5 +1,6 @@
-import React, { useState } from 'react'; // <--- Importamos useState
-import { Bell, Menu, X, UserCircle, LogOut } from 'lucide-react'; // <--- Importamos X para cerrar
+import React, { useState } from 'react';
+import { Bell, Menu, X, UserCircle, LogOut } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   // Estado para controlar si el menú móvil está abierto o cerrado
@@ -9,7 +10,7 @@ const Navbar = () => {
     <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
+
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center text-white font-bold">
@@ -34,8 +35,9 @@ const Navbar = () => {
             </button>
             <div className="flex items-center gap-2 pl-4 border-l border-slate-200">
               <div className="text-right">
-                <p className="text-sm font-bold text-slate-900">Hola, Carlos</p>
-                <p className="text-xs text-slate-500">Plan Premium</p>
+                <Link to="/login" className="text-sm font-bold text-slate-900">
+                  Iniciar Sesión
+                </Link>
               </div>
               <UserCircle size={32} className="text-slate-300" />
             </div>
@@ -44,9 +46,9 @@ const Navbar = () => {
           {/* BOTÓN HAMBURGUESA MÓVIL (Visible solo en móvil) */}
           <div className="md:hidden flex items-center gap-4">
             <button className="text-slate-400">
-               <Bell size={20} />
+              <Bell size={20} />
             </button>
-            <button 
+            <button
               onClick={() => setIsOpen(!isOpen)} // <--- Aquí cambiamos el estado al hacer clic
               className="text-slate-600 hover:text-slate-900 focus:outline-none"
             >
@@ -67,19 +69,20 @@ const Navbar = () => {
             <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Mis Reservas</a>
             <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Torneos</a>
             <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Membresías</a>
-            
+
             {/* Perfil en versión móvil */}
             <div className="border-t border-slate-100 mt-4 pt-4 px-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <UserCircle size={32} className="text-slate-400" />
                 <div>
-                  <p className="text-sm font-bold text-slate-900">Carlos Pérez</p>
-                  <p className="text-xs text-slate-500">carlos@email.com</p>
+                  <Link to="/login" className="text-sm font-bold text-slate-900">
+                    Iniciar Sesión
+                  </Link>
                 </div>
               </div>
-              <button className="text-red-500 bg-red-50 p-2 rounded-lg">
+              {/* <button className="text-red-500 bg-red-50 p-2 rounded-lg">
                 <LogOut size={20} />
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
