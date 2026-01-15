@@ -21,11 +21,25 @@ const Navbar = () => {
 
           {/* Menú Desktop (Se oculta en móvil) */}
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-            <a href="#" className="hover:text-blue-600 transition-colors">Clases y Horarios</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Mis Reservas</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Torneos</a>
-            <a href="#" className="hover:text-blue-600 transition-colors">Membresías</a>
-          </div>
+    
+    {/* OPCIÓN 1: Clases y Horarios -> Lleva al Dashboard */}
+    <Link to="/dashboard/teacher" className="hover:text-blue-600 transition-colors">
+        Teacher
+    </Link>
+
+    {/* OPCIÓN 2: Mis Reservas (Por ahora al mismo lugar o a donde tú digas) */}
+    <Link to="/dashboard/admin" className="hover:text-blue-600 transition-colors">
+        Admin
+    </Link>
+
+    <a href="#" className="hover:text-blue-600 transition-colors">Torneos</a>
+
+    {/* OPCIÓN 3: Membresías -> También lleva al Dashboard (porque ahí están los pagos) */}
+    <Link to="/dashboard/student" className="hover:text-blue-600 transition-colors">
+        Horarios
+    </Link>
+
+</div>
 
           {/* Acciones Derecha (Desktop) */}
           <div className="hidden md:flex items-center gap-4">

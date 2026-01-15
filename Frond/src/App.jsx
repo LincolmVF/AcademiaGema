@@ -1,9 +1,16 @@
+// src/App.jsx
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import DashboardLayout from './layouts/DashboardLayout';
-import Dashboard from './pages/Dashboard';
+
+// Importamos AMBOS Layouts
+import DashboardLayout from './layouts/DashboardLayout'; // Layout Admin (PC/Sidebar)
+import StudentLayout from './layouts/StudentLayout';     // Layout Estudiante (Móvil)
+
+// Importamos las páginas
+import Dashboard from './pages/Dashboard';             // Página genérica (Admin/Teacher)
+import DashboardEstudiante from './pages/DashboardEstudiante'; // Página diseño nuevo (Estudiante)
 
 function App() {
   return (
@@ -12,15 +19,24 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Rutas Protegidas (Dashboard) */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
+        {/* TRUCO CLAVE: 
+           La ruta padre "/dashboard" YA NO TIENE 'element={...}'.
+           Así no fuerza ningún layout por defecto.
+        */}
+        <Route path="/dashboard">
 
-          {/* Ruta por defecto */}
-          <Route index element={<Navigate to="/dashboard/student" replace />} />
+          {/* GRUPO 1: ESTUDIANTE -> Usa StudentLayout */}
+          <Route element={<StudentLayout />}>
+            <Route path="student" element={<DashboardEstudiante />} />
+            {/* Si entran a /dashboard directo, los mandamos al estudiante */}
+            <Route index element={<Navigate to="/dashboard/student" replace />} />
+          </Route>
 
-          <Route path="admin" element={<Dashboard role="admin" />} />
-          <Route path="teacher" element={<Dashboard role="teacher" />} />
-          <Route path="student" element={<Dashboard role="student" />} />
+          {/* GRUPO 2: ADMIN/PROFE -> Usa DashboardLayout */}
+          <Route element={<DashboardLayout />}>
+            <Route path="admin" element={<Dashboard role="admin" />} />
+            <Route path="teacher" element={<Dashboard role="teacher" />} />
+          </Route>
 
         </Route>
 
