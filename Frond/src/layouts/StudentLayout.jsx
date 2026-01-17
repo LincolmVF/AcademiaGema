@@ -1,29 +1,25 @@
-// src/layouts/StudentLayout.jsx
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import MobileNavbar from '../components/MobileNavbar';
+import StudentSidebar from '../components/student/StudentSidebar';
 
 const StudentLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       
-      {/* ANTES: className="w-full max-w-md pb-24 relative"
-         PROBLEMA: El 'max-w-md' forzaba a que SIEMPRE fuera tamaño celular.
-      */}
+      {/* 1. SIDEBAR (Solo visible en Desktop 'md:flex') */}
+      <StudentSidebar />
 
-      {/* AHORA: Usamos 'w-full' para que ocupe toda la pantalla. 
-          El componente interno (DashboardEstudiante) es el que decidirá 
-          cuándo frenar su ancho (con max-w-6xl). 
-      */}
-      <div className="w-full pb-24 relative"> 
-        
-        {/* Aquí se carga tu DashboardEstudiante (que ya tiene el Grid configurado) */}
+      {/* 2. CONTENIDO PRINCIPAL */}
+      {/* Añadimos 'md:pl-64' para dejar espacio al sidebar en PC */}
+      <div className="w-full md:pl-64 pb-24 md:pb-8 relative"> 
         <Outlet />
-
-        {/* El menú flotante sigue abajo */}
-        <MobileNavbar />
-        
       </div>
+
+      {/* 3. NAVBAR MÓVIL (Solo visible en Móvil 'md:hidden') */}
+      {/* Asegúrate de actualizar MobileNavbar con las rutas correctas también */}
+      <MobileNavbar />
+      
     </div>
   );
 };

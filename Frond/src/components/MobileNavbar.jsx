@@ -1,14 +1,13 @@
-// src/components/MobileNavbar.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, CreditCard, User } from 'lucide-react'; // Asegúrate de tener lucide-react o usa texto
+import { Home, CreditCard, User } from 'lucide-react';
 
 const MobileNavbar = () => {
   return (
     <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 py-3 px-6 shadow-lg z-50 md:hidden">
       <div className="flex justify-between items-center max-w-md mx-auto">
         
-        {/* Botón Inicio / Horario */}
+        {/* Botón Inicio */}
         <NavLink 
           to="/dashboard/student" 
           end
@@ -20,9 +19,9 @@ const MobileNavbar = () => {
           <span className="text-[10px] font-medium">Inicio</span>
         </NavLink>
 
-        {/* Botón Pagos (Podríamos separar esto en otra ruta luego, por ahora lleva al mismo dashboard) */}
+        {/* Botón Pagos (RUTA CORREGIDA) */}
         <NavLink 
-          to="/dashboard/pagos" 
+          to="/dashboard/student/payments" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 ${isActive ? 'text-blue-600' : 'text-gray-400'}`
           }
@@ -31,9 +30,9 @@ const MobileNavbar = () => {
           <span className="text-[10px] font-medium">Pagos</span>
         </NavLink>
 
-        {/* Botón Perfil */}
+        {/* Botón Perfil (RUTA CORREGIDA) */}
         <NavLink 
-          to="/dashboard/profile" 
+          to="/dashboard/student/profile" 
           className={({ isActive }) => 
             `flex flex-col items-center gap-1 ${isActive ? 'text-blue-600' : 'text-gray-400'}`
           }
