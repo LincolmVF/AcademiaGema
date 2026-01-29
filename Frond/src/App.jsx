@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // 1. Páginas Públicas
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Register from './pages/Register';
 
 // 2. Layouts (Contenedores)
 import DashboardLayout from './layouts/DashboardLayout'; // Admin (Sidebar Completo)
@@ -32,6 +33,7 @@ function App() {
         {/* --- RUTAS PÚBLICAS --- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* --- RUTAS PROTEGIDAS (DASHBOARD) --- */}
         <Route path="/dashboard">

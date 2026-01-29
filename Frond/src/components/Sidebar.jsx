@@ -1,11 +1,23 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom'; 
 import { LayoutDashboard, GraduationCap, UserCog, CalendarRange, Settings, LogOut } from 'lucide-react';
+import { logoutService } from '../services/auth.service'; 
 
 const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation();
+    const navigate = useNavigate(); 
 
-    // Menú actualizado para el ADMIN
+    const handleLogout = async () => {
+        try {
+            await logoutService(); 
+            navigate('/login');   
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            localStorage.clear();
+            navigate('/login');
+        }
+    };
+
     const menuItems = [
         { icon: LayoutDashboard, label: 'Resumen General', path: '/dashboard/admin' },
         { icon: GraduationCap, label: 'Gestión Alumnos', path: '/dashboard/admin/students' },
@@ -48,12 +60,15 @@ const Sidebar = ({ isOpen, onClose }) => {
                         ))}
                     </nav>
 
-                    {/* Footer Sidebar */}
+                    {/* Footer Sidebar con lógica de LOGOUT */}
                     <div className="p-4 border-t border-slate-800">
-                        <Link to="/" className="flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors">
+                        <button 
+                            onClick={handleLogout}
+                            className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
+                        >
                             <LogOut size={20} />
                             <span className="font-medium">Cerrar Sesión</span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </aside>
