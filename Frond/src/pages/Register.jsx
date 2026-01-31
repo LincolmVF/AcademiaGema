@@ -4,17 +4,14 @@ import { Link } from 'react-router-dom';
 function Register() {
     const [aceptarTerminos, setAceptarTerminos] = useState(false);
     const [formData, setFormData] = useState({
-        nombreCompleto: '',
-        celular: '',
-        fechaNacimiento: '',
-        dni: '',
-        distrito: '',
-        sede: '',
-        nivel: '',
-        contactoEmergencia: '',
-        constancia: null,
-        autorizacion: '',
-        comentarios: ''
+        nombres: '',
+        apellidos: '',
+        rol_id: 'alumno',
+        tipo_documento_id: 'DNI',
+        numero_documento: '',
+        telefono_personal: '',
+        fecha_nacimiento: '',
+        genero: ''
     });
 
     const handleChange = (e) => {
@@ -24,7 +21,8 @@ function Register() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Datos de registro:", formData);
+        // El objeto formData ya tiene la estructura exacta del JSON (sin email/password)
+        console.log("Datos para el backend:", formData);
     };
 
     return (
@@ -32,17 +30,42 @@ function Register() {
             <div className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-200">
 
                 {/* LADO IZQUIERDO: Branding */}
-                <div className="w-full md:w-1/3 bg-gradient-to-br from-blue-700 to-indigo-900 p-12 text-white flex flex-col justify-between relative min-h-[450px]">
-                    <div className="absolute top-0 left-0 w-40 h-40 bg-white opacity-10 rounded-full -translate-x-10 -translate-y-10"></div>
-                    <div className="z-10">
-                        <h2 className="text-4xl font-extrabold mb-4 tracking-tight italic">Academia Gema</h2>
-                        <div className="h-1 w-12 bg-blue-400 mb-6"></div>
-                        <p className="text-blue-100 text-lg leading-relaxed font-light">
-                            ¡Gracias por confiar en nosotros! Alcanza tu mejor versión con nuestro <span className="font-semibold text-white">staff profesional</span>.
+                <div className="w-full md:w-1/3 bg-gradient-to-b from-blue-600 via-blue-800 to-indigo-950 p-10 text-white flex flex-col justify-between relative min-h-[500px]">
+                    {/* Decoración de fondo */}
+                    <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                        <div className="absolute -top-20 -left-20 w-64 h-64 bg-white opacity-5 rounded-full"></div>
+                    </div>
+
+                    <div className="z-10 flex flex-col items-center text-center">
+                        {/* Contenedor del Logo */}
+                        <div className="p-4">
+                            <img
+                                src="/logo.png"
+                                alt="Club Gema Logo"
+                                className="w-60 h-auto drop-shadow-2xl"
+                            />
+                        </div>
+
+                        <h2 className="text-3xl font-black mb-2 tracking-tight uppercase">
+                            Academia Gema
+                        </h2>
+                        <div className="h-1 w-16 bg-blue-400 mb-6 rounded-full"></div>
+
+                        <p className="text-blue-100 text-sm leading-relaxed font-medium max-w-[250px]">
+                            ¡Gracias por confiar en nosotros! Completa tu perfil oficial de
+                            <span className="block font-bold text-white mt-1">ALUMNO</span>
                         </p>
-                        <div className="mt-10 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20">
-                            <p className="text-[10px] text-blue-300 uppercase tracking-widest font-bold mb-1">Cuenta Activa</p>
-                            <p className="text-sm font-medium opacity-90 truncate italic">clubgema.voley@gmail.com</p>
+                    </div>
+
+                    {/* Cuadro inferior de Cuenta Activa */}
+                    <div className="z-10 mt-auto">
+                        <div className="bg-transparent border-4 border-orange-500/40 backdrop-blur-sm p-4 rounded-lg text-center">
+                            <p className="text-[10px] text-blue-200 uppercase tracking-[0.2em] font-bold mb-1">
+                                Contáctanos al:
+                            </p>
+                            <p className="text-xs font-semibold opacity-90 truncate">
+                                clubgema.voley@gmail.com
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -51,102 +74,68 @@ function Register() {
                 <div className="w-full md:w-2/3 p-8 md:p-12 bg-white max-h-[90vh] overflow-y-auto">
                     <div className="mb-8 border-b border-gray-100 pb-4">
                         <h3 className="text-3xl font-bold text-gray-900">Datos del Participante</h3>
-                        <p className="text-gray-500 mt-2">Por favor, completa la información para procesar tu matrícula.</p>
+                        <p className="text-gray-500 mt-2">Completa la información obligatoria para tu matrícula.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* NOMBRES Y APELLIDOS */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {/* DNI */}
                             <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">DNI o CE *</label>
-                                <input
-                                    type="text"
-                                    name="dni"
-                                    maxLength="8"
-                                    required
-                                    value={formData.dni}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm"
-                                    placeholder="Ingrese su documento"
-                                />
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Nombres *</label>
+                                <input type="text" name="nombres" required value={formData.nombres} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="Carlos" />
                             </div>
-                            {/* NOMBRE */}
                             <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Nombre Completo *</label>
-                                <input
-                                    type="text"
-                                    name="nombreCompleto"
-                                    required
-                                    value={formData.nombreCompleto}
-                                    onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm"
-                                    placeholder="Nombres y Apellidos"
-                                />
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Apellidos *</label>
+                                <input type="text" name="apellidos" required value={formData.apellidos} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="Rodríguez" />
                             </div>
                         </div>
 
-                        {/* CELULAR Y FECHA */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* DOCUMENTO */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Número de Celular *</label>
-                                <input type="tel" name="celular" required onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm"
-                                    placeholder="999 999 999" />
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Tipo Doc. *</label>
+                                <select name="tipo_documento_id" value={formData.tipo_documento_id} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm text-sm">
+                                    <option value="DNI">DNI</option>
+                                    <option value="CE">CE</option>
+                                </select>
                             </div>
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Fecha de Nacimiento *</label>
-                                <input type="date" name="fechaNacimiento" required onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all shadow-sm" />
+                            <div className="md:col-span-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Número de Documento *</label>
+                                <input type="text" name="numero_documento" maxLength="12" required value={formData.numero_documento} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="72345678" />
                             </div>
                         </div>
 
-                        {/* DISTRITO Y SEDE */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* TELÉFONO, FECHA Y GÉNERO */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Distrito donde vives *</label>
-                                <input type="text" name="distrito" required onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm" />
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Celular *</label>
+                                <input type="tel" name="telefono_personal" required value={formData.telefono_personal} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="+51..." />
                             </div>
                             <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Sede a participar *</label>
-                                <select name="sede" required onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 outline-none transition-all shadow-sm text-sm text-gray-600 cursor-pointer">
-                                    <option value="">Selecciona una sede...</option>
-                                    <option>Callao - Leoncio Prado</option>
-                                    <option>Mirones</option>
-                                    <option>Pueblo Libre</option>
-                                    <option>San Miguel - Aráoz Pinto</option>
-                                    <option>Surquillo - Colegio Lourdes</option>
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Fecha Nacimiento *</label>
+                                <input type="date" name="fecha_nacimiento" required value={formData.fecha_nacimiento} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" />
+                            </div>
+                            <div>
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Género *</label>
+                                <select name="genero" required value={formData.genero} onChange={handleChange}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm text-sm">
+                                    <option value="">Elegir...</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
                                 </select>
                             </div>
                         </div>
 
-                        {/* SECCIÓN DE YAPE */}
+                        {/* SECCIÓN DE AUTORIZACION*/}
                         <div className="space-y-4 pt-4">
-                            <div className="flex items-center justify-between mb-1">
-                                <label className="text-[11px] font-black uppercase text-blue-700 tracking-[0.2em] ml-1">Constancia de Inscripción *</label>
-                                <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full border border-gray-200 shadow-sm">YAPE: 902 585 995</span>
-                            </div>
-
-                            <div className="relative group overflow-hidden bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-500">
-                                <div className="absolute top-0 left-0 w-2 h-full bg-blue-600"></div>
-                                <div className="flex items-center p-6 gap-6">
-                                    <div className="flex-shrink-0 w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100 group-hover:bg-blue-600 transition-all duration-500 shadow-inner">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                    </div>
-                                    <div className="flex-grow">
-                                        <h4 className="text-sm font-bold text-gray-800 mb-1">Cargar Comprobante</h4>
-                                        <p className="text-[11px] text-gray-400">Captura de Yape (JPG, PNG o PDF)</p>
-                                    </div>
-                                </div>
-                                <input type="file" required accept="image/*,.pdf" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" />
-                            </div>
-
-                            {/* SECCIÓN DE AUTORIZACIÓN */}
                             <div className="flex items-center justify-between mb-1 pt-2">
-                                <label className="text-[11px] font-black uppercase text-blue-700 tracking-[0.2em] ml-1">Autorización y Deslinde de Responsabilidad *</label>
+                                <label className="text-[11px] font-black uppercase text-orange-500 tracking-[0.2em] ml-1">Autorización y Deslinde de Responsabilidad *</label>
                             </div>
 
                             <div className="relative bg-gray-50 border border-gray-200 rounded-3xl p-5 shadow-inner">
@@ -192,9 +181,10 @@ function Register() {
                             </button>
 
                             <div className="text-center">
-                                <span className="text-gray-400 text-xs font-medium">¿Ya eres parte de nuestra comunidad? </span>
-                                <Link to="/login" className="text-blue-600 font-bold hover:text-indigo-800 transition-all text-xs border-b border-transparent hover:border-indigo-800">
+                                <span className="text-sm text-gray-500 block mb-3">¿Ya eres parte de nuestra comunidad? </span>
+                                <Link to="/login" className="group text-orange-500 font-bold hover:text-orange-600 transition-all inline-flex items-center gap-2">
                                     Inicia sesión aquí
+                                    <span className="group-hover:translate-x-1 transition-transform">→</span>
                                 </Link>
                             </div>
                         </div>

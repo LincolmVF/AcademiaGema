@@ -1,20 +1,24 @@
 import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; 
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, GraduationCap, UserCog, CalendarRange, Settings, LogOut } from 'lucide-react';
-import { logoutService } from '../services/auth.service'; 
+import { logoutService } from '../services/auth.service';
+import toast from 'react-hot-toast';
 
 const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
-            await logoutService(); 
-            navigate('/login');   
-        } catch (error) {
-            console.error("Error al cerrar sesión:", error);
-            localStorage.clear();
+            await logoutService();
+            toast.success('Sesión cerrada correctamente', {
+                icon: '👋',
+                duration: 10000, 
+                id: 'logout-toast', 
+            });
             navigate('/login');
+        } catch (error) {
+            toast.error('Error al cerrar sesión');
         }
     };
 
@@ -48,11 +52,10 @@ const Sidebar = ({ isOpen, onClose }) => {
                                 key={item.path}
                                 to={item.path}
                                 onClick={() => onClose && onClose()}
-                                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
-                                    location.pathname === item.path
+                                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${location.pathname === item.path
                                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
                                     : 'text-slate-400 hover:bg-slate-800 hover:text-white'
-                                }`}
+                                    }`}
                             >
                                 <item.icon size={20} />
                                 <span className="font-medium">{item.label}</span>
@@ -62,7 +65,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
                     {/* Footer Sidebar con lógica de LOGOUT */}
                     <div className="p-4 border-t border-slate-800">
-                        <button 
+                        <button
                             onClick={handleLogout}
                             className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-colors"
                         >

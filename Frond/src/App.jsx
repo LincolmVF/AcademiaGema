@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
+import { Toaster } from 'react-hot-toast';
+
 // 1. Páginas Públicas
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -28,8 +30,10 @@ import Profile from './pages/student/Profile';
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" reverseOrder={false} />
+
       <Routes>
-        
+
         {/* --- RUTAS PÚBLICAS --- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -43,7 +47,7 @@ function App() {
             <Route path="student" element={<DashboardEstudiante />} />
             <Route path="student/payments" element={<Payments />} />
             <Route path="student/profile" element={<Profile />} />
-            
+
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
             <Route index element={<Navigate to="/dashboard/student" replace />} />
           </Route>
@@ -55,18 +59,18 @@ function App() {
 
           {/* GRUPO 3: ADMINISTRADOR (Layout Completo de Gestión) */}
           <Route element={<DashboardLayout />}>
-            
+
             {/* Resumen General */}
             <Route path="admin" element={<Dashboard role="admin" />} />
-            
+
             {/* Gestión CRUD */}
             <Route path="admin/students" element={<AdminStudents />} />
             <Route path="admin/teachers" element={<AdminTeachers />} />
             <Route path="admin/schedule" element={<AdminSchedule />} />
-            
+
             {/* Configuración (Placeholder) */}
             <Route path="admin/settings" element={<div className="p-8 font-bold text-slate-500">Configuración del Sistema (En construcción)</div>} />
-            
+
           </Route>
 
         </Route>
