@@ -1,72 +1,90 @@
 import React, { useState } from 'react';
-import { Bell, Menu, X, UserCircle, LogOut } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Bell, Menu, X, UserCircle, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
-  // Estado para controlar si el menú móvil está abierto o cerrado
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
+
+  const navLinks = [
+    { label: 'Admin', path: '/dashboard/admin' },
+    { label: 'Teacher', path: '/dashboard/teacher' },
+    { label: 'Horarios', path: '/dashboard/student' },
+    { label: 'Torneos', path: '/torneos' },
+  ];
 
   return (
-    <nav className="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <nav className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        {/* Altura ajustada a h-20 para un look más compacto y moderno */}
+        <div className="flex justify-between items-center h-20">
 
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center text-white font-bold">
-              G
-            </div>
-            <span className="text-xl font-bold text-slate-900 tracking-tight">Academia<span className="text-blue-600">Gema</span></span>
-          </div>
-
-          {/* Menú Desktop (Se oculta en móvil) */}
-          <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600">
-    
-    {/* OPCIÓN 1: Clases y Horarios -> Lleva al Dashboard */}
-    <Link to="/dashboard/teacher" className="hover:text-blue-600 transition-colors">
-        Teacher
-    </Link>
-
-    {/* OPCIÓN 2: Mis Reservas (Por ahora al mismo lugar o a donde tú digas) */}
-    <Link to="/dashboard/admin" className="hover:text-blue-600 transition-colors">
-        Admin
-    </Link>
-
-    <a href="#" className="hover:text-blue-600 transition-colors">Torneos</a>
-
-    {/* OPCIÓN 3: Membresías -> También lleva al Dashboard (porque ahí están los pagos) */}
-    <Link to="/dashboard/student" className="hover:text-blue-600 transition-colors">
-        Horarios
-    </Link>
-
-</div>
-
-          {/* Acciones Derecha (Desktop) */}
-          <div className="hidden md:flex items-center gap-4">
-            <button className="text-slate-400 hover:text-slate-600 relative">
-              <Bell size={20} />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-            </button>
-            <div className="flex items-center gap-2 pl-4 border-l border-slate-200">
-              <div className="text-right">
-                <Link to="/login" className="text-sm font-bold text-slate-900">
-                  Iniciar Sesión
-                </Link>
+          {/* --- BLOQUE LOGO --- */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative flex-shrink-0">
+              {/* Logo reducido a w-14 h-14 */}
+              <div className="w-14 h-14 bg-[#1e3a8a] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/10 group-hover:scale-105 transition-transform overflow-hidden border border-slate-50">
+                <img
+                  src="/logo.png"
+                  alt="Logo"
+                  className="w-full h-full object-contain p-1.5 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                />
               </div>
-              <UserCircle size={32} className="text-slate-300" />
+              {/* Punto naranja decorativo escalado */}
+              <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-orange-500 rounded-full border-2 border-white shadow-sm"></div>
             </div>
+
+            <div className="flex flex-col">
+              <span className="text-lg font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
+                Academia<span className="text-orange-500">Gema</span>
+              </span>
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] leading-none mt-1">
+                Puras jugadoras sau
+              </span>
+            </div>
+          </Link>
+
+          {/* Menú Desktop */}
+          <div className="hidden md:flex items-center space-x-1">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${location.pathname === link.path
+                    ? 'text-[#1e3a8a] bg-blue-50'
+                    : 'text-slate-500 hover:text-orange-500 hover:bg-orange-50'
+                  }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          {/* BOTÓN HAMBURGUESA MÓVIL (Visible solo en móvil) */}
-          <div className="md:hidden flex items-center gap-4">
-            <button className="text-slate-400">
-              <Bell size={20} />
-            </button>
-            <button
-              onClick={() => setIsOpen(!isOpen)} // <--- Aquí cambiamos el estado al hacer clic
-              className="text-slate-600 hover:text-slate-900 focus:outline-none"
+          {/* Acciones Derecha */}
+          <div className="hidden md:flex items-center gap-4">
+            <div className="h-8 w-px bg-slate-200 mx-1"></div>
+
+            <Link
+              to="/login"
+              className="flex items-center gap-2.5 pl-2 group"
             >
-              {/* Si está abierto mostramos X, si no, mostramos Menu */}
+              <div className="text-right hidden lg:block">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Portal</p>
+                <p className="text-xs font-black text-[#1e3a8a] group-hover:text-orange-500 transition-colors mt-0.5">Ingresar</p>
+              </div>
+              <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1e3a8a] group-hover:text-white transition-all border border-slate-100 shadow-sm">
+                <UserCircle size={22} />
+              </div>
+            </Link>
+          </div>
+
+          {/* Mobile Hamburguesa */}
+          <div className="md:hidden flex items-center gap-3">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className={`p-2 rounded-xl transition-all ${isOpen ? 'bg-orange-500 text-white shadow-lg shadow-orange-200' : 'bg-slate-100 text-[#1e3a8a]'
+                }`}
+            >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -74,29 +92,31 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* --- MENÚ DESPLEGABLE MÓVIL --- */}
-      {/* Solo se muestra si isOpen es true */}
+      {/* Menú Móvil */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-slate-100 absolute w-full left-0 shadow-lg animate-fade-in-down">
-          <div className="px-4 pt-2 pb-6 space-y-1">
-            <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Clases y Horarios</a>
-            <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Mis Reservas</a>
-            <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Torneos</a>
-            <a href="#" className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-blue-600 hover:bg-blue-50">Membresías</a>
+        <div className="md:hidden bg-white border-t border-slate-100 absolute w-full left-0 shadow-2xl animate-fade-in-down z-50">
+          <div className="px-5 py-6 space-y-2">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-black uppercase tracking-widest text-[#1e3a8a] bg-slate-50/50 hover:bg-blue-50 transition-all"
+              >
+                {link.label}
+                <ChevronRight size={18} className="text-orange-500" />
+              </Link>
+            ))}
 
-            {/* Perfil en versión móvil */}
-            <div className="border-t border-slate-100 mt-4 pt-4 px-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <UserCircle size={32} className="text-slate-400" />
-                <div>
-                  <Link to="/login" className="text-sm font-bold text-slate-900">
-                    Iniciar Sesión
-                  </Link>
-                </div>
-              </div>
-              {/* <button className="text-red-500 bg-red-50 p-2 rounded-lg">
-                <LogOut size={20} />
-              </button> */}
+            <div className="pt-4 mt-4 border-t border-slate-100">
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
+                className="w-full flex items-center justify-center gap-3 bg-[#1e3a8a] text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-blue-900/20"
+              >
+                <UserCircle size={20} />
+                Iniciar Sesión
+              </Link>
             </div>
           </div>
         </div>

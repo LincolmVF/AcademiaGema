@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import NotFound from './pages/NotFound';
 
 // 2. Layouts (Contenedores)
 import DashboardLayout from './layouts/DashboardLayout'; // Admin (Sidebar Completo)
@@ -26,6 +27,7 @@ import AdminSchedule from './pages/admin/AdminSchedule';
 // 5. Nuevas Páginas de Estudiante
 import Payments from './pages/student/Payments';
 import Profile from './pages/student/Profile';
+
 
 function App() {
   return (
@@ -70,11 +72,11 @@ function App() {
 
             {/* Configuración (Placeholder) */}
             <Route path="admin/settings" element={<div className="p-8 font-bold text-slate-500">Configuración del Sistema (En construcción)</div>} />
-
           </Route>
 
         </Route>
 
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

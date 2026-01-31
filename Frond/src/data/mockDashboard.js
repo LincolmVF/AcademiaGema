@@ -2,7 +2,6 @@ import { Users, GraduationCap, DollarSign, BookOpen, Calendar, Award } from 'luc
 
 export const roleData = {
     admin: {
-        title: "Panel de Administración",
         stats: [
             { title: "Alumnos Activos", value: "1,234", icon: Users, color: "blue" },
             { title: "Ingresos Mes", value: "$12,450", icon: DollarSign, color: "green" },

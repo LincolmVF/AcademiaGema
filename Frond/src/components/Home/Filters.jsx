@@ -1,59 +1,91 @@
 import React from 'react';
-import { CalendarDays, Filter } from 'lucide-react';
+import { CalendarDays, Filter, ChevronRight } from 'lucide-react';
 
 const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory }) => {
   const days = [
-    { name: 'Lunes', date: '12 OCT' },
-    { name: 'Martes', date: '13 OCT' },
-    { name: 'Miércoles', date: '14 OCT' },
-    { name: 'Jueves', date: '15 OCT' },
-    { name: 'Viernes', date: '16 OCT' },
-    { name: 'Sábado', date: '17 OCT' },
+    { name: 'Lun', date: '12 OCT' },
+    { name: 'Mar', date: '13 OCT' },
+    { name: 'Mié', date: '14 OCT' },
+    { name: 'Jue', date: '15 OCT' },
+    { name: 'Vie', date: '16 OCT' },
+    { name: 'Sáb', date: '17 OCT' },
   ];
 
   const categories = ['Todas', 'Principiantes', 'Intermedios', 'Avanzados', 'Vóley Playa'];
 
   return (
-    <div className="space-y-6 mb-8">
-      {/* Selector de Días */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-slate-800 font-bold text-xl">
-          <CalendarDays className="text-blue-600" />
-          <h2>Calendario Semanal</h2>
+    <div className="space-y-8 p-1">
+      {/* --- SECTOR CALENDARIO --- */}
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="p-2 bg-blue-50 rounded-lg">
+              <CalendarDays className="text-[#1e3a8a]" size={20} />
+            </div>
+            <h2 className="text-sm font-black text-[#1e3a8a] uppercase tracking-widest italic">
+              Calendario de <span className="text-orange-500">Clases</span>
+            </h2>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] font-black text-slate-400 uppercase tracking-tighter">
+            Desliza para ver más <ChevronRight size={12} />
+          </div>
+        </div>
+
+        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide select-none">
+          {days.map((day, idx) => {
+            const isActive = activeDay === idx;
+            return (
+              <button
+                key={idx}
+                onClick={() => setActiveDay(idx)}
+                className={`min-w-[90px] md:min-w-[110px] flex-1 flex flex-col items-center border-2 rounded-2xl p-4 transition-all duration-300 relative overflow-hidden group ${isActive
+                    ? 'border-orange-500 bg-white shadow-lg shadow-orange-100'
+                    : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-blue-200 hover:bg-white'
+                  }`}
+              >
+                {/* Indicador superior solo cuando está activo */}
+                {isActive && <div className="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>}
+
+                <span className={`text-[10px] font-black uppercase tracking-widest mb-1 transition-colors ${isActive ? 'text-orange-500' : 'text-slate-400'
+                  }`}>
+                  {day.name}
+                </span>
+                <span className={`text-lg font-black tracking-tighter transition-colors ${isActive ? 'text-[#1e3a8a]' : 'text-slate-500 group-hover:text-[#1e3a8a]'
+                  }`}>
+                  {day.date}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-        {days.map((day, idx) => (
-          <button
-            key={idx}
-            onClick={() => setActiveDay(idx)}
-            className={`min-w-[100px] flex-1 border rounded-xl p-3 transition-all text-center ${activeDay === idx
-                ? 'border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600'
-                : 'border-slate-200 bg-white text-slate-500 hover:border-blue-300 hover:bg-slate-50'
-              }`}
-          >
-            <span className="block text-xs font-bold uppercase tracking-wider mb-1 opacity-70">{day.name}</span>
-            <span className="block text-lg font-bold">{day.date}</span>
-          </button>
-        ))}
-      </div>
+      {/* --- SECTOR CATEGORÍAS --- */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          <div className="flex items-center gap-2 pr-2 border-r border-slate-200">
+            <Filter size={16} className="text-[#1e3a8a]" />
+            <span className="text-[10px] font-black uppercase text-[#1e3a8a] tracking-widest hidden sm:inline">Filtro:</span>
+          </div>
 
-      {/* Selector de Categorías*/}
-      <div className="flex items-center gap-3 overflow-x-auto pb-1">
-        <Filter size={18} className="text-slate-400 min-w-[18px]" />
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${activeCategory === cat
-                ? 'bg-slate-900 text-white'
-                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-              }`}
-          >
-            {cat}
-          </button>
-        ))}
+          <div className="flex gap-2">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 border-2 ${isActive
+                      ? 'bg-[#1e3a8a] border-[#1e3a8a] text-white shadow-md shadow-blue-900/20 scale-105'
+                      : 'bg-white border-slate-100 text-slate-500 hover:border-orange-200 hover:text-orange-500'
+                    }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,92 +1,141 @@
-import React, { useState } from 'react';
-import { X, Check, Clock, UserX, Save } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom'; // Importamos createPortal
+import { X, Check, Clock, UserX, Save, Users } from 'lucide-react';
 
 const AttendanceModal = ({ classData, onClose, onSave }) => {
-  // Estado local para manejar los cambios antes de guardar
-  const [students, setStudents] = useState(classData.students || []);
+  const [students, setStudents] = useState(classData?.students || []);
+
+  useEffect(() => {
+    // Bloqueo estricto del scroll en el body
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
+
+    // Cleanup para restaurar el scroll al cerrar
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
+
+  const stats = {
+    present: students.filter(s => s.status === 'present').length,
+    late: students.filter(s => s.status === 'late').length,
+    absent: students.filter(s => s.status === 'absent').length,
+  };
 
   const toggleStatus = (studentId, newStatus) => {
-    setStudents(students.map(s => 
+    setStudents(prev => prev.map(s =>
       s.id === studentId ? { ...s, status: newStatus } : s
     ));
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-        
-        {/* Header del Modal */}
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <div>
-            <h3 className="font-bold text-lg text-slate-800">Tomar Asistencia</h3>
-            <p className="text-sm text-slate-500">{classData.title} • {classData.time}</p>
+  if (!classData) return null;
+
+  // Contenido del Modal
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-hidden">
+      {/* BACKGROUND OVERLAY: Ocupa toda la ventana y aplica el blur */}
+      <div
+        className="absolute inset-0 bg-[#0f172a]/70 backdrop-blur-md animate-fade-in"
+        onClick={onClose} // Cerrar si se hace click fuera
+      />
+
+      {/* CONTENEDOR DEL MODAL */}
+      <div className="relative bg-white rounded-[3rem] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] border border-white/20 animate-scale-up">
+
+        {/* HEADER */}
+        <div className="pt-10 pb-6 px-10 flex justify-between items-start">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-50 text-orange-500 rounded-2xl flex items-center justify-center">
+              <Users size={24} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h3 className="font-black text-[#1e3a8a] text-2xl uppercase tracking-tighter italic leading-none">Pasar Lista</h3>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                {classData.title} • {classData.time}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-500">
-            <X size={20} />
+          <button onClick={onClose} className="text-slate-300 hover:text-red-500 transition-colors">
+            <X size={28} strokeWidth={3} />
           </button>
         </div>
 
-        {/* Lista de Alumnos (Scrollable) */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-3">
-          {students.length > 0 ? (
-            students.map((student) => (
-              <div key={student.id} className="flex items-center justify-between p-3 border border-slate-100 rounded-xl hover:bg-slate-50 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                    student.status === 'present' ? 'bg-green-100 text-green-700' :
-                    student.status === 'late' ? 'bg-orange-100 text-orange-700' :
-                    'bg-red-100 text-red-700'
-                  }`}>
-                    {student.name.charAt(0)}
-                  </div>
-                  <span className="font-medium text-slate-700">{student.name}</span>
-                </div>
+        {/* INDICADORES (STATS) */}
+        <div className="flex justify-around px-10 py-4 mb-2">
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-black text-green-500 leading-none">{stats.present}</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Presentes</span>
+          </div>
+          <div className="flex flex-col items-center border-x border-slate-100 px-10">
+            <span className="text-2xl font-black text-orange-400 leading-none">{stats.late}</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Tardanzas</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-2xl font-black text-red-500 leading-none">{stats.absent}</span>
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Faltas</span>
+          </div>
+        </div>
 
-                {/* Botones de Estado */}
-                <div className="flex gap-1">
-                  <button 
-                    onClick={() => toggleStatus(student.id, 'present')}
-                    className={`p-2 rounded-lg transition-all ${student.status === 'present' ? 'bg-green-500 text-white shadow-md' : 'text-slate-300 hover:bg-slate-100'}`}
-                    title="Presente"
-                  >
-                    <Check size={18} />
-                  </button>
-                  <button 
-                    onClick={() => toggleStatus(student.id, 'late')}
-                    className={`p-2 rounded-lg transition-all ${student.status === 'late' ? 'bg-orange-400 text-white shadow-md' : 'text-slate-300 hover:bg-slate-100'}`}
-                    title="Tardanza"
-                  >
-                    <Clock size={18} />
-                  </button>
-                  <button 
-                    onClick={() => toggleStatus(student.id, 'absent')}
-                    className={`p-2 rounded-lg transition-all ${student.status === 'absent' ? 'bg-red-500 text-white shadow-md' : 'text-slate-300 hover:bg-slate-100'}`}
-                    title="Ausente"
-                  >
-                    <UserX size={18} />
-                  </button>
+        {/* LISTA DE ALUMNOS */}
+        <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-3 custom-scrollbar">
+          {students.map((student) => (
+            <div key={student.id} className="flex items-center justify-between p-4 bg-white border border-slate-50 rounded-[2rem] shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-black text-white shadow-sm transition-colors ${student.status === 'present' ? 'bg-green-500' :
+                    student.status === 'late' ? 'bg-orange-400' :
+                      student.status === 'absent' ? 'bg-red-500' : 'bg-slate-200'
+                  }`}>
+                  {student.name?.charAt(0) || '?'}
+                </div>
+                <div>
+                  <span className="block font-black text-[#1e3a8a] text-base leading-tight">{student.name}</span>
+                  <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Perfil Alumno</span>
                 </div>
               </div>
-            ))
-          ) : (
-            <p className="text-center text-slate-400 py-4">No hay alumnos registrados en esta clase.</p>
-          )}
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => toggleStatus(student.id, 'present')}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${student.status === 'present' ? 'bg-green-500 text-white' : 'bg-slate-50 text-slate-200'
+                    }`}
+                >
+                  <Check size={18} strokeWidth={4} />
+                </button>
+                <button
+                  onClick={() => toggleStatus(student.id, 'late')}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${student.status === 'late' ? 'bg-orange-400 text-white' : 'bg-slate-50 text-slate-200'
+                    }`}
+                >
+                  <Clock size={18} strokeWidth={4} />
+                </button>
+                <button
+                  onClick={() => toggleStatus(student.id, 'absent')}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${student.status === 'absent' ? 'bg-red-500 text-white' : 'bg-slate-50 text-slate-200'
+                    }`}
+                >
+                  <UserX size={18} strokeWidth={4} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Footer con Botón Guardar */}
-        <div className="p-5 border-t border-slate-100 bg-white">
-          <button 
-            onClick={() => onSave(classData.id)}
-            className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-200"
+        {/* FOOTER */}
+        <div className="px-10 pb-10 bg-white">
+          <button
+            onClick={() => onSave(classData.id, students)}
+            className="w-full bg-[#1e3a8a] hover:bg-[#0f172a] text-white font-black py-5 rounded-[2rem] shadow-xl shadow-blue-900/30 active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-xs"
           >
-            <Save size={20} />
-            Guardar Asistencia
+            <Save size={18} />
+            Finalizar y Guardar
           </button>
         </div>
-
       </div>
     </div>
   );
+
+  // Renderizamos usando el Portal en el body
+  return createPortal(modalContent, document.body);
 };
 
 export default AttendanceModal;

@@ -20,47 +20,65 @@ function Home() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen font-sans text-slate-900 flex flex-col">
+    <div className="bg-[#f8fafc] min-h-screen font-sans text-slate-900 flex flex-col">
 
       <Navbar />
 
       <Hero />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+      <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 flex-grow">
 
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold text-slate-900 mb-6">Programación Semanal</h2>
-          <Filters
-            activeDay={activeDay}
-            setActiveDay={setActiveDay}
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-          />
+        {/* Sección de Encabezado de Clases */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-8 w-1.5 bg-orange-500 rounded-full"></div>
+            <h2 className="text-3xl font-black text-[#1e3a8a] uppercase italic tracking-tighter">
+              Programación <span className="text-orange-500">Semanal</span>
+            </h2>
+          </div>
+          <p className="text-slate-500 font-medium ml-4">
+            Reserva tu cupo en nuestras clases de alto rendimiento.
+          </p>
+
+          <div className="mt-8 bg-white p-2 rounded-3xl shadow-sm border border-slate-100">
+            <Filters
+              activeDay={activeDay}
+              setActiveDay={setActiveDay}
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+            />
+          </div>
         </div>
 
-        {/* --- GRID RESPONSIVO (La parte clave) --- 
-            - grid-cols-1: En celular (1 columna)
-            - md:grid-cols-2: En tablet (2 columnas)
-            - lg:grid-cols-3: En escritorio (3 columnas)
-        */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Grid Responsivo con Hover Effects */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {classes.map((clase) => (
-            <ClassCard
-              key={clase.id}
-              {...clase} // Pasamos todas las propiedades del objeto a la tarjeta
-            />
+            <div key={clase.id} className="transform transition-transform duration-300 hover:-translate-y-2">
+              <ClassCard {...clase} />
+            </div>
           ))}
         </div>
 
         {/* Estado vacío (si no hay clases) */}
         {classes.length === 0 && (
-          <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-            <p className="text-slate-400">No hay clases disponibles para este filtro.</p>
+          <div className="text-center py-24 bg-white rounded-[40px] border-2 border-dashed border-slate-200 shadow-inner">
+            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+               <span className="text-4xl text-slate-300">🏐</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Sin clases disponibles</h3>
+            <p className="text-slate-400 mt-2">Intenta cambiar los filtros de día o categoría.</p>
+            <button 
+              onClick={() => {setActiveDay(0); setActiveCategory('Todas');}}
+              className="mt-6 text-[#1e3a8a] font-black uppercase text-xs tracking-widest hover:text-orange-500 transition-colors"
+            >
+              Restablecer Filtros
+            </button>
           </div>
         )}
 
       </main>
 
+      {/* Footer ya vendrá con sus colores aplicados por fuera */}
       <Footer />
 
     </div>

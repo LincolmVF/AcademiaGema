@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 function Register() {
     const [aceptarTerminos, setAceptarTerminos] = useState(false);
@@ -26,9 +27,15 @@ function Register() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 font-sans text-gray-800">
-            <div className="max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-200">
+        <div className="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">
 
+            {/* FONDO CON IMAGEN Y OVERLAY (Igual al Login) */}
+            <div className="absolute inset-0 z-0">
+                <img src="/bg.jpg" alt="Background" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-[#0f172a]/80 backdrop-blur-sm"></div>
+            </div>
+
+            <div className="max-w-6xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-white/10 z-10">
                 {/* LADO IZQUIERDO: Branding */}
                 <div className="w-full md:w-1/3 bg-gradient-to-b from-blue-600 via-blue-800 to-indigo-950 p-10 text-white flex flex-col justify-between relative min-h-[500px]">
                     {/* Decoración de fondo */}
@@ -42,16 +49,16 @@ function Register() {
                             <img
                                 src="/logo.png"
                                 alt="Club Gema Logo"
-                                className="w-60 h-auto drop-shadow-2xl"
+                                className="w-60 h-auto filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                             />
                         </div>
 
-                        <h2 className="text-3xl font-black mb-2 tracking-tight uppercase">
-                            Academia Gema
-                        </h2>
-                        <div className="h-1 w-16 bg-blue-400 mb-6 rounded-full"></div>
+                        <div className="space-y-3">
+                            <h2 className="text-4xl font-black tracking-tighter uppercase italic">Academia Gema</h2>
+                            <div className="h-1.5 w-16 bg-orange-500 mx-auto rounded-full"></div>
+                        </div>
 
-                        <p className="text-blue-100 text-sm leading-relaxed font-medium max-w-[250px]">
+                        <p className="text-blue-100 text-sm leading-relaxed font-medium max-w-[250px] mt-8">
                             ¡Gracias por confiar en nosotros! Completa tu perfil oficial de
                             <span className="block font-bold text-white mt-1">ALUMNO</span>
                         </p>

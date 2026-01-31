@@ -1,60 +1,106 @@
 import React from 'react';
-import { Clock, MapPin, User } from 'lucide-react'; // Si no tienes lucide-react, usa texto o emojis 🕒 📍 👤
+import { Clock, MapPin, User, Zap, Star } from 'lucide-react'; 
 
 const scheduleData = [
-  { id: 1, day: 'HOY', date: 'Lunes 15', time: '16:00 - 18:00', category: 'Sub-17 Avanzado', coach: 'Prof. Carlos', court: 'Cancha 1', isNext: true },
-  { id: 2, day: 'Miércoles', date: 'Mier 17', time: '16:00 - 18:00', category: 'Físico / Táctico', coach: 'Prof. Ana', court: 'Gimnasio', isNext: false },
-  { id: 3, day: 'Viernes', date: 'Vie 19', time: '15:30 - 17:30', category: 'Partido Práctica', coach: 'Prof. Carlos', court: 'Cancha 2', isNext: false },
+  { id: 1, day: 'HOY', date: 'LUN 15', time: '16:00 - 18:00', category: 'Sub-17 Avanzado', coach: 'Prof. Carlos', court: 'Cancha Central', isNext: true },
+  { id: 2, day: 'MIÉRCOLES', date: 'MIE 17', time: '16:00 - 18:00', category: 'Físico / Táctico', coach: 'Prof. Ana', court: 'Gimnasio Gema', isNext: false },
+  { id: 3, day: 'VIERNES', date: 'VIE 19', time: '15:30 - 17:30', category: 'Partido Práctica', coach: 'Prof. Carlos', court: 'Cancha 2', isNext: false },
 ];
 
 const StudentSchedule = () => {
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-bold text-gray-800 mb-4 px-1">🏐 Mis Entrenamientos</h2>
+      <div className="flex items-center gap-2 mb-6 px-1">
+        <Zap size={20} className="text-orange-500 fill-orange-500" />
+        <h2 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tighter">Próximas Sesiones</h2>
+      </div>
       
       <div className="space-y-4">
         {scheduleData.map((item) => (
           <div 
             key={item.id} 
-            className={`relative rounded-2xl p-5 border shadow-sm transition-transform active:scale-95 ${
+            className={`group relative overflow-hidden rounded-3xl transition-all duration-300 hover:shadow-xl ${
               item.isNext 
-                ? 'bg-blue-600 text-white border-blue-600 shadow-blue-200 shadow-lg' 
-                : 'bg-white text-gray-700 border-gray-100'
+                ? 'bg-[#1e3a8a] text-white shadow-blue-900/20' 
+                : 'bg-white text-slate-700 border border-slate-100'
             }`}
           >
-            {/* Etiqueta de "Próximo" solo si es el siguiente */}
-            {item.isNext && (
-              <span className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
-                PRÓXIMO
-              </span>
-            )}
+            <div className={`absolute left-0 top-0 h-full w-2 ${item.isNext ? 'bg-orange-500' : 'bg-slate-200 group-hover:bg-blue-400'} transition-colors`}></div>
 
-            <div className="flex justify-between items-start mb-3">
-              <div>
-                <p className={`text-sm font-semibold opacity-90 ${item.isNext ? 'text-blue-100' : 'text-gray-400'}`}>
-                  {item.day}
-                </p>
-                <h3 className="text-2xl font-bold">{item.time.split(' - ')[0]} <span className="text-sm font-normal opacity-80">{item.time.split(' - ')[1]}</span></h3>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-lg">{item.date.split(' ')[0]}</p>
-                <p className="text-2xl font-bold">{item.date.split(' ')[1]}</p>
+            <div className="p-6">
+              {item.isNext && (
+                <div className="absolute top-0 right-0">
+                   <div className="bg-orange-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-widest shadow-lg animate-pulse">
+                     Next Session
+                   </div>
+                </div>
+              )}
+
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                
+                <div className="flex items-center gap-6">
+                  <div className={`flex flex-col items-center justify-center min-w-[70px] py-2 rounded-2xl ${item.isNext ? 'bg-white/10' : 'bg-slate-50'}`}>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${item.isNext ? 'text-orange-400' : 'text-slate-400'}`}>
+                      {item.date.split(' ')[0]}
+                    </span>
+                    <span className="text-2xl font-black tracking-tighter">{item.date.split(' ')[1]}</span>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock size={14} className={item.isNext ? 'text-orange-400' : 'text-blue-600'} />
+                      <span className={`text-xs font-black uppercase tracking-widest ${item.isNext ? 'text-blue-100' : 'text-slate-400'}`}>
+                        {item.day}
+                      </span>
+                    </div>
+                    <h3 className="text-2xl font-black tracking-tighter leading-none">
+                      {item.time.split(' - ')[0]} 
+                      <span className={`text-sm font-medium ml-2 opacity-60`}>
+                        a {item.time.split(' - ')[1]}
+                      </span>
+                    </h3>
+                  </div>
+                </div>
+
+                <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 flex-1 md:justify-items-center border-t md:border-t-0 md:border-l ${item.isNext ? 'border-white/10' : 'border-slate-100'} pt-4 md:pt-0`}>
+                  
+                  <div className="flex items-center gap-2">
+                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-blue-50 text-blue-600'}`}>
+                      <MapPin size={16} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Lugar</p>
+                      <p className="text-sm font-bold truncate">{item.court}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-orange-50 text-orange-600'}`}>
+                      <User size={16} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Coach</p>
+                      <p className="text-sm font-bold truncate">{item.coach}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-indigo-50 text-indigo-600'}`}>
+                      {/* Reemplazamos Volleyball por Star o un emoji */}
+                      <Star size={16} fill={item.isNext ? "currentColor" : "none"} />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Sesión</p>
+                      <p className="text-sm font-bold truncate">{item.category}</p>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
 
-            <div className="space-y-2 border-t border-white/20 pt-3 mt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">📍</span> {/* Icono Cancha */}
-                <span className="font-medium">{item.court}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm opacity-90">
-                <span className="text-lg">👤</span> {/* Icono Coach */}
-                <span>{item.coach}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm opacity-90">
-                <span className="text-lg">🏐</span> {/* Icono Voley */}
-                <span>{item.category}</span>
-              </div>
+            <div className="absolute -bottom-4 -right-4 opacity-[0.05] pointer-events-none group-hover:rotate-12 transition-transform duration-700">
+               <img src="/logo.png" alt="" className="w-24 h-auto" />
             </div>
           </div>
         ))}

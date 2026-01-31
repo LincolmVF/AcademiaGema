@@ -1,54 +1,76 @@
 import React from 'react';
-import { ChevronRight, Trophy } from 'lucide-react';
+import { ChevronRight, Trophy, Sparkles } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <div className="relative w-full h-[500px] bg-slate-900 overflow-hidden">
+    /* Reducimos la altura mínima y los paddings para compactarlo */
+    <div className="relative w-full min-h-[45vh] md:min-h-[50vh] flex items-center bg-[#0f172a] overflow-hidden py-8 md:py-12">
       
-      {/* 1. IMAGEN DE FONDO 
-          Usamos 'object-cover' para que cubra todo sin deformarse y 'object-center' para centrar la acción.
-      */}
-      <img 
-        src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000&auto=format&fit=crop" 
-        alt="Voleibol Profesional" 
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-60"
+      {/* 1. IMAGEN DE FONDO CON TINTE GEMA */}
+      <img
+        src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000&auto=format&fit=crop"
+        alt="Voleibol Profesional"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 select-none"
       />
 
-      {/* 2. OVERLAY (Degradado) 
-          Esto oscurece la imagen progresivamente para que el texto blanco se lea perfecto.
-      */}
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/70 to-transparent"></div>
+      {/* 2. OVERLAY (Degradado Gema) */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/80 to-transparent"></div>
 
-      {/* 3. CONTENIDO 
-          Usamos 'max-w-7xl' para alinear el texto con el resto de la página (el Navbar y las cards).
-      */}
-      <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-        
+      {/* Decoración: Resplandor naranja más pequeño */}
+      <div className="absolute -right-12 top-0 w-64 h-64 bg-orange-500/10 blur-[100px] rounded-full"></div>
+
+      {/* 3. CONTENIDO */}
+      <div className="relative h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col justify-center">
+
         <div className="max-w-2xl animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 text-blue-300 px-4 py-1.5 rounded-full text-sm font-bold mb-6 backdrop-blur-sm">
-            <Trophy size={16} className="text-blue-400" />
-            <span>Academia #1 en Formación</span>
+
+          {/* Badge Superior: Más compacto */}
+          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 backdrop-blur-md">
+            <Trophy size={12} className="text-orange-500" />
+            <span>Academia Gema #1 en formación</span>
           </div>
-          
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-            Eleva tu juego al <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
-              Siguiente Nivel
+
+          {/* Título: Reducido de text-7xl a text-6xl */}
+          <h1 className="text-4xl md:text-6xl font-black text-white leading-[0.95] mb-4 uppercase italic tracking-tighter">
+            Eleva tu juego <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">
+              al siguiente nivel
             </span>
           </h1>
-          
-          <p className="text-lg text-slate-300 mb-8 leading-relaxed max-w-lg">
-            Únete a la comunidad de voleibol más grande. Entrenamientos personalizados, ligas competitivas y una pasión que nos une.
+
+          <p className="text-base md:text-lg text-slate-400 mb-8 leading-relaxed max-w-lg font-medium">
+            Entrenamientos de alto rendimiento y coaches profesionales para convertirte en un crack del voley.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 hover:-translate-y-1">
+          {/* Botones de Acción: Más estilizados */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-orange-500/20 hover:-translate-y-1 active:scale-95 group">
               Matricularme Ahora
-              <ChevronRight size={20} />
+              <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
-            <button className="bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold px-8 py-4 rounded-xl transition-all backdrop-blur-sm">
+
+            <button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all backdrop-blur-md flex items-center justify-center gap-2 group">
+              <Sparkles size={16} className="text-orange-500" />
               Ver Horarios
             </button>
+          </div>
+
+          {/* Stats Rápidas: Más discretas */}
+          <div className="mt-8 flex gap-6 items-center border-t border-white/5 pt-6">
+            <div>
+              <p className="text-white font-black text-xl tracking-tighter italic">+500</p>
+              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Alumnos</p>
+            </div>
+            <div className="w-px h-6 bg-white/10"></div>
+            <div>
+              <p className="text-white font-black text-xl tracking-tighter italic">15</p>
+              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Coaches</p>
+            </div>
+            <div className="w-px h-6 bg-white/10"></div>
+            <div>
+              <p className="text-white font-black text-xl tracking-tighter italic">24/7</p>
+              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Soporte</p>
+            </div>
           </div>
         </div>
 
