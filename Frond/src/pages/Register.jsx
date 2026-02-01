@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Mail } from 'lucide-react';
+import registerService from '../services/auth.service';
+import toast from 'react-hot-toast';
 
 function Register() {
+    const navigate = useNavigate();
     const [aceptarTerminos, setAceptarTerminos] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         nombres: '',
         apellidos: '',
@@ -20,10 +24,33 @@ function Register() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // El objeto formData ya tiene la estructura exacta del JSON (sin email/password)
-        console.log("Datos para el backend:", formData);
+
+        if (!aceptarTerminos) {
+            toast.error("Debes aceptar los términos y condiciones para continuar.");
+            return;
+        }
+
+        if (!formData.email.includes('@')) {
+            toast.error("Por favor, ingresa un correo electrónico válido");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await registerService(formData);
+            toast.success("¡Registro exitoso! Revisa tu correo para tus credenciales.");
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+
+        } catch (error) {
+            toast.error(error.message || "Hubo un problema con el registro");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -85,6 +112,20 @@ function Register() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Campo de Email (Agregado arriba para visibilidad) */}
+                        <div className="relative group">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Correo Electrónico"
+                                required
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-sm font-medium"
+                            />
+                        </div>
+
                         {/* NOMBRES Y APELLIDOS */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
@@ -181,10 +222,10 @@ function Register() {
                         <div className="space-y-4 pt-2">
                             <button
                                 type="submit"
-                                disabled={!aceptarTerminos}
+                                disabled={!aceptarTerminos || loading}
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 md:py-5 rounded-2xl shadow-xl shadow-blue-600/20 active:scale-[0.97] transition-all uppercase tracking-[0.2em] text-xs disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed"
                             >
-                                Finalizar Inscripción
+                                {loading ? "Procesando..." : "Finalizar Inscripción"}
                             </button>
 
                             <div className="text-center">

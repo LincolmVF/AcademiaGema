@@ -15,15 +15,15 @@ export const loginService = async (email, password) => {
   }
 
   localStorage.setItem('userRole', result.data.rol);
-  
+
   return result.data;
 };
 
 export const logoutService = async () => {
   try {
-    await fetch(`${API_URL}/auth/logout`, { 
+    await fetch(`${API_URL}/auth/logout`, {
       method: 'POST',
-      credentials: 'include' 
+      credentials: 'include'
     });
   } catch (error) {
     console.error("Error en la petición de logout:", error);
@@ -33,4 +33,20 @@ export const logoutService = async () => {
 
     window.location.href = '/login';
   }
+};
+
+export const registerService = async (userData) => {
+  const response = await fetch(`${API_URL}/usuarios/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(userData),
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Error al registrar el usuario');
+  }
+
+  return result;
 };
