@@ -31,9 +31,9 @@ function Home() {
         {/* Sección de Encabezado de Clases */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-2">
-            <div className="h-8 w-1.5 bg-orange-500 rounded-full"></div>
-            <h2 className="text-3xl font-black text-[#1e3a8a] uppercase italic tracking-tighter">
-              Programación <span className="text-orange-500">Semanal</span>
+            <div className="h-8 w-1.5 bg-[#cd5a2c] rounded-full"></div>
+            <h2 className="text-3xl font-black text-[#263e5e] uppercase italic tracking-tighter">
+              Programación <span className="text-[cd5a2c]">Semanal</span>
             </h2>
           </div>
           <p className="text-slate-500 font-medium ml-4">

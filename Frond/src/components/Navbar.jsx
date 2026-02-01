@@ -39,7 +39,7 @@ const Navbar = () => {
                 Academia<span className="text-orange-500">Gema</span>
               </span>
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] leading-none mt-1">
-                Puras jugadoras sau
+                PASIÓN EN CADA SET
               </span>
             </div>
           </Link>

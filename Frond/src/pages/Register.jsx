@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail } from 'lucide-react';
+import { User, CreditCard, Mail, Phone, Calendar, Users } from 'lucide-react';
 import { registerService } from '../services/auth.service';
 import toast from 'react-hot-toast';
 
@@ -82,9 +82,9 @@ function Register() {
                         {/* Contenedor del Logo */}
                         <div className="p-4">
                             <img
-                                src="/logo.png"
+                                src="/logo_diamante.jpeg"
                                 alt="Club Gema Logo"
-                                className="w-60 h-auto filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                                className="rounded-full w-60 h-auto"
                             />
                         </div>
 
@@ -120,71 +120,107 @@ function Register() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Campo de Email (Agregado arriba para visibilidad) */}
-                        <div className="relative group">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Correo Electrónico"
-                                required
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all text-sm font-medium"
-                            />
+                        {/* Campo de Email - Optimizado para Academia Gema */}
+                        <div className="space-y-2">
+                            <label
+                                htmlFor="email"
+                                className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider"
+                            >
+                                Correo Electrónico *
+                            </label>
+
+                            <div className="relative group">
+                                {/* Icono: Cambia a azul #263e5e al hacer foco */}
+                                <Mail
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors"
+                                />
+
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    placeholder="ejemplo@correo.com"
+                                    required
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-[#263e5e] focus:bg-white rounded-2xl outline-none transition-all text-sm font-medium shadow-sm"
+                                />
+                            </div>
                         </div>
+
 
                         {/* NOMBRES Y APELLIDOS */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Nombres *</label>
-                                <input type="text" name="nombres" required value={formData.nombres} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="Carlos" />
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Nombres *</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
+                                    <input type="text" name="nombres" required value={formData.nombres} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm" placeholder="Carlos" />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Apellidos *</label>
-                                <input type="text" name="apellidos" required value={formData.apellidos} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="Rodríguez" />
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Apellidos *</label>
+                                <div className="relative group">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
+                                    <input type="text" name="apellidos" required value={formData.apellidos} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm" placeholder="Rodríguez" />
+                                </div>
                             </div>
                         </div>
 
                         {/* DOCUMENTO */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Tipo Doc. *</label>
-                                <select name="tipo_documento_id" value={formData.tipo_documento_id} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm text-sm">
-                                    <option value="DNI">DNI</option>
-                                    <option value="CE">CE</option>
-                                </select>
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Tipo Doc. *</label>
+                                <div className="relative group">
+                                    <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors pointer-events-none" />
+                                    <select name="tipo_documento_id" value={formData.tipo_documento_id} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm text-sm appearance-none">
+                                        <option value="DNI">DNI</option>
+                                        <option value="CE">CE</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Número de Documento *</label>
-                                <input type="text" name="numero_documento" maxLength="12" required value={formData.numero_documento} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="72345678" />
+                            <div className="md:col-span-2 space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Número de Documento *</label>
+                                <div className="relative group">
+                                    <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
+                                    <input type="text" name="numero_documento" maxLength="12" required value={formData.numero_documento} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm" placeholder="72345678" />
+                                </div>
                             </div>
                         </div>
 
                         {/* TELÉFONO, FECHA Y GÉNERO */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Celular *</label>
-                                <input type="tel" name="telefono_personal" required value={formData.telefono_personal} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" placeholder="+51..." />
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Celular *</label>
+                                <div className="relative group">
+                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
+                                    <input type="tel" name="telefono_personal" required value={formData.telefono_personal} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm" placeholder="+51..." />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Fecha Nacimiento *</label>
-                                <input type="date" name="fecha_nacimiento" required value={formData.fecha_nacimiento} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm" />
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Fecha Nacimiento *</label>
+                                <div className="relative group">
+                                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
+                                    <input type="date" name="fecha_nacimiento" required value={formData.fecha_nacimiento} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm text-sm" />
+                                </div>
                             </div>
-                            <div>
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 mb-2 ml-1 tracking-wider">Género *</label>
-                                <select name="genero" required value={formData.genero} onChange={handleChange}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-orange-500 outline-none transition-all shadow-sm text-sm">
-                                    <option value="">Elegir...</option>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Femenino</option>
-                                </select>
+                            <div className="space-y-2">
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Género *</label>
+                                <div className="relative group">
+                                    <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors pointer-events-none" />
+                                    <select name="genero" required value={formData.genero} onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm text-sm appearance-none">
+                                        <option value="">Elegir...</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 

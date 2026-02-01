@@ -27,6 +27,7 @@ import AdminSchedule from './pages/admin/AdminSchedule';
 // 5. Nuevas Páginas de Estudiante
 import Payments from './pages/student/Payments';
 import Profile from './pages/student/Profile';
+import StudentRegistration from './components/student/StudentRegistration';
 
 
 function App() {
@@ -49,6 +50,7 @@ function App() {
             <Route path="student" element={<DashboardEstudiante />} />
             <Route path="student/payments" element={<Payments />} />
             <Route path="student/profile" element={<Profile />} />
+            <Route path="student/registration" element={<StudentRegistration />} />
 
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
             <Route index element={<Navigate to="/dashboard/student" replace />} />
