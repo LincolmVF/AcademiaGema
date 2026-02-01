@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { roleData } from '../data/mockDashboard';
+import apiFetch from '../interceptors/api';
 
-// Tarjetas de estadísticas con acentos de marca
 const StatCard = ({ title, value, icon: Icon, color }) => {
     const colors = {
         blue: "bg-blue-50 text-[#1e3a8a] border-blue-100",
@@ -27,8 +27,37 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
 
 const Dashboard = ({ role = 'student' }) => {
     const data = roleData[role];
+    const [stats, setStats] = useState(data?.stats || []);
 
-    // Verificación de seguridad para evitar el error de 'undefined'
+    useEffect(() => {
+        if (role === 'admin') {
+            const fetchAlumnosCount = async () => {
+                try {
+                    const response = await apiFetch.get('/usuarios/count/alumnos');
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const totalAlumnos = result.data;
+
+                        setStats(prevStats =>
+                            prevStats.map(stat =>
+                                stat.title === "Alumnos Activos"
+                                    ? { ...stat, value: totalAlumnos.toString() } 
+                                    : stat
+                            )
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error cargando contador de alumnos:", error);
+                }
+            };
+
+            fetchAlumnosCount();
+        } else {
+            setStats(data?.stats || []);
+        }
+    }, [role, data]);
+
     if (!data) return (
         <div className="flex items-center justify-center h-64 text-slate-500 font-bold italic">
             Cargando información del panel...
@@ -37,13 +66,12 @@ const Dashboard = ({ role = 'student' }) => {
 
     return (
         <div className="max-w-7xl mx-auto animate-fade-in-up">
-            {/* Título de Bienvenida con Colores del Logo */}
             <div className="mb-10 relative">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                         <p className="text-slate-500 font-medium italic">Bienvenido de nuevo a tu centro de alto rendimiento.</p>
                     </div>
-                    
+
                     <div className="bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                         Estado: Activo
@@ -51,14 +79,13 @@ const Dashboard = ({ role = 'student' }) => {
                 </div>
             </div>
 
-            {/* Grid de Estadísticas */}
+            {/* Renderizamos las stats desde el estado dinámico 'stats' */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-                {data.stats?.map((stat, index) => (
+                {stats.map((stat, index) => (
                     <StatCard key={index} {...stat} />
                 ))}
             </div>
 
-            {/* Lista de Actividad Reciente */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
                 <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-white to-slate-50">
                     <div className="flex items-center gap-3">
@@ -71,7 +98,7 @@ const Dashboard = ({ role = 'student' }) => {
                         Ver Historial
                     </button>
                 </div>
-                
+
                 <div className="divide-y divide-slate-100">
                     {data.activity?.map((item) => (
                         <div key={item.id} className="px-8 py-5 flex items-center justify-between hover:bg-blue-50/30 transition-all group">

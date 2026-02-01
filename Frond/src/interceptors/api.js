@@ -24,13 +24,25 @@ export const apiFetch = async (endpoint, options = {}) => {
       response = await fetch(`${API_URL}${endpoint}`, defaultOptions);
     } else {
       localStorage.clear();
-      toast.error("Tu sesión ha expirado por inactividad", {
-        id: 'session-expired', 
-        icon: '⏳'
-      });
+      toast.error("Tu sesión ha expirado", { id: 'session-expired' });
       window.location.href = '/login';
     }
   }
 
   return response;
 };
+
+// --- AÑADE ESTO PARA SOPORTAR .get() ---
+apiFetch.get = (endpoint, options = {}) =>
+  apiFetch(endpoint, { ...options, method: 'GET' });
+
+apiFetch.post = (endpoint, body, options = {}) =>
+  apiFetch(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) });
+
+apiFetch.put = (endpoint, body, options = {}) =>
+  apiFetch(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) });
+
+apiFetch.delete = (endpoint, options = {}) =>
+  apiFetch(endpoint, { ...options, method: 'DELETE' });
+
+export default apiFetch;
