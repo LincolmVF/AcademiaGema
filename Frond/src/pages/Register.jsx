@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail } from 'lucide-react';
-import registerService from '../services/auth.service';
+import { registerService } from '../services/auth.service';
 import toast from 'react-hot-toast';
 
 function Register() {
@@ -11,9 +11,11 @@ function Register() {
     const [formData, setFormData] = useState({
         nombres: '',
         apellidos: '',
+        email: '',
         rol_id: 'alumno',
         tipo_documento_id: 'DNI',
         numero_documento: '',
+        password: '',
         telefono_personal: '',
         fecha_nacimiento: '',
         genero: ''
@@ -39,8 +41,14 @@ function Register() {
 
         setLoading(true);
         try {
-            await registerService(formData);
-            toast.success("¡Registro exitoso! Revisa tu correo para tus credenciales.");
+            const dataToSend = {
+                ...formData,
+                password: formData.numero_documento
+            };
+
+            await registerService(dataToSend);
+
+            toast.success("¡Registro exitoso! Serás redirigido al inicio de sesión.");
 
             setTimeout(() => {
                 navigate('/login');
