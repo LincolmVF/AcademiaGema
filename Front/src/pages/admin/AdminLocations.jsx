@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, MapPin, Home, Phone, Trash2, Save, Map, ArrowLeft } from 'lucide-react';
+import { sedeService } from '../../services/sede.service';
 
 const AdminLocations = ({ onBack, onSuccess }) => {
     const [loading, setLoading] = useState(false);
@@ -41,31 +42,49 @@ const AdminLocations = ({ onBack, onSuccess }) => {
     };
 
     const handleSubmit = async () => {
+        // 1. Filtrar canchas que tengan al menos un nombre
+        const canchasFiltradas = formData.canchas
+            .filter(c => c.nombre && c.nombre.trim() !== '')
+            .map(c => ({
+                nombre: c.nombre.trim(),
+                descripcion: c.descripcion ? c.descripcion.trim() : ''
+            }));
+
+        // 2. Validación básica antes de disparar el loading
+        if (canchasFiltradas.length === 0) {
+            alert("Debes agregar al menos una cancha con nombre.");
+            return;
+        }
+
+        if (!formData.distrito) {
+            alert("Por favor selecciona un distrito.");
+            return;
+        }
+
         setLoading(true);
         try {
             const payload = {
-                nombre: formData.nombre,
+                nombre: formData.nombre.trim(),
                 telefono_contacto: formData.telefono_contacto,
                 tipo_instalacion: formData.tipo_instalacion,
-                direcciones: {
-                    create: {
-                        direccion_completa: formData.direccion_completa,
-                        distrito: formData.distrito,
-                        ciudad: formData.ciudad,
-                        referencia: formData.referencia
-                    }
+                administrador_id: 3, // Idealmente obtener de un Context o Auth
+                direccion: {
+                    direccion_completa: formData.direccion_completa,
+                    distrito: formData.distrito,
+                    ciudad: formData.ciudad || 'Lima',
+                    referencia: formData.referencia
                 },
-                canchas: {
-                    create: formData.canchas.filter(c => c.nombre !== '')
-                }
+                canchas: canchasFiltradas
             };
+            
+            await sedeService.create(payload);
 
-            console.log("Enviando a la API:", payload);
-
+            // Si el backend responde 201, disparamos el éxito
             if (onSuccess) onSuccess();
-            if (onBack) onBack();
+
         } catch (error) {
-            console.error("Error al guardar:", error);
+            // El error ya viene formateado por tu interceptor
+            alert(error.message || "Error al conectar con el servidor");
         } finally {
             setLoading(false);
         }

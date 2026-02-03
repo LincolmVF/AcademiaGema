@@ -32,15 +32,23 @@ export const apiFetch = async (endpoint, options = {}) => {
   return response;
 };
 
-// --- AÑADE ESTO PARA SOPORTAR .get() ---
+// --- SOPORTE PARA MÉTODOS HTTP ---
 apiFetch.get = (endpoint, options = {}) =>
   apiFetch(endpoint, { ...options, method: 'GET' });
 
 apiFetch.post = (endpoint, body, options = {}) =>
-  apiFetch(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) });
+  apiFetch(endpoint, {
+    ...options,
+    method: 'POST',
+    body: body ? JSON.stringify(body) : undefined
+  });
 
 apiFetch.put = (endpoint, body, options = {}) =>
-  apiFetch(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) });
+  apiFetch(endpoint, {
+    ...options,
+    method: 'PUT',
+    body: body ? JSON.stringify(body) : undefined
+  });
 
 apiFetch.delete = (endpoint, options = {}) =>
   apiFetch(endpoint, { ...options, method: 'DELETE' });
