@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, GraduationCap, UserCog, CalendarRange, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, GraduationCap, UserCog, CalendarRange, Settings, LogOut, MapPin, BarChart3, DollarSign } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
 
@@ -24,9 +24,12 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Resumen General', path: '/dashboard/admin' },
-        { icon: GraduationCap, label: 'Gestión Alumnos', path: '/dashboard/admin/students' },
         { icon: UserCog, label: 'Profesores', path: '/dashboard/admin/teachers' },
-        { icon: CalendarRange, label: 'Crear Horarios', path: '/dashboard/admin/schedule' },
+        { icon: MapPin, label: 'Sedes', path: '/dashboard/admin/locations' },
+        { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
+        { icon: DollarSign, label: 'Catálogo', path: '/dashboard/admin/catalog' },
+        { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
+        { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
         { icon: Settings, label: 'Configuración', path: '/dashboard/admin/settings' },
     ];
 
@@ -40,7 +43,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 md:sticky md:top-0 md:translate-x-0 border-r border-white/10
                 flex flex-col overflow-hidden shadow-2xl
             `}>
-                
+
                 {/* SECCIÓN LOGO: Branding oficial unificado */}
                 <div className="flex-none py-8 px-6 flex flex-col items-center border-b border-white/10">
                     <div className="relative">
@@ -72,15 +75,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                                 key={item.path}
                                 to={item.path}
                                 onClick={() => onClose && onClose()}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                                    isActive
-                                        ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
-                                        : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
-                                }`}
+                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
+                                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
+                                    : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
+                                    }`}
                             >
-                                <item.icon 
-                                    size={20} 
-                                    className={`${isActive ? 'text-white' : 'group-hover:text-orange-400'} transition-colors`} 
+                                <item.icon
+                                    size={20}
+                                    className={`${isActive ? 'text-white' : 'group-hover:text-orange-400'} transition-colors`}
                                 />
                                 <span className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}>
                                     {item.label}

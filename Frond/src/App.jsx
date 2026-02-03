@@ -20,15 +20,17 @@ import DashboardEstudiante from './pages/DashboardEstudiante'; // Estudiante: In
 import DashboardTeacher from './pages/DashboardTeacher';     // Profesor: Asistencia
 
 // 4. Nuevas Páginas de Gestión (Admin)
-import AdminStudents from './pages/admin/AdminStudents';
-import AdminTeachers from './pages/admin/AdminTeachers';
-import AdminSchedule from './pages/admin/AdminSchedule';
+import AdminLocationsManager from './pages/admin/AdminLocationsManager';
+import AdminLevelsManager from './pages/admin/AdminLevelsManager';
+import AdminTeachersManager from './pages/admin/AdminTeachersManager';
+import AdminCatalogManager from './pages/admin/AdminCatalogManager';
+import AdminSchedulesManager from './pages/admin/AdminScheduleManager';
+import AdminStudentsManager from './pages/admin/AdminStudentManager';
 
 // 5. Nuevas Páginas de Estudiante
 import Payments from './pages/student/Payments';
 import Profile from './pages/student/Profile';
 import StudentRegistration from './components/student/StudentRegistration';
-
 
 function App() {
   return (
@@ -68,9 +70,12 @@ function App() {
             <Route path="admin" element={<Dashboard role="admin" />} />
 
             {/* Gestión CRUD */}
-            <Route path="admin/students" element={<AdminStudents />} />
-            <Route path="admin/teachers" element={<AdminTeachers />} />
-            <Route path="admin/schedule" element={<AdminSchedule />} />
+            <Route path="admin/students" element={<AdminStudentsManager />} />
+            <Route path="admin/teachers" element={<AdminTeachersManager />} />
+            <Route path="admin/schedule" element={<AdminSchedulesManager />} />
+            <Route path="admin/levels" element={<AdminLevelsManager />} />
+            <Route path="admin/catalog" element={<AdminCatalogManager />} />
+            <Route path="admin/locations" element={<AdminLocationsManager />} />
 
             {/* Configuración (Placeholder) */}
             <Route path="admin/settings" element={<div className="p-8 font-bold text-slate-500">Configuración del Sistema (En construcción)</div>} />

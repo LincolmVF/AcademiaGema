@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu, X, Bell, Search, User } from 'lucide-react';
-import { useAuth } from '../context/AuthContext'; 
+import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
 
 const DashboardLayout = () => {
@@ -18,14 +18,14 @@ const DashboardLayout = () => {
             <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                
+
                 {/* HEADER CON COLORES DE MARCA */}
                 <header className="bg-white border-b-2 border-[#1e3a8a]/10 h-20 flex items-center justify-between px-4 sm:px-8 z-10">
-                    
+
                     {/* Sección Izquierda: Toggle y Buscador */}
                     <div className="flex items-center gap-6">
-                        <button 
-                            onClick={() => setSidebarOpen(!isSidebarOpen)} 
+                        <button
+                            onClick={() => setSidebarOpen(!isSidebarOpen)}
                             className="md:hidden p-2 text-[#1e3a8a] hover:bg-orange-50 rounded-xl transition-colors"
                         >
                             {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
@@ -34,10 +34,10 @@ const DashboardLayout = () => {
 
                     {/* Logo móvil con drop-shadow blanco como pediste */}
                     <div className="md:hidden flex items-center">
-                        <img 
-                            src="/logo.png" 
-                            alt="Gema Logo" 
-                            className="h-10 w-auto filter drop-shadow-[0_0_3px_rgba(255,255,255,1)]" 
+                        <img
+                            src="/logo.png"
+                            alt="Gema Logo"
+                            className="h-10 w-auto filter drop-shadow-[0_0_3px_rgba(255,255,255,1)]"
                         />
                     </div>
 
@@ -55,7 +55,7 @@ const DashboardLayout = () => {
                                     {userRole}
                                 </span>
                             </div>
-                            
+
                             {/* Avatar con degradado y borde naranja */}
                             <div className="relative">
                                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1e40af] to-[#0f172a] flex items-center justify-center text-white font-black border-2 border-white shadow-lg shadow-blue-900/20 group-hover:rotate-6 transition-all">
@@ -76,14 +76,6 @@ const DashboardLayout = () => {
                     </div>
 
                     <div className="max-w-7xl mx-auto relative z-10">
-                        {/* Header de la vista actual (opcional) */}
-                        <div className="mb-8">
-                            <h1 className="text-2xl font-black text-[#1e3a8a] uppercase tracking-tight">
-                                Panel de <span className="text-orange-500">Administración</span>
-                            </h1>
-                            <div className="h-1.5 w-20 bg-orange-500 rounded-full mt-2"></div>
-                        </div>
-
                         <Outlet />
                     </div>
                 </main>

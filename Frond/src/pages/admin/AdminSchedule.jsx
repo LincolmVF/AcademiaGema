@@ -1,92 +1,132 @@
-import React from 'react';
-import { Plus, Calendar, Clock, MapPin, ChevronRight } from 'lucide-react';
-import { schedulesList } from '../../data/mockAdmin';
+import React, { useState } from 'react';
+import { Save, Clock, User, Trophy, MapPin, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
-const AdminSchedule = () => {
+const AdminSchedule = ({ onBack }) => {
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        cancha_id: '',
+        profesor_id: '',
+        nivel_id: '',
+        dias_seleccionados: [], // Array para múltiples días
+        hora_inicio: '',
+        hora_fin: '',
+        capacidad_max: 20
+    });
+
+    const diasSemana = [
+        { id: 1, label: 'Lun' }, { id: 2, label: 'Mar' }, { id: 3, label: 'Mie' },
+        { id: 4, label: 'Jue' }, { id: 5, label: 'Vie' }, { id: 6, label: 'Sab' }, { id: 0, label: 'Dom' }
+    ];
+
+    const toggleDia = (id) => {
+        setFormData(prev => ({
+            ...prev,
+            dias_seleccionados: prev.dias_seleccionados.includes(id)
+                ? prev.dias_seleccionados.filter(d => d !== id)
+                : [...prev.dias_seleccionados, id]
+        }));
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async () => {
+        if (formData.dias_seleccionados.length === 0) return alert("Selecciona al menos un día");
+        setLoading(true);
+
+        // Simulación de envío: En Prisma harías un createMany o varios create
+        console.log("Payload para Prisma:", formData);
+
+        setTimeout(() => {
+            setLoading(false);
+            onBack();
+        }, 1500);
+    };
+
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
-                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
-                            Programación <span className="text-[#1e3a8a]">de Horarios</span>
-                        </h1>
+                <div className="flex items-center gap-3">
+                    <button onClick={onBack} className="group flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-all shadow-sm">
+                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    </button>
+                    <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <div className="h-5 w-1 bg-orange-500 rounded-full"></div>
+                            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Programar <span className="text-[#1e3a8a]">Clase</span></h1>
+                        </div>
+                        <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wide ml-3">Gestión de <span className="text-orange-500">Horarios Múltiples</span></p>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Gestiona los turnos y canchas de la academia.</p>
                 </div>
 
-                <button className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all duration-300 shadow-lg shadow-blue-900/20 group">
-                    <Plus size={20} className="group-hover:rotate-90 transition-transform" />
-                    Nueva Clase
+                <button onClick={handleSubmit} disabled={loading} className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-900/20 active:scale-95 disabled:opacity-50">
+                    <Save size={20} /> {loading ? 'PUBLICANDO...' : 'GUARDAR PROGRAMACIÓN'}
                 </button>
             </div>
 
-            {/* Contenedor de Horarios */}
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg">
-                            <Calendar size={20} />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Selección de Días */}
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
+                            <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><Clock size={20} /></div>
+                            <h3 className="font-black text-[#1e3a8a] uppercase text-xs tracking-wider">Días de la Semana</h3>
                         </div>
-                        <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Clases Vigentes</h3>
-                    </div>
-                    <span className="text-[10px] font-black bg-orange-100 text-orange-600 px-3 py-1 rounded-full uppercase">
-                        Temporada 2026
-                    </span>
-                </div>
-
-                <div className="divide-y divide-slate-100">
-                    {schedulesList.map((item) => (
-                        <div key={item.id} className="p-5 sm:px-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-blue-50/30 transition-all group">
-                            <div className="flex gap-6 items-center">
-                                {/* Badge de Día con Estilo Gema */}
-                                <div className="w-14 h-14 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white rounded-2xl flex flex-col items-center justify-center shadow-md group-hover:shadow-orange-200 group-hover:from-orange-500 group-hover:to-orange-600 transition-all duration-300">
-                                    <span className="text-[10px] font-bold opacity-80 uppercase leading-none">Día</span>
-                                    <span className="font-black text-lg leading-tight uppercase">
-                                        {item.day.substring(0, 3)}
-                                    </span>
-                                </div>
-
-                                <div>
-                                    <h4 className="font-black text-slate-800 text-lg uppercase italic tracking-tighter group-hover:text-[#1e3a8a] transition-colors">
-                                        {item.category}
-                                    </h4>
-                                    <div className="flex items-center gap-3 mt-1">
-                                        <div className="flex items-center gap-1 text-slate-400 text-xs font-bold uppercase">
-                                            <MapPin size={12} className="text-orange-500" />
-                                            {item.court}
-                                        </div>
-                                        <div className="flex items-center gap-1 text-slate-400 text-xs font-bold uppercase">
-                                            <Clock size={12} className="text-blue-500" />
-                                            {item.time}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center justify-between sm:justify-end gap-4">
-                                <div className="hidden sm:block">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block text-right">Estado</span>
-                                    <span className="text-green-500 font-bold text-xs uppercase">Confirmado</span>
-                                </div>
-                                <button className="flex items-center gap-1 bg-slate-50 hover:bg-orange-500 hover:text-white text-slate-600 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all group/btn border border-slate-100 hover:border-orange-500 shadow-sm">
-                                    Gestionar
-                                    <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                        <div className="p-6 flex flex-wrap gap-2">
+                            {diasSemana.map((dia) => (
+                                <button
+                                    key={dia.id}
+                                    onClick={() => toggleDia(dia.id)}
+                                    className={`flex-1 min-w-[70px] py-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${formData.dias_seleccionados.includes(dia.id)
+                                            ? "border-[#1e3a8a] bg-blue-50 text-[#1e3a8a] shadow-md shadow-blue-100"
+                                            : "border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200"
+                                        }`}
+                                >
+                                    <span className="text-xs font-black uppercase tracking-tighter">{dia.label}</span>
+                                    {formData.dias_seleccionados.includes(dia.id) && <CheckCircle2 size={16} />}
                                 </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Recursos */}
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><MapPin size={20} /></div>
+                            <h3 className="font-black text-[#1e3a8a] uppercase text-xs tracking-wider">Asignación</h3>
+                        </div>
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <select name="profesor_id" onChange={handleChange} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Selecciona Profesor...</option>
+                                <option value="1">Prof. Ricardo Gareca</option>
+                            </select>
+                            <select name="cancha_id" onChange={handleChange} className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Selecciona Cancha...</option>
+                                <option value="1">Cancha Principal Surco</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-6">
+                    {/* Tiempo y Capacidad */}
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6 space-y-4">
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Rango Horario</label>
+                            <div className="grid grid-cols-2 gap-2">
+                                <input name="hora_inicio" type="time" onChange={handleChange} className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold" />
+                                <input name="hora_fin" type="time" onChange={handleChange} className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold" />
                             </div>
                         </div>
-                    ))}
+                        <div className="space-y-1">
+                            <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Capacidad Máxima</label>
+                            <input name="capacidad_max" type="number" defaultValue={20} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold outline-none" />
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            {/* Footer Informativo */}
-            <div className="bg-orange-500/5 border border-orange-200 p-4 rounded-2xl flex items-center gap-3">
-                <div className="w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
-                <p className="text-orange-700 text-xs font-bold uppercase tracking-wide">
-                    Los cambios realizados en los horarios se notificarán automáticamente a los alumnos y profesores.
-                </p>
             </div>
         </div>
     );
