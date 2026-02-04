@@ -14,10 +14,16 @@ const AdminSchedulesManager = () => {
     const [filterSede, setFilterSede] = useState('');
     const [filterProfesor, setFilterProfesor] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedHorario, setSelectedHorario] = useState(null);
 
     // --- ESTADO PAGINACIÓN ---
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
+
+    const handleEdit = (horario) => {
+        setSelectedHorario(horario);
+        setView('edit');
+    };
 
     const mapDiaSemana = (dia) => {
         const dias = { 1: 'Lun', 2: 'Mar', 3: 'Mie', 4: 'Jue', 5: 'Vie', 6: 'Sab', 7: 'Dom' };
@@ -67,6 +73,7 @@ const AdminSchedulesManager = () => {
     const uniqueProfesores = [...new Set(horarios.map(h => h.profesor.nombre_completo))];
 
     if (view === 'create') return <AdminSchedule onBack={() => setView('list')} />;
+    if (view === 'edit') return <AdminSchedule onBack={() => { setView('list'); setSelectedHorario(null); }} initialData={selectedHorario} />;
 
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
@@ -139,7 +146,10 @@ const AdminSchedulesManager = () => {
                                             </span>
                                             {/* Botones de acción siempre visibles en móvil, hover en desktop */}
                                             <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                                <button className="p-2 text-slate-400 hover:text-[#1e3a8a] bg-slate-50 md:bg-transparent rounded-lg transition-colors">
+                                                <button
+                                                    onClick={() => handleEdit(h)}
+                                                    className="p-2 text-slate-400 hover:text-[#1e3a8a] bg-slate-50 md:bg-transparent rounded-lg transition-colors"
+                                                >
                                                     <Edit3 size={15} />
                                                 </button>
                                                 <button
