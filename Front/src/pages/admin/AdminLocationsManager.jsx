@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, MapPin, Building2, ChevronRight, Search, Edit3, Trash2, ArrowLeft } from 'lucide-react';
 import AdminLocations from './AdminLocations';
 import { sedeService } from '../../services/sede.service';
-import toast from 'react-hot-toast'; // Asegúrate de tenerlo instalado
+import toast from 'react-hot-toast'; 
 
 const AdminLocationsManager = () => {
     const [view, setView] = useState('list');
