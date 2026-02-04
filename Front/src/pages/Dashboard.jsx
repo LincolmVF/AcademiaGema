@@ -31,28 +31,36 @@ const Dashboard = ({ role = 'student' }) => {
 
     useEffect(() => {
         if (role === 'admin') {
-            const fetchAlumnosCount = async () => {
+            const fetchDashboardStats = async () => {
                 try {
-                    const response = await apiFetch.get('/usuarios/count/alumnos');
+                    const response = await apiFetch.get('/usuarios/count/usuarios-stats');
                     const result = await response.json();
 
-                    if (response.ok) {
-                        const totalAlumnos = result.data;
+                    if (response.ok && result.data) {
+                        const { alumno, profesor } = result.data;
 
                         setStats(prevStats =>
-                            prevStats.map(stat =>
-                                stat.title === "Alumnos Activos"
-                                    ? { ...stat, value: totalAlumnos.toString() } 
-                                    : stat
-                            )
+                            prevStats.map(stat => {
+                                const titleLower = stat.title.toLowerCase();
+
+                                if (titleLower.includes("alumnos")) {
+                                    return { ...stat, value: (alumno || 0).toString() };
+                                }
+
+                                if (titleLower.includes("profesores") || titleLower.includes("entrenadores")) {
+                                    return { ...stat, value: (profesor || 0).toString() };
+                                }
+
+                                return stat;
+                            })
                         );
                     }
                 } catch (error) {
-                    console.error("Error cargando contador de alumnos:", error);
+                    console.error("Error cargando estadísticas del dashboard:", error);
                 }
             };
 
-            fetchAlumnosCount();
+            fetchDashboardStats();
         } else {
             setStats(data?.stats || []);
         }
@@ -79,13 +87,14 @@ const Dashboard = ({ role = 'student' }) => {
                 </div>
             </div>
 
-            {/* Renderizamos las stats desde el estado dinámico 'stats' */}
+            {/* Renderizado de Cards con datos reales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
                 {stats.map((stat, index) => (
                     <StatCard key={index} {...stat} />
                 ))}
             </div>
 
+            {/* Actividad Reciente */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
                 <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-white to-slate-50">
                     <div className="flex items-center gap-3">
@@ -94,9 +103,6 @@ const Dashboard = ({ role = 'student' }) => {
                             {data.recentTitle || 'Actividad Reciente'}
                         </h2>
                     </div>
-                    <button className="px-4 py-2 text-xs font-black text-orange-600 bg-orange-50 rounded-lg hover:bg-orange-500 hover:text-white transition-all uppercase tracking-widest border border-orange-100">
-                        Ver Historial
-                    </button>
                 </div>
 
                 <div className="divide-y divide-slate-100">
