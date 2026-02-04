@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Plus, MapPin, Home, Phone, Trash2, Save, Map, ArrowLeft } from 'lucide-react';
 import { sedeService } from '../../services/sede.service';
 import toast from 'react-hot-toast'; 
+import { useAuth } from '../../context/AuthContext';
 
 const AdminLocations = ({ onBack, onSuccess, initialData }) => {
     const [loading, setLoading] = useState(false);
     const isEdit = !!initialData;
+
+    const { userId } = useAuth();
 
     const [formData, setFormData] = useState({
         nombre: initialData?.nombre || '',
@@ -72,7 +75,7 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
                 nombre: formData.nombre.trim(),
                 telefono_contacto: formData.telefono_contacto,
                 tipo_instalacion: formData.tipo_instalacion,
-                administrador_id: 3, // Idealmente obtener de un Context o Auth
+                administrador_id: userId, 
                 direccion: {
                     direccion_completa: formData.direccion_completa,
                     distrito: formData.distrito,
