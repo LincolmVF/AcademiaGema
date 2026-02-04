@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Save, User, Mail, GraduationCap, Phone, ArrowLeft, Lock, ShieldCheck } from 'lucide-react';
+import { Save, User, Mail, GraduationCap, Phone, ArrowLeft, Lock, ShieldCheck, Loader2 } from 'lucide-react';
+import { apiFetch } from '../../interceptors/api'; // Importa tu interceptor
+import toast from 'react-hot-toast';
 
 const AdminTeachers = ({ onBack }) => {
     const [loading, setLoading] = useState(false);
@@ -21,112 +23,114 @@ const AdminTeachers = ({ onBack }) => {
     };
 
     const handleSubmit = async () => {
-        if (!formData.numero_documento) {
-            alert("El número de documento es obligatorio para generar la contraseña.");
+        // Validaciones básicas
+        if (!formData.email || !formData.numero_documento || !formData.nombres) {
+            toast.error("Por favor, completa los campos obligatorios.");
             return;
         }
 
         setLoading(true);
 
+        // Construcción del objeto EXACTO que pediste
         const payload = {
+            email: formData.email,
+            password: formData.numero_documento, // Password por defecto
             nombres: formData.nombres,
             apellidos: formData.apellidos,
-            email: formData.email,
-            telefono_personal: formData.telefono_personal,
+            rol_id: "profesor",
             tipo_documento_id: formData.tipo_documento_id,
             numero_documento: formData.numero_documento,
+            telefono_personal: formData.telefono_personal,
+            fecha_nacimiento: formData.fecha_nacimiento, // Formato YYYY-MM-DD
             genero: formData.genero === "Masculino" ? "M" : "F",
-            fecha_nacimiento: formData.fecha_nacimiento ? new Date(formData.fecha_nacimiento).toISOString() : null,
-            rol_id: 3,
-            profesores: {
-                create: {
-                    especializacion: formData.especializacion
-                }
-            },
-            credenciales_usuario: {
-                create: {
-                    hash_contrasena: formData.numero_documento // Contraseña por default
-                }
+            datosRolEspecifico: {
+                especializacion: formData.especializacion
             }
         };
 
-        console.log("Payload enviado:", payload);
-
-        setTimeout(() => {
+        try {
+            const response = await apiFetch.post('/usuarios/register', payload); 
+            
+            if (response.ok) {
+                toast.success("¡Profesor registrado exitosamente!");
+                onBack(); // Regresa al listado
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.message || "Error al registrar");
+            }
+        } catch (error) {
+            console.error("Error en registro:", error);
+            toast.error("Error de conexión con el servidor");
+        } finally {
             setLoading(false);
-            onBack(); // Regresa a la lista
-        }, 1500);
+        }
     };
 
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
             {/* Header Formulario */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div className="flex items-center gap-3">
-                        {/* BOTÓN DE VOLVER: Estilo minimalista pero funcional */}
-                        <button
-                            onClick={onBack}
-                            className="group flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-all duration-300 shadow-sm"
-                            title="Volver al listado"
-                        >
-                            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={onBack}
+                        className="group flex items-center justify-center w-10 h-10 bg-white border border-slate-200 rounded-xl hover:border-orange-500 hover:text-orange-500 transition-all shadow-sm"
+                    >
+                        <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    </button>
 
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-2 mb-0.5">
-                                <div className="h-5 w-1 bg-orange-500 rounded-full"></div>
-                                <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
-                                    Registro de <span className="text-[#1e3a8a]">Docente</span>
-                                </h1>
-                            </div>
-                            <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wide ml-3">
-                                Gestión de <span className="text-orange-500">Talento Humano</span>
-                            </p>
+                    <div className="flex flex-col">
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <div className="h-5 w-1 bg-orange-500 rounded-full"></div>
+                            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
+                                Registro de <span className="text-[#1e3a8a]">Docente</span>
+                            </h1>
                         </div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3">Creación de cuenta federada</p>
                     </div>
                 </div>
 
                 <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-blue-900/20"
+                    className="bg-[#0f172a] hover:bg-orange-600 text-white px-8 py-3 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-lg disabled:opacity-50"
                 >
-                    <Save size={20} /> {loading ? 'GUARDANDO...' : 'FINALIZAR REGISTRO'}
+                    {loading ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                    {loading ? 'Procesando...' : 'Finalizar Registro'}
                 </button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Card: Datos Personales */}
+                    {/* Sección 1: Datos Personales */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><User size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase text-xs tracking-wider">Identificación y Perfil</h3>
+                        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                            <User size={18} className="text-[#1e3a8a]" />
+                            <h3 className="font-black text-slate-800 uppercase text-[10px] tracking-widest">Perfil e Identidad</h3>
                         </div>
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nombres</label>
-                                <input name="nombres" placeholder="Ej: Juan Alberto" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                                <input name="nombres" placeholder="Ej: María" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Apellidos</label>
-                                <input name="apellidos" placeholder="Ej: Pérez Rossi" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                                <input name="apellidos" placeholder="Ej: González" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Tipo de Doc.</label>
                                 <select name="tipo_documento_id" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none">
                                     <option value="DNI">DNI</option>
                                     <option value="CE">C.E.</option>
+                                    <option value="PAS">Pasaporte</option>
                                 </select>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nro. Documento</label>
-                                <input name="numero_documento" placeholder="Ej: 77123456" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nro. Documento (Será la clave)</label>
+                                <input name="numero_documento" placeholder="45678901" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20 shadow-inner" />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Fecha de Nacimiento</label>
-                                <input name="fecha_nacimiento" type='date' onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500" />
+                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">F. Nacimiento</label>
+                                <input name="fecha_nacimiento" type='date' onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Género</label>
@@ -139,54 +143,51 @@ const AdminTeachers = ({ onBack }) => {
                         </div>
                     </div>
 
-                    {/* Card: Contacto */}
+                    {/* Sección 2: Contacto */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
-                            <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><Mail size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase text-xs tracking-wider">Datos de Contacto</h3>
+                        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                            <Mail size={18} className="text-[#1e3a8a]" />
+                            <h3 className="font-black text-slate-800 uppercase text-[10px] tracking-widest">Comunicación</h3>
                         </div>
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Correo Electrónico</label>
-                                <input name="email" placeholder="correo@ejemplo.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500" />
+                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Email Corporativo</label>
+                                <input name="email" type="email" placeholder="profesor.nuevo@gema.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Teléfono Personal</label>
-                                <input name="telefono_personal" placeholder="999 999 999" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500" />
+                                <input name="telefono_personal" placeholder="+51 912345678" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Columna Derecha */}
+                {/* Columna Lateral */}
                 <div className="space-y-6">
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><GraduationCap size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase text-xs tracking-wider">Especialidad</h3>
+                        <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                            <GraduationCap size={18} className="text-orange-500" />
+                            <h3 className="font-black text-slate-800 uppercase text-[10px] tracking-widest">Especialidad</h3>
                         </div>
-                        <div className="p-6 space-y-4">
+                        <div className="p-6">
                             <textarea
                                 name="especializacion"
                                 onChange={handleChange}
-                                placeholder="Ej: Entrenador de arqueros, Preparador físico..."
-                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none h-32 resize-none focus:border-[#1e3a8a]"
+                                placeholder="Describa el área técnica (Ej: Entrenamiento de alto rendimiento)..."
+                                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 text-sm font-bold outline-none h-40 resize-none focus:ring-2 focus:ring-orange-500/20"
                             />
                         </div>
                     </div>
 
-                    {/* Info Card de Seguridad */}
-                    <div className="bg-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                    <div className="bg-[#0f172a] p-8 rounded-3xl text-white shadow-xl relative overflow-hidden">
                         <div className="relative z-10">
-                            <Lock size={32} className="text-orange-500 mb-3" />
-                            <h4 className="font-black uppercase italic tracking-tighter text-lg leading-tight">Acceso Inicial</h4>
-                            <p className="text-[10px] opacity-70 font-bold uppercase mt-2 leading-relaxed">
-                                El sistema usará el número de documento como contraseña temporal.
+                            <Lock size={28} className="text-orange-500 mb-4" />
+                            <h4 className="font-black uppercase italic tracking-tighter text-lg leading-tight">Clave Temporal</h4>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-3 leading-relaxed">
+                                Una vez registrado, el profesor podrá ingresar usando su número de documento como contraseña inicial.
                             </p>
                         </div>
-                        <div className="absolute -right-6 -bottom-6 opacity-10">
-                            <ShieldCheck size={120} />
-                        </div>
+                        <ShieldCheck size={100} className="absolute -right-6 -bottom-6 opacity-5 rotate-12" />
                     </div>
                 </div>
             </div>

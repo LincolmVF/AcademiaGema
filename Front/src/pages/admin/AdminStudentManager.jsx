@@ -1,50 +1,73 @@
-import React, { useState } from 'react';
-import { Search, Phone, ShieldAlert, ChevronRight, ArrowLeft, Heart, Mail, Calendar, User, Fingerprint, Activity, Info, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Phone, ShieldAlert, ChevronRight, ArrowLeft, Heart, Mail, Calendar, User, Fingerprint, Activity, Info, FileText, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { apiFetch } from '../../interceptors/api';
 
 const AdminStudentsManager = () => {
     const [view, setView] = useState('list');
     const [selectedAlumno, setSelectedAlumno] = useState(null);
+    const [alumnos, setAlumnos] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Data simulada con la nueva estructura
-    const [alumnos] = useState([
-        {
-            id: 1,
-            nombres: "Carlos",
-            apellidos: "Rodríguez",
-            email: "alumno.nuevo@gema.com",
-            tipo_documento_id: "DNI",
-            numero_documento: "72345678",
-            telefono_personal: "+51987654321",
-            fecha_nacimiento: "2005-03-15",
-            genero: "M",
-            datosRolEspecifico: {
-                condiciones_medicas: "Asma leve",
-                seguro_medico: "Pacífico Seguros",
-                grupo_sanguineo: "O+"
+    // 1. Cargar alumnos desde el Backend
+    const fetchAlumnos = async () => {
+        try {
+            setLoading(true);
+            const response = await apiFetch.get('/usuarios/role/alumno');
+            const result = await response.json();
+
+            if (response.ok) {
+                // Mapeamos la data de Prisma a la estructura del componente
+                const formattedData = result.data.map(user => ({
+                    id: user.id,
+                    nombres: user.nombres,
+                    apellidos: user.apellidos,
+                    email: user.email,
+                    tipo_documento_id: user.tipo_documento_id || 'DNI',
+                    numero_documento: user.numero_documento,
+                    telefono_personal: user.telefono_personal || 'No registrado',
+                    fecha_nacimiento: user.fecha_nacimiento ? new Date(user.fecha_nacimiento).toLocaleDateString() : '---',
+                    genero: user.genero,
+                    // Extraemos los datos del objeto 'alumnos' que viene de Prisma
+                    datosRolEspecifico: {
+                        condiciones_medicas: user.alumnos?.condiciones_medicas || 'Ninguna conocida',
+                        seguro_medico: user.alumnos?.seguro_medico || 'No especificado',
+                        grupo_sanguineo: user.alumnos?.grupo_sanguineo || 'S/N'
+                    }
+                }));
+                setAlumnos(formattedData);
             }
-        },
-        {
-            id: 2,
-            nombres: "Gianluca",
-            apellidos: "Lapadula",
-            email: "lapagol@outlook.it",
-            tipo_documento_id: "DNI",
-            numero_documento: "87654321",
-            telefono_personal: "911 222 333",
-            fecha_nacimiento: "1990-02-07",
-            genero: "M",
-            datosRolEspecifico: {
-                condiciones_medicas: "Uso de máscara protectora por fractura nasal",
-                seguro_medico: "Rimac Seguros",
-                grupo_sanguineo: "A-"
-            }
+        } catch (error) {
+            toast.error("Error al conectar con el servidor");
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
+
+    useEffect(() => {
+        fetchAlumnos();
+    }, []);
+
+    // 2. Filtrado en tiempo real
+    const filteredAlumnos = alumnos.filter(alum =>
+        alum.nombres.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alum.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alum.numero_documento.includes(searchTerm)
+    );
 
     const handleViewDetails = (alumno) => {
         setSelectedAlumno(alumno);
         setView('details');
     };
+
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center h-64 text-slate-500 gap-3">
+            <Loader2 className="animate-spin text-[#1e3a8a]" size={40} />
+            <p className="font-bold italic animate-pulse">Sincronizando expedientes...</p>
+        </div>
+    );
 
     if (view === 'details' && selectedAlumno) {
         return (
@@ -71,9 +94,7 @@ const AdminStudentsManager = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Columna Principal: Datos Personales */}
                     <div className="lg:col-span-2 space-y-6">
-                        {/* Card: Perfil e Identidad */}
                         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                             <div className="p-6">
                                 <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
@@ -100,7 +121,6 @@ const AdminStudentsManager = () => {
                                     </div>
                                 </div>
 
-                                {/* Grid de detalles secundarios */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-100">
                                     <div className="space-y-1">
                                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Género</span>
@@ -110,10 +130,10 @@ const AdminStudentsManager = () => {
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Email Corporativo</span>
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Email</span>
                                         <div className="flex items-center gap-2 font-bold text-slate-700">
                                             <Mail size={14} className="text-slate-400" />
-                                            <span className="text-sm lowercase">{selectedAlumno.email}</span>
+                                            <span className="text-sm lowercase truncate max-w-[150px]">{selectedAlumno.email}</span>
                                         </div>
                                     </div>
                                     <div className="space-y-1">
@@ -127,7 +147,6 @@ const AdminStudentsManager = () => {
                             </div>
                         </div>
 
-                        {/* Card: Ficha Médica */}
                         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                             <div className="px-6 py-4 bg-red-50/50 border-b border-red-100 flex items-center justify-between">
                                 <div className="flex items-center gap-2 text-red-600">
@@ -167,40 +186,19 @@ const AdminStudentsManager = () => {
                         </div>
                     </div>
 
-                    {/* Columna Lateral: Estado Académico */}
                     <div className="space-y-6">
                         <div className="bg-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden group">
                             <div className="absolute -right-4 -top-4 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all"></div>
-
                             <h4 className="font-black uppercase italic tracking-tighter text-lg mb-6 flex items-center gap-2">
                                 <div className="w-1.5 h-6 bg-orange-500 rounded-full"></div>
                                 Resumen de Rol
                             </h4>
-
                             <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
                                     <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">Rol del Sistema</span>
-                                    <p className="text-sm font-bold uppercase italic">Alumno Aspirante</p>
-                                </div>
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
-                                    <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">Antigüedad</span>
-                                    <p className="text-sm font-bold uppercase italic">Nuevo Ingreso (2024)</p>
-                                </div>
-
-                                <div className="pt-4">
-                                    <button className="w-full py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] transition-all shadow-lg shadow-orange-900/40 flex items-center justify-center gap-2">
-                                        <FileText size={16} />
-                                        Editar Expediente
-                                    </button>
+                                    <p className="text-sm font-bold uppercase italic text-white/90">Deportista Académico</p>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Recordatorio de Privacidad */}
-                        <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100">
-                            <p className="text-[10px] text-blue-800 font-bold leading-relaxed uppercase tracking-tight">
-                                <span className="text-blue-500">Nota:</span> Esta información es confidencial. El manejo de datos de salud está protegido por el reglamento interno de la academia.
-                            </p>
                         </div>
                     </div>
                 </div>
@@ -208,7 +206,6 @@ const AdminStudentsManager = () => {
         );
     }
 
-    // LIST VIEW (Sin cambios, solo actualizada para reflejar nombres/apellidos)
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -227,12 +224,14 @@ const AdminStudentsManager = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1e3a8a]" size={18} />
                 <input
                     type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="BUSCAR POR NOMBRE O DOCUMENTO..."
                     className="w-full bg-white border border-slate-200 rounded-2xl pl-12 pr-4 py-3 text-xs font-bold uppercase tracking-widest outline-none focus:ring-2 focus:ring-blue-500/20 shadow-sm"
                 />
             </div>
 
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden min-h-[300px]">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -244,7 +243,7 @@ const AdminStudentsManager = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {alumnos.map((alum) => (
+                            {filteredAlumnos.length > 0 ? filteredAlumnos.map((alum) => (
                                 <tr key={alum.id} className="hover:bg-blue-50/30 transition-colors group">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
@@ -266,7 +265,13 @@ const AdminStudentsManager = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ))}
+                            )) : (
+                                <tr>
+                                    <td colSpan="4" className="p-20 text-center text-slate-400 font-bold italic">
+                                        No se encontraron alumnos con esos criterios.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

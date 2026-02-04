@@ -1,94 +1,218 @@
-import React, { useState } from 'react';
-import { Plus, Search, Clock, User, MapPin, Edit3, Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Plus, Search, Clock, User, MapPin, Edit3, Trash2, Loader2, Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import AdminSchedule from './AdminSchedule';
+import { apiFetch } from '../../interceptors/api';
+import toast from 'react-hot-toast';
 
 const AdminSchedulesManager = () => {
     const [view, setView] = useState('list');
-    const [horarios, setHorarios] = useState([
-        {
-            id: 1,
-            dias: ['Lun', 'Mie', 'Vie'], // Lista de días
-            hora: '16:00 - 17:30',
-            profesor: 'Ricardo Gareca',
-            nivel: 'Básico',
-            cancha: 'Cancha 1 Surco',
-            cupos: 20
-        },
-        {
-            id: 2,
-            dias: ['Mar', 'Jue'],
-            hora: '18:00 - 19:30',
-            profesor: 'Sergio Markarian',
-            nivel: 'Pro',
-            cancha: 'Cancha Principal',
-            cupos: 15
-        },
-    ]);
+    const [horarios, setHorarios] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // --- ESTADOS DE FILTRO ---
+    const [filterDia, setFilterDia] = useState('');
+    const [filterSede, setFilterSede] = useState('');
+    const [filterProfesor, setFilterProfesor] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // --- ESTADO PAGINACIÓN ---
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
+
+    const mapDiaSemana = (dia) => {
+        const dias = { 1: 'Lun', 2: 'Mar', 3: 'Mie', 4: 'Jue', 5: 'Vie', 6: 'Sab', 7: 'Dom' };
+        return dias[dia] || 'S/D';
+    };
+
+    const fetchHorarios = async () => {
+        try {
+            setLoading(true);
+            const response = await apiFetch.get('/horarios');
+            const result = await response.json();
+            if (response.ok) setHorarios(result.data);
+        } catch (error) {
+            toast.error("Error al conectar con el servidor");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (view === 'list') fetchHorarios();
+    }, [view]);
+
+    // --- LÓGICA DE FILTRADO ---
+    const filteredHorarios = useMemo(() => {
+        return horarios.filter(h => {
+            const matchesDia = filterDia === '' || h.dia_semana.toString() === filterDia;
+            const matchesSede = filterSede === '' || h.cancha.sede.nombre === filterSede;
+            const matchesProf = filterProfesor === '' || h.profesor.nombre_completo === filterProfesor;
+            const matchesSearch = searchTerm === '' ||
+                h.profesor.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                h.cancha.nombre.toLowerCase().includes(searchTerm.toLowerCase());
+
+            return matchesDia && matchesSede && matchesProf && matchesSearch;
+        });
+    }, [horarios, filterDia, filterSede, filterProfesor, searchTerm]);
+
+    // --- LÓGICA DE PAGINACIÓN ---
+    const totalPages = Math.ceil(filteredHorarios.length / itemsPerPage);
+    const currentData = filteredHorarios.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Obtener opciones únicas para los selects de filtro
+    const uniqueSedes = [...new Set(horarios.map(h => h.cancha.sede.nombre))];
+    const uniqueProfesores = [...new Set(horarios.map(h => h.profesor.nombre_completo))];
 
     if (view === 'create') return <AdminSchedule onBack={() => setView('list')} />;
 
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
-            {/* Header del Panel */}
+            {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
                         <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
                         <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel de <span className="text-[#1e3a8a]">Horarios</span></h1>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Cronograma de clases y asignación de canchas.</p>
                 </div>
-
-                <button onClick={() => setView('create')} className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg group">
+                <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-orange-500 transition-all group">
                     <Plus size={20} className="group-hover:rotate-90 transition-transform" /> Programar Clase
                 </button>
             </div>
 
-            {/* Grid de Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {horarios.map((h) => (
-                    <div key={h.id} className="bg-white rounded-3xl border border-slate-200 p-6 hover:shadow-xl transition-all group relative">
-                        <div className="flex justify-between items-start mb-4">
-                            {/* Visualización de Múltiples Días */}
-                            <div className="flex flex-wrap gap-1">
-                                {h.dias.map(dia => (
-                                    <span key={dia} className="px-2 py-1 bg-orange-100 text-orange-600 text-[9px] font-black rounded-lg uppercase">
-                                        {dia}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="flex gap-1">
-                                <button className="p-2 text-slate-300 hover:text-[#1e3a8a] transition-colors"><Edit3 size={16} /></button>
-                                <button className="p-2 text-slate-300 hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 mb-4">
-                            <div className="p-3 bg-blue-50 text-[#1e3a8a] rounded-2xl group-hover:bg-[#1e3a8a] group-hover:text-white transition-all"><Clock size={20} /></div>
-                            <div>
-                                <h3 className="font-black text-slate-800 text-lg uppercase italic leading-tight">{h.hora}</h3>
-                                <p className="text-[#1e3a8a] text-[10px] font-black uppercase tracking-widest">{h.nivel}</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3 pt-4 border-t border-slate-50">
-                            <div className="flex items-center gap-2 text-slate-500">
-                                <User size={14} className="text-orange-500" />
-                                <span className="text-[11px] font-bold uppercase">{h.profesor}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-slate-500">
-                                <MapPin size={14} className="text-orange-500" />
-                                <span className="text-[11px] font-bold uppercase">{h.cancha}</span>
-                            </div>
-                        </div>
-
-                        <div className="mt-5 flex items-center justify-between bg-slate-50 p-3 rounded-2xl">
-                            <span className="text-[9px] font-black text-slate-400 uppercase">Cupos Máx.</span>
-                            <span className="text-xs font-black text-slate-700">{h.cupos} Alumnos</span>
-                        </div>
-                    </div>
-                ))}
+            {/* --- BARRA DE FILTROS --- */}
+            <div className="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                    <input
+                        type="text"
+                        placeholder="Buscar..."
+                        className="w-full pl-10 pr-4 py-2 bg-slate-50 border-none rounded-2xl text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500/20"
+                        value={searchTerm}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                    />
+                </div>
+                <select
+                    className="bg-slate-50 border-none rounded-2xl px-4 py-2 text-xs font-bold outline-none"
+                    value={filterDia}
+                    onChange={(e) => { setFilterDia(e.target.value); setCurrentPage(1); }}
+                >
+                    <option value="">Todos los días</option>
+                    <option value="1">Lunes</option><option value="2">Martes</option>
+                    <option value="3">Miércoles</option><option value="4">Jueves</option>
+                    <option value="5">Viernes</option><option value="6">Sábado</option>
+                    <option value="7">Domingo</option>
+                </select>
+                <select
+                    className="bg-slate-50 border-none rounded-2xl px-4 py-2 text-xs font-bold outline-none"
+                    value={filterSede}
+                    onChange={(e) => { setFilterSede(e.target.value); setCurrentPage(1); }}
+                >
+                    <option value="">Todas las Sedes</option>
+                    {uniqueSedes.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+                <select
+                    className="bg-slate-50 border-none rounded-2xl px-4 py-2 text-xs font-bold outline-none"
+                    value={filterProfesor}
+                    onChange={(e) => { setFilterProfesor(e.target.value); setCurrentPage(1); }}
+                >
+                    <option value="">Todos los Profesores</option>
+                    {uniqueProfesores.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
             </div>
+
+            {loading ? (
+                <div className="flex justify-center p-20"><Loader2 className="animate-spin text-[#1e3a8a]" size={40} /></div>
+            ) : (
+                <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                        {currentData.length > 0 ? (
+                            currentData.map((h) => (
+                                <div key={h.id} className="bg-white rounded-3xl border border-slate-200 p-5 md:p-6 hover:shadow-xl transition-all group flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-4">
+                                            <span className="px-2 py-1 bg-orange-100 text-orange-600 text-[9px] font-black rounded-lg uppercase tracking-wider">
+                                                {mapDiaSemana(h.dia_semana)}
+                                            </span>
+                                            {/* Botones de acción siempre visibles en móvil, hover en desktop */}
+                                            <div className="flex gap-1 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                                <button className="p-2 text-slate-400 hover:text-[#1e3a8a] bg-slate-50 md:bg-transparent rounded-lg transition-colors">
+                                                    <Edit3 size={15} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(h.id)}
+                                                    className="p-2 text-slate-400 hover:text-red-500 bg-slate-50 md:bg-transparent rounded-lg transition-colors"
+                                                >
+                                                    <Trash2 size={15} />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="shrink-0 p-3 bg-blue-50 text-[#1e3a8a] rounded-2xl group-hover:bg-[#1e3a8a] group-hover:text-white transition-all duration-300">
+                                                <Clock size={20} />
+                                            </div>
+                                            <div className="min-w-0">
+                                                <h3 className="font-black text-slate-800 text-base md:text-lg italic leading-tight truncate">
+                                                    {h.hora_inicio} - {h.hora_fin}
+                                                </h3>
+                                                <p className="text-[#1e3a8a] text-[10px] font-black uppercase tracking-widest truncate">
+                                                    {h.nivel.nombre}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2.5 pt-4 border-t border-slate-50">
+                                        <div className="flex items-center gap-2 text-slate-500">
+                                            <User size={14} className="shrink-0 text-orange-500" />
+                                            <span className="text-[11px] font-bold uppercase truncate">
+                                                {h.profesor.nombre_completo}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-slate-500">
+                                            <MapPin size={14} className="shrink-0 text-orange-500" />
+                                            <span className="text-[11px] font-bold uppercase truncate" title={`${h.cancha.nombre} (${h.cancha.sede.nombre})`}>
+                                                {h.cancha.nombre} <span className="text-[10px] text-slate-400 font-medium">({h.cancha.sede.nombre})</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full py-20 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                                <p className="text-slate-400 font-bold italic">No se encontraron horarios con esos filtros.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* --- CONTROLES DE PAGINACIÓN --- */}
+                    {totalPages > 1 && (
+                        <div className="flex items-center justify-center gap-4 pt-6">
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                className="p-2 bg-white border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-50 transition-all"
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+                            <span className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                                Página {currentPage} de {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className="p-2 bg-white border border-slate-200 rounded-xl disabled:opacity-30 hover:bg-slate-50 transition-all"
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 };
