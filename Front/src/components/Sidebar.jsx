@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, GraduationCap, UserCog, CalendarRange, Settings, LogOut, MapPin, BarChart3, DollarSign } from 'lucide-react';
+import {
+    LayoutDashboard, GraduationCap, UserCog, CalendarRange,
+    Settings, LogOut, MapPin, BarChart3, DollarSign,
+    ChevronDown
+} from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
 
@@ -8,29 +12,62 @@ const Sidebar = ({ isOpen, onClose }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Estado para manejar qué dropdown está abierto
+    const [openMenus, setOpenMenus] = useState({
+        'Gestión Deportiva': true, // Abierto por defecto
+        'Comunidad': false,
+        'Administración': false
+    });
+
+    const toggleMenu = (title) => {
+        setOpenMenus(prev => ({
+            ...prev,
+            [title]: !prev[title]
+        }));
+    };
+
     const handleLogout = async () => {
         try {
             await logoutService();
-            toast.success('Sesión cerrada correctamente', {
-                icon: '👋',
-                duration: 5000,
-                id: 'logout-toast',
-            });
+            toast.success('Sesión cerrada correctamente', { icon: '👋', id: 'logout-toast' });
             navigate('/login');
         } catch (error) {
             toast.error('Error al cerrar sesión');
         }
     };
 
-    const menuItems = [
-        { icon: LayoutDashboard, label: 'Resumen General', path: '/dashboard/admin' },
-        { icon: UserCog, label: 'Profesores', path: '/dashboard/admin/teachers' },
-        { icon: MapPin, label: 'Sedes', path: '/dashboard/admin/locations' },
-        { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
-        { icon: DollarSign, label: 'Catálogo', path: '/dashboard/admin/catalog' },
-        { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
-        { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
-        { icon: Settings, label: 'Configuración', path: '/dashboard/admin/settings' },
+    const menuGroups = [
+        {
+            title: 'Principal',
+            type: 'link', // Link directo sin dropdown
+            icon: LayoutDashboard,
+            path: '/dashboard/admin'
+        },
+        {
+            title: 'Gestión Deportiva',
+            type: 'dropdown',
+            items: [
+                { icon: MapPin, label: 'Sedes y Canchas', path: '/dashboard/admin/locations' },
+                { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
+                { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
+            ]
+        },
+        {
+            title: 'Comunidad',
+            type: 'dropdown',
+            items: [
+                { icon: UserCog, label: 'Profesores', path: '/dashboard/admin/teachers' },
+                { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
+            ]
+        },
+        {
+            title: 'Administración',
+            type: 'dropdown',
+            items: [
+                { icon: DollarSign, label: 'Catálogo de Precios', path: '/dashboard/admin/catalog' },
+                { icon: Settings, label: 'Configuración', path: '/dashboard/admin/settings' },
+            ]
+        }
     ];
 
     return (
@@ -44,73 +81,92 @@ const Sidebar = ({ isOpen, onClose }) => {
                 flex flex-col overflow-hidden shadow-2xl
             `}>
 
-                {/* SECCIÓN LOGO: Branding oficial unificado */}
+                {/* LOGO */}
                 <div className="flex-none py-8 px-6 flex flex-col items-center border-b border-white/10">
                     <div className="relative">
-                        {/* Brillo decorativo idéntico al StudentSidebar */}
                         <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full"></div>
-                        <img
-                            src="/logo.png"
-                            alt="Academia Gema"
-                            className="w-32 h-auto relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-                        />
+                        <img src="/logo.png" alt="Logo" className="w-28 h-auto relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]" />
                     </div>
                     <div className="text-center mt-2">
-                        <span className="block font-black text-xl tracking-tighter uppercase italic text-white">
-                            Gema<span className="text-orange-500 font-black">Admin</span>
+                        <span className="block font-black text-lg tracking-tighter uppercase italic text-white">
+                            Gema<span className="text-orange-500">Admin</span>
                         </span>
-                        <div className="h-1 w-8 bg-orange-500 mx-auto mt-1 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
                     </div>
                 </div>
 
-                {/* NAVEGACIÓN: Scroll interno oculto */}
-                <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto scrollbar-hide">
-                    <p className="px-4 text-[10px] font-black text-blue-300/50 uppercase tracking-[0.2em] mb-4">
-                        Menú Principal
-                    </p>
-                    {menuItems.map((item) => {
-                        const isActive = location.pathname === item.path;
-                        return (
-                            <Link
-                                key={item.path}
-                                to={item.path}
-                                onClick={() => onClose && onClose()}
-                                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
-                                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
-                                    : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
-                                    }`}
-                            >
-                                <item.icon
-                                    size={20}
-                                    className={`${isActive ? 'text-white' : 'group-hover:text-orange-400'} transition-colors`}
-                                />
-                                <span className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}>
-                                    {item.label}
-                                </span>
-                            </Link>
-                        );
-                    })}
+                {/* NAVEGACIÓN CON DROPDOWNS */}
+                <nav className={`
+                    flex-1 py-4 px-3 overflow-y-auto space-y-2
+                    [&::-webkit-scrollbar]:w-1.5
+                    [&::-webkit-scrollbar-thumb]:bg-blue-900/40
+                    [&::-webkit-scrollbar-thumb]:rounded-full
+                `}>
+                    {menuGroups.map((group, idx) => (
+                        <div key={idx} className="space-y-1">
+                            {group.type === 'link' ? (
+                                // Renderizado de Link Directo
+                                <Link
+                                    to={group.path}
+                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${location.pathname === group.path ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40' : 'text-blue-100/60 hover:bg-white/5'
+                                        }`}
+                                >
+                                    <group.icon size={18} />
+                                    <span className="text-sm font-bold">{group.title}</span>
+                                </Link>
+                            ) : (
+                                // Renderizado de Dropdown
+                                <>
+                                    <button
+                                        onClick={() => toggleMenu(group.title)}
+                                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-blue-100/60 hover:bg-white/5 transition-all group"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-orange-500/40 group-hover:bg-orange-500 transition-colors"></div>
+                                            <span className="text-[11px] font-black uppercase tracking-widest">{group.title}</span>
+                                        </div>
+                                        <ChevronDown
+                                            size={14}
+                                            className={`transition-transform duration-300 ${openMenus[group.title] ? 'rotate-180' : ''}`}
+                                        />
+                                    </button>
+
+                                    {/* Contenido del Dropdown Animado */}
+                                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openMenus[group.title] ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                        <div className="pl-4 space-y-1 mt-1 border-l border-white/5 ml-4">
+                                            {group.items.map((item) => {
+                                                const isActive = location.pathname === item.path;
+                                                return (
+                                                    <Link
+                                                        key={item.path}
+                                                        to={item.path}
+                                                        onClick={() => onClose && onClose()}
+                                                        className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-sm ${isActive ? 'text-orange-400 font-bold bg-orange-400/10' : 'text-blue-100/50 hover:text-white'
+                                                            }`}
+                                                    >
+                                                        <item.icon size={16} />
+                                                        <span>{item.label}</span>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    ))}
                 </nav>
 
-                {/* FOOTER: Fijo abajo con estilo Student */}
-                <div className="flex-none p-4 bg-black/20 border-t border-white/10">
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all group"
-                    >
-                        <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="font-bold text-sm text-red-400">Cerrar Sesión</span>
+                {/* FOOTER */}
+                <div className="p-4 bg-black/20 border-t border-white/10">
+                    <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all font-bold text-sm">
+                        <LogOut size={18} />
+                        <span>Cerrar Sesión</span>
                     </button>
                 </div>
             </aside>
 
             {/* Overlay Móvil */}
-            {isOpen && (
-                <div
-                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 md:hidden transition-all"
-                    onClick={onClose}
-                ></div>
-            )}
+            {isOpen && <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 md:hidden" onClick={onClose}></div>}
         </>
     );
 };
