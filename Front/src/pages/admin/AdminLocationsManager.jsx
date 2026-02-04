@@ -9,6 +9,12 @@ const AdminLocationsManager = () => {
     const [sedes, setSedes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedSede, setSelectedSede] = useState(null);
+
+    const handleEdit = (sede) => {
+        setSelectedSede(sede);
+        setView('edit');
+    };
 
     const fetchSedes = async () => {
         setLoading(true);
@@ -26,9 +32,7 @@ const AdminLocationsManager = () => {
         fetchSedes();
     }, []);
 
-    // --- FUNCIÓN DE ELIMINACIÓN ---
     const handleDelete = async (id, nombre) => {
-        // Toast de confirmación personalizado
         toast((t) => (
             <div className="flex flex-col gap-3">
                 <p className="text-sm font-medium text-slate-700">
@@ -68,17 +72,21 @@ const AdminLocationsManager = () => {
         }
     };
 
-    // Filtrado básico
-    const filteredSedes = sedes.filter(s => 
+    const filteredSedes = sedes.filter(s =>
         s.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         s.direcciones?.distrito.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (view === 'create') {
+    if (view === 'create' || view === 'edit') {
         return (
             <AdminLocations
-                onBack={() => setView('list')}
+                initialData={selectedSede}
+                onBack={() => {
+                    setSelectedSede(null);
+                    setView('list');
+                }}
                 onSuccess={() => {
+                    setSelectedSede(null);
                     setView('list');
                     fetchSedes();
                 }}
@@ -159,11 +167,13 @@ const AdminLocationsManager = () => {
                             </div>
 
                             <div className="flex gap-2">
-                                <button className="p-2 text-slate-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-all">
+                                <button
+                                    onClick={() => handleEdit(sede)}
+                                    className="p-2 text-slate-400 hover:text-[#1e3a8a] hover:bg-blue-50 rounded-xl transition-all">
                                     <Edit3 size={18} />
                                 </button>
                                 {/* BOTÓN DE TRASH CONECTADO */}
-                                <button 
+                                <button
                                     onClick={() => handleDelete(sede.id, sede.nombre)}
                                     className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                                 >
@@ -173,7 +183,7 @@ const AdminLocationsManager = () => {
                         </div>
                     </div>
                 ))}
-                
+
                 {/* Botón de agregar al final */}
                 <div
                     onClick={() => setView('create')}

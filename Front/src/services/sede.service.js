@@ -21,12 +21,23 @@ export const sedeService = {
 
     delete: async (id) => {
         const response = await apiFetch.delete(`/sedes/${id}`);
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Error al eliminar la sede');
         }
-        
+
         return response.status === 204 ? { success: true } : await response.json();
+    },
+
+    update: async (id, sedeData) => {
+        const response = await apiFetch.put(`/sedes/${id}`, sedeData);
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Error al actualizar la sede');
+        }
+
+        return await response.json();
     }
 };

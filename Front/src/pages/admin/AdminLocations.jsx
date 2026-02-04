@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import { Plus, MapPin, Home, Phone, Trash2, Save, Map, ArrowLeft } from 'lucide-react';
 import { sedeService } from '../../services/sede.service';
 
-const AdminLocations = ({ onBack, onSuccess }) => {
+const AdminLocations = ({ onBack, onSuccess, initialData }) => {
     const [loading, setLoading] = useState(false);
+    const isEdit = !!initialData;
+
     const [formData, setFormData] = useState({
-        nombre: '',
-        telefono_contacto: '',
-        tipo_instalacion: '',
-        direccion_completa: '',
-        distrito: '',
-        ciudad: '',
-        referencia: '',
-        canchas: [{ nombre: '', descripcion: '' }]
+        nombre: initialData?.nombre || '',
+        telefono_contacto: initialData?.telefono_contacto || '',
+        tipo_instalacion: initialData?.tipo_instalacion || '',
+        direccion_completa: initialData?.direcciones?.direccion_completa || '',
+        distrito: initialData?.direcciones?.distrito || '',
+        ciudad: initialData?.direcciones?.ciudad || 'Lima',
+        referencia: initialData?.direcciones?.referencia || '',
+        // Mapeamos las canchas existentes o iniciamos una vacía
+        canchas: initialData?.canchas?.length > 0
+            ? initialData.canchas.map(c => ({ nombre: c.nombre, descripcion: c.descripcion }))
+            : [{ nombre: '', descripcion: '' }]
     });
 
     const handleChange = (e) => {
@@ -42,7 +47,6 @@ const AdminLocations = ({ onBack, onSuccess }) => {
     };
 
     const handleSubmit = async () => {
-        // 1. Filtrar canchas que tengan al menos un nombre
         const canchasFiltradas = formData.canchas
             .filter(c => c.nombre && c.nombre.trim() !== '')
             .map(c => ({
@@ -76,8 +80,16 @@ const AdminLocations = ({ onBack, onSuccess }) => {
                 },
                 canchas: canchasFiltradas
             };
-            
-            await sedeService.create(payload);
+
+            if (isEdit) {
+                // LLAMADA A UPDATE
+                await sedeService.update(initialData.id, payload);
+                toast.success("Sede actualizada correctamente");
+            } else {
+                // LLAMADA A CREATE
+                await sedeService.create(payload);
+                toast.success("Sede creada correctamente");
+            }
 
             // Si el backend responde 201, disparamos el éxito
             if (onSuccess) onSuccess();
@@ -127,8 +139,8 @@ const AdminLocations = ({ onBack, onSuccess }) => {
                     disabled={loading || !formData.nombre}
                     className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all duration-300 shadow-lg shadow-blue-900/20 group"
                 >
-                    <Save size={20} className="group-hover:scale-110 transition-transform" />
-                    {loading ? 'Guardando...' : 'Finalizar Registro'}
+                    <Save size={20} />
+                    {loading ? 'Guardando...' : isEdit ? 'Actualizar Sede' : 'Finalizar Registro'}
                 </button>
             </div>
 
