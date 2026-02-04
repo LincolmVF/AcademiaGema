@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, MapPin, Home, Phone, Trash2, Save, Map, ArrowLeft } from 'lucide-react';
 import { sedeService } from '../../services/sede.service';
-import toast from 'react-hot-toast'; 
+import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminLocations = ({ onBack, onSuccess, initialData }) => {
@@ -75,7 +75,7 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
                 nombre: formData.nombre.trim(),
                 telefono_contacto: formData.telefono_contacto,
                 tipo_instalacion: formData.tipo_instalacion,
-                administrador_id: userId, 
+                administrador_id: userId,
                 direccion: {
                     direccion_completa: formData.direccion_completa,
                     distrito: formData.distrito,
@@ -99,8 +99,9 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
             if (onSuccess) onSuccess();
 
         } catch (error) {
-            // El error ya viene formateado por tu interceptor
-            alert(error.message || "Error al conectar con el servidor");
+            toast.error(error.message || "Error en los datos");
+
+            console.log("Campos fallidos:", error.errors);
         } finally {
             setLoading(false);
         }
