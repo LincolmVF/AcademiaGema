@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, GraduationCap, UserCog, CalendarRange,
     Settings, LogOut, MapPin, BarChart3, DollarSign,
-    ChevronDown
+    ChevronDown,
+    CheckCircle
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -14,7 +15,7 @@ const Sidebar = ({ isOpen, onClose }) => {
 
     // Estado para manejar qué dropdown está abierto
     const [openMenus, setOpenMenus] = useState({
-        'Gestión Deportiva': true, // Abierto por defecto
+        'Gestión Deportiva': true, 
         'Comunidad': false,
         'Administración': false
     });
@@ -39,7 +40,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     const menuGroups = [
         {
             title: 'Principal',
-            type: 'link', // Link directo sin dropdown
+            type: 'link', 
             icon: LayoutDashboard,
             path: '/dashboard/admin'
         },
@@ -65,6 +66,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             type: 'dropdown',
             items: [
                 { icon: DollarSign, label: 'Catálogo de Precios', path: '/dashboard/admin/catalog' },
+                { icon: CheckCircle, label: 'Validación de Pagos', path: '/dashboard/admin/payment-validation' },
                 { icon: Settings, label: 'Configuración', path: '/dashboard/admin/settings' },
             ]
         }

@@ -26,6 +26,7 @@ import AdminTeachersManager from './pages/admin/AdminTeachersManager';
 import AdminCatalogManager from './pages/admin/AdminCatalogManager';
 import AdminSchedulesManager from './pages/admin/AdminScheduleManager';
 import AdminStudentsManager from './pages/admin/AdminStudentManager';
+import AdminPaymentManager from './pages/admin/AdminPaymentManager';
 
 // 5. Nuevas Páginas de Estudiante
 import Payments from './pages/student/Payments';
@@ -76,6 +77,7 @@ function App() {
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />
             <Route path="admin/locations" element={<AdminLocationsManager />} />
+            <Route path="admin/payment-validation" element={<AdminPaymentManager />} />
 
             {/* Configuración (Placeholder) */}
             <Route path="admin/settings" element={<div className="p-8 font-bold text-slate-500">Configuración del Sistema (En construcción)</div>} />
