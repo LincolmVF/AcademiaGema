@@ -5,23 +5,34 @@ import { useAuth } from '../../context/AuthContext';
 
 const StudentSidebar = () => {
   const location = useLocation();
-  const { logout } = useAuth(); // Usamos la función real de logout
+  const { logout, user } = useAuth();
 
-  const menuItems = [
-    { icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' },
-    { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
-    { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
-    { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' },
+  // Si esto sale 'undefined' en la consola, el problema es que el 
+  // AuthContext/Login no está trayendo los datos del alumno.
+  console.log("Datos del alumno:", user?.alumnos);
 
-  ];
+  const registroCompletado = user?.alumnos &&
+    user.alumnos.seguro_medico !== null &&
+    user.alumnos.seguro_medico?.trim() !== "";
+
+  const menuItems = registroCompletado
+    ? [
+      { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
+      { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
+      { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' },
+    ]
+    : [
+      { icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' },
+    ];
+
+  // ... resto del return igual
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white min-h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl">
 
-      {/* SECCIÓN LOGO: Branding oficial igual al admin */}
+      {/* SECCIÓN LOGO */}
       <div className="py-8 px-6 flex flex-col items-center border-b border-white/10">
         <div className="relative">
-          {/* Brillo decorativo detrás del logo */}
           <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full"></div>
           <img
             src="/logo.png"
@@ -37,10 +48,10 @@ const StudentSidebar = () => {
         </div>
       </div>
 
-      {/* Navegación con colores de marca */}
+      {/* Navegación Dinámica */}
       <nav className="flex-1 py-6 px-3 space-y-2">
         <p className="px-4 text-[10px] font-black text-blue-300/50 uppercase tracking-[0.2em] mb-4">
-          Panel del Alumno
+          {registroCompletado ? 'Panel del Alumno' : 'Acceso Restringido'}
         </p>
 
         {menuItems.map((item) => {
@@ -66,7 +77,7 @@ const StudentSidebar = () => {
         })}
       </nav>
 
-      {/* Footer con lógica de Logout real */}
+      {/* Footer con Logout */}
       <div className="p-4 bg-black/20 border-t border-white/10">
         <button
           onClick={logout}
