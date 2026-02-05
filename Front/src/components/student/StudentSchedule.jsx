@@ -1,106 +1,74 @@
 import React from 'react';
-import { Clock, MapPin, User, Zap, Star } from 'lucide-react'; 
-
-const scheduleData = [
-  { id: 1, day: 'HOY', date: 'LUN 15', time: '16:00 - 18:00', category: 'Sub-17 Avanzado', coach: 'Prof. Carlos', court: 'Cancha Central', isNext: true },
-  { id: 2, day: 'MIÉRCOLES', date: 'MIE 17', time: '16:00 - 18:00', category: 'Físico / Táctico', coach: 'Prof. Ana', court: 'Gimnasio Gema', isNext: false },
-  { id: 3, day: 'VIERNES', date: 'VIE 19', time: '15:30 - 17:30', category: 'Partido Práctica', coach: 'Prof. Carlos', court: 'Cancha 2', isNext: false },
-];
+import { Clock, MapPin, User, Star, Zap } from 'lucide-react';
 
 const StudentSchedule = () => {
+  const sesiones = [
+    { id: 1, dia: 'LUN', num: '15', hora: '16:00 a 18:00', etiqueta: 'HOY', lugar: 'Cancha Central', coach: 'Prof. Carlos', nivel: 'Sub-17 Avanzado', isNext: true },
+    { id: 2, dia: 'MIE', num: '17', hora: '16:00 a 18:00', etiqueta: 'MIÉRCOLES', lugar: 'Gimnasio Gema', coach: 'Prof. Ana', nivel: 'Físico / Táctico', isNext: false },
+    { id: 3, dia: 'VIE', num: '19', hora: '15:30 a 17:30', etiqueta: 'VIERNES', lugar: 'Cancha 2', coach: 'Prof. Carlos', nivel: 'Partido Práctica', isNext: false }
+  ];
+
   return (
-    <div className="mb-8">
-      <div className="flex items-center gap-2 mb-6 px-1">
-        <Zap size={20} className="text-orange-500 fill-orange-500" />
-        <h2 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tighter">Próximas Sesiones</h2>
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 mb-6 px-2">
+        <Zap size={22} className="text-orange-500 fill-orange-500" />
+        <h3 className="font-black text-[#1e3a8a] uppercase tracking-tighter text-xl">Próximas Sesiones</h3>
       </div>
-      
-      <div className="space-y-4">
-        {scheduleData.map((item) => (
-          <div 
-            key={item.id} 
-            className={`group relative overflow-hidden rounded-3xl transition-all duration-300 hover:shadow-xl ${
-              item.isNext 
-                ? 'bg-[#1e3a8a] text-white shadow-blue-900/20' 
-                : 'bg-white text-slate-700 border border-slate-100'
-            }`}
-          >
-            <div className={`absolute left-0 top-0 h-full w-2 ${item.isNext ? 'bg-orange-500' : 'bg-slate-200 group-hover:bg-blue-400'} transition-colors`}></div>
 
-            <div className="p-6">
-              {item.isNext && (
-                <div className="absolute top-0 right-0">
-                   <div className="bg-orange-500 text-white text-[10px] font-black px-4 py-1.5 rounded-bl-2xl uppercase tracking-widest shadow-lg animate-pulse">
-                     Next Session
-                   </div>
+      <div className="space-y-5">
+        {sesiones.map((s) => (
+          <div key={s.id} className={`relative rounded-[2.5rem] border transition-all duration-300 ${s.isNext ? 'bg-[#213a85] text-white border-transparent shadow-2xl' : 'bg-white text-slate-600 border-slate-100 hover:shadow-lg'}`}>
+            
+            {/* Indicador Naranja Lateral con mayor altura */}
+            {s.isNext && <div className="absolute left-0 top-12 bottom-12 w-1.5 bg-orange-500 rounded-r-full shadow-[0_0_15px_rgba(249,115,22,0.5)]"></div>}
+            
+            <div className="p-8 flex flex-wrap md:flex-nowrap items-center gap-8">
+              {/* Bloque Fecha - Más Grande */}
+              <div className="flex items-center gap-5 min-w-[160px]">
+                <div className={`flex flex-col items-center justify-center w-20 h-20 rounded-3xl font-black shadow-inner ${s.isNext ? 'bg-white/10' : 'bg-slate-50 text-[#1e3a8a]'}`}>
+                  <span className="text-[12px] opacity-60 uppercase tracking-tighter">{s.dia}</span>
+                  <span className="text-3xl leading-none mt-1">{s.num}</span>
                 </div>
-              )}
-
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                
-                <div className="flex items-center gap-6">
-                  <div className={`flex flex-col items-center justify-center min-w-[70px] py-2 rounded-2xl ${item.isNext ? 'bg-white/10' : 'bg-slate-50'}`}>
-                    <span className={`text-[10px] font-black uppercase tracking-widest ${item.isNext ? 'text-orange-400' : 'text-slate-400'}`}>
-                      {item.date.split(' ')[0]}
-                    </span>
-                    <span className="text-2xl font-black tracking-tighter">{item.date.split(' ')[1]}</span>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <Clock size={16} className={s.isNext ? 'text-orange-400' : 'text-slate-400'} />
+                    <span className="text-[11px] font-black uppercase tracking-[0.15em] opacity-80">{s.etiqueta}</span>
                   </div>
-
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Clock size={14} className={item.isNext ? 'text-orange-400' : 'text-blue-600'} />
-                      <span className={`text-xs font-black uppercase tracking-widest ${item.isNext ? 'text-blue-100' : 'text-slate-400'}`}>
-                        {item.day}
-                      </span>
-                    </div>
-                    <h3 className="text-2xl font-black tracking-tighter leading-none">
-                      {item.time.split(' - ')[0]} 
-                      <span className={`text-sm font-medium ml-2 opacity-60`}>
-                        a {item.time.split(' - ')[1]}
-                      </span>
-                    </h3>
-                  </div>
-                </div>
-
-                <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-8 flex-1 md:justify-items-center border-t md:border-t-0 md:border-l ${item.isNext ? 'border-white/10' : 'border-slate-100'} pt-4 md:pt-0`}>
-                  
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-blue-50 text-blue-600'}`}>
-                      <MapPin size={16} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Lugar</p>
-                      <p className="text-sm font-bold truncate">{item.court}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-orange-50 text-orange-600'}`}>
-                      <User size={16} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Coach</p>
-                      <p className="text-sm font-bold truncate">{item.coach}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <div className={`p-2 rounded-lg ${item.isNext ? 'bg-white/10' : 'bg-indigo-50 text-indigo-600'}`}>
-                      {/* Reemplazamos Volleyball por Star o un emoji */}
-                      <Star size={16} fill={item.isNext ? "currentColor" : "none"} />
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black uppercase tracking-widest opacity-50">Sesión</p>
-                      <p className="text-sm font-bold truncate">{item.category}</p>
-                    </div>
-                  </div>
-
+                  <h4 className="text-xl font-black italic leading-none whitespace-nowrap">{s.hora}</h4>
                 </div>
               </div>
-            </div>
 
-            <div className="absolute -bottom-4 -right-4 opacity-[0.05] pointer-events-none group-hover:rotate-12 transition-transform duration-700">
-               <img src="/logo.png" alt="" className="w-24 h-auto" />
+              {/* Bloque Detalles con divisores */}
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 flex-1 border-t md:border-t-0 md:border-l border-white/10 md:pl-10 pt-6 md:pt-0">
+                <div className="space-y-1.5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50">Ubicación</p>
+                  <div className="flex items-center gap-2">
+                    <MapPin size={16} className="text-blue-400" />
+                    <span className="text-sm font-bold uppercase tracking-tight">{s.lugar}</span>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50">Instructor</p>
+                  <div className="flex items-center gap-2">
+                    <User size={16} className="text-orange-400" />
+                    <span className="text-sm font-bold uppercase tracking-tight">{s.coach}</span>
+                  </div>
+                </div>
+                <div className="space-y-1.5 hidden lg:block">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-50">Programa</p>
+                  <div className="flex items-center gap-2">
+                    <Star size={16} className="text-blue-400" />
+                    <span className="text-sm font-bold uppercase tracking-tight">{s.nivel}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Badge Next Session - Estilizado */}
+              {s.isNext && (
+                <div className="absolute top-0 right-10 bg-orange-500 text-white text-[10px] font-black px-6 py-2 rounded-b-2xl uppercase tracking-[0.2em] shadow-lg">
+                  Next Session
+                </div>
+              )}
             </div>
           </div>
         ))}
