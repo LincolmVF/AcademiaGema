@@ -7,8 +7,6 @@ const StudentSidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuth();
 
-  // Si esto sale 'undefined' en la consola, el problema es que el 
-  // AuthContext/Login no está trayendo los datos del alumno.
   console.log("Datos del alumno:", user?.alumnos);
 
   const registroCompletado = user?.alumnos &&
@@ -25,7 +23,6 @@ const StudentSidebar = () => {
       { icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' },
     ];
 
-  // ... resto del return igual
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white min-h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl">
