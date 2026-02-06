@@ -16,6 +16,7 @@ const StudentSidebar = () => {
   const menuItems = registroCompletado
     ? [
       { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
+      { icon: Home, label: 'Nueva Inscripción', path: '/dashboard/student/enrollment' },
       { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
       { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' },
     ]

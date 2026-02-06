@@ -32,6 +32,7 @@ import AdminPaymentManager from './pages/admin/AdminPaymentManager';
 import Payments from './pages/student/Payments';
 import Profile from './pages/student/Profile';
 import StudentRegistration from './components/student/StudentRegistration';
+import Enrollment from './pages/student/enrollment';
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
             <Route path="student" element={<DashboardEstudiante />} />
             <Route path="student/payments" element={<Payments />} />
             <Route path="student/profile" element={<Profile />} />
+            <Route path="student/enrollment" element={<Enrollment />} />
             <Route path="student/registration" element={<StudentRegistration />} />
 
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
