@@ -41,8 +41,13 @@ function Register() {
 
         setLoading(true);
         try {
+            const fechaNacimientoValida = formData.fecha_nacimiento 
+            ? new Date(formData.fecha_nacimiento + "T00:00:00").toISOString() 
+            : null;
+
             const dataToSend = {
                 ...formData,
+                fecha_nacimiento: fechaNacimientoValida,
                 password: formData.numero_documento
             };
 
