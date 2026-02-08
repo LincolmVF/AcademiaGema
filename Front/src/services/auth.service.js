@@ -69,9 +69,7 @@ export const completarEmailService = async (nuevoEmail) => {
     throw new Error(result.message || 'Error al actualizar el correo');
   }
 
-  const userData = JSON.parse(localStorage.getItem('userMinimalInfo'));
-  userData.debeCompletarEmail = false;
-  localStorage.setItem('userMinimalInfo', JSON.stringify(userData));
+
 
   return result.data;
 };

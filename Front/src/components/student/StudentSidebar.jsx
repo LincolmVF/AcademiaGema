@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, CreditCard, User, LogOut, Check } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import CompletarEmailModal from '../../pages/CompletarEmailModal';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Home, CreditCard, User, LogOut, Check } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import CompletarEmailModal from "../../pages/CompletarEmailModal";
 
 const StudentSidebar = () => {
   const location = useLocation();
@@ -21,8 +21,8 @@ const StudentSidebar = () => {
       user: {
         ...(user.user || user),
         ...updatedData,
-        debeCompletarEmail: false 
-      }
+        debeCompletarEmail: false,
+      },
     };
 
     console.log("Actualizando estado de sesión...", newUserState);
@@ -30,29 +30,45 @@ const StudentSidebar = () => {
   };
 
   const menuItems = debeCompletarEmail
-    ? [{ icon: User, label: 'Verificando...', path: '#' }]
-    : (registroCompletado
+    ? [{ icon: User, label: "Verificando...", path: "#" }]
+    : registroCompletado
       ? [
-        { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
-        { icon: Home, label: 'Nueva Inscripción', path: '/dashboard/student/enrollment' },
-        { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
-        { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' }
-      ]
-      : [{ icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' }]
-    );
+          { icon: Home, label: "Inicio / Horario", path: "/dashboard/student" },
+          {
+            icon: Home,
+            label: "Nueva Inscripción",
+            path: "/dashboard/student/enrollment",
+          },
+          {
+            icon: CreditCard,
+            label: "Mis Pagos",
+            path: "/dashboard/student/payments",
+          },
+          {
+            icon: User,
+            label: "Mi Perfil",
+            path: "/dashboard/student/profile",
+          },
+        ]
+      : [
+          {
+            icon: Check,
+            label: "Completa tu inscripción",
+            path: "/dashboard/student/registration",
+          },
+        ];w
 
   return (
     <>
       {debeCompletarEmail && (
         <CompletarEmailModal
           isOpen={true}
-          onClose={() => { }}
+          onClose={() => {}}
           onActionSuccess={handleUpdateSuccess}
         />
       )}
 
       <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white min-h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl">
-
         {/* SECCIÓN LOGO */}
         <div className="py-8 px-6 flex flex-col items-center border-b border-white/10">
           <div className="relative">
@@ -75,9 +91,10 @@ const StudentSidebar = () => {
         <nav className="flex-1 py-6 px-3 space-y-2">
           <p className="px-4 text-[10px] font-black text-blue-300/50 uppercase tracking-[0.2em] mb-4">
             {debeCompletarEmail
-              ? 'Seguridad'
-              : (registroCompletado ? 'Panel del Alumno' : 'Acceso Restringido')
-            }
+              ? "Seguridad"
+              : registroCompletado
+                ? "Panel del Alumno"
+                : "Acceso Restringido"}
           </p>
 
           {menuItems.map((item) => {
@@ -86,16 +103,19 @@ const StudentSidebar = () => {
               <Link
                 key={item.label}
                 to={debeCompletarEmail ? "#" : item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
-                  ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
-                  : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
-                  } ${debeCompletarEmail ? 'cursor-not-allowed opacity-50' : ''}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
+                  isActive
+                    ? "bg-orange-500 text-white shadow-lg shadow-orange-900/40"
+                    : "text-blue-100/60 hover:bg-white/5 hover:text-white"
+                } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
               >
                 <item.icon
                   size={20}
-                  className={`${isActive ? 'text-white' : 'group-hover:text-orange-400'} transition-colors`}
+                  className={`${isActive ? "text-white" : "group-hover:text-orange-400"} transition-colors`}
                 />
-                <span className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}>
+                <span
+                  className={`text-sm ${isActive ? "font-bold" : "font-medium"}`}
+                >
                   {item.label}
                 </span>
               </Link>
@@ -109,7 +129,10 @@ const StudentSidebar = () => {
             onClick={logout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all group"
           >
-            <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+            <LogOut
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             <span className="font-bold text-sm">Cerrar Sesión</span>
           </button>
         </div>

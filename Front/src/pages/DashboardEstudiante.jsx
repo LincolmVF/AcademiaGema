@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, Zap, Loader2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { apiFetch } from '../interceptors/api';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Trophy, Zap, Loader2 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { apiFetch } from "../interceptors/api";
 
-import StudentStats from '../components/student/StudentStats';
-import StudentSchedule from '../components/student/StudentSchedule';
-import StudentAnnouncements from '../components/student/StudentAnnouncements';
-import StudentPayments from '../components/student/StudentPayments';
+import StudentStats from "../components/student/StudentStats";
+import StudentSchedule from "../components/student/StudentSchedule";
+import StudentAnnouncements from "../components/student/StudentAnnouncements";
+import StudentPayments from "../components/student/StudentPayments";
 
 const DashboardEstudiante = () => {
   const { user, userId } = useAuth();
@@ -22,8 +22,8 @@ const DashboardEstudiante = () => {
         setLoading(true);
         const [resAsist, resDebts, resPay] = await Promise.all([
           apiFetch.get(`/asistencias/alumno/${userId}`),
-          apiFetch.get('/cuentaPorCobrar'),
-          apiFetch.get('/pagos')
+          apiFetch.get("/cuentaPorCobrar"),
+          apiFetch.get("/pagos"),
         ]);
 
         const dataAsist = await resAsist.json();
@@ -31,8 +31,12 @@ const DashboardEstudiante = () => {
         const dataPay = await resPay.json();
 
         setAttendance(dataAsist.data || []);
-        setDebts((dataDebts.data || []).filter(d => d.alumno_id === userId));
-        setPayments((dataPay.data || []).filter(p => p.cuentas_por_cobrar?.alumno_id === userId));
+        setDebts((dataDebts.data || []).filter((d) => d.alumno_id === userId));
+        setPayments(
+          (dataPay.data || []).filter(
+            (p) => p.cuentas_por_cobrar?.alumno_id === userId,
+          ),
+        );
       } catch (error) {
         console.error("Error cargando dashboard:", error);
       } finally {
@@ -44,17 +48,20 @@ const DashboardEstudiante = () => {
   }, [userId]);
 
   // Variables dinámicas para el perfil
-  const firstName = user?.nombres || 'Campeón';
-  const fullName = user ? `${user.nombres} ${user.apellidos}` : 'Alumno Gema';
-  const initial = user?.nombres?.charAt(0).toUpperCase() || 'G';
-  const userRole = user?.rol?.nombre || 'Estudiante';
+  const firstName = user?.nombres || "Campeón";
+  const fullName = user ? `${user.nombres} ${user.apellidos}` : "Alumno Gema";
+  const initial = user?.nombres?.charAt(0).toUpperCase() || "G";
+  const userRole = user?.rol?.nombre || "Estudiante";
 
-  if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
-      <Loader2 className="animate-spin text-orange-500 mb-4" size={48} />
-      <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest">Sincronizando rendimiento...</p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
+        <Loader2 className="animate-spin text-orange-500 mb-4" size={48} />
+        <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest">
+          Sincronizando rendimiento...
+        </p>
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-[#f1f5f9] flex justify-center relative overflow-hidden">
@@ -64,7 +71,6 @@ const DashboardEstudiante = () => {
       </div>
 
       <div className="w-full md:max-w-6xl p-4 md:p-8 pb-28 relative z-10">
-
         {/* --- HEADER DINÁMICO --- */}
         <header className="flex justify-between items-start mb-10 mt-2 bg-white md:bg-transparent p-5 md:p-0 rounded-[2.5rem] shadow-xl shadow-slate-200/50 md:shadow-none border border-slate-100 md:border-none">
           <div>
@@ -72,7 +78,10 @@ const DashboardEstudiante = () => {
               to="/"
               className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest group"
             >
-              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft
+                size={14}
+                className="group-hover:-translate-x-1 transition-transform"
+              />
               Volver al Inicio
             </Link>
 
@@ -81,7 +90,8 @@ const DashboardEstudiante = () => {
             </h1>
             <div className="h-1.5 w-20 bg-orange-500 rounded-full mt-3 shadow-lg"></div>
             <p className="text-xs md:text-sm text-slate-500 font-bold mt-4 italic uppercase tracking-wider">
-              Academia Gema <span className="text-slate-300 mx-2">|</span> Centro de Alto Rendimiento
+              Academia Gema <span className="text-slate-300 mx-2">|</span>{" "}
+              Centro de Alto Rendimiento
             </p>
           </div>
 
@@ -118,7 +128,9 @@ const DashboardEstudiante = () => {
               <div className="mt-8 pt-8 border-t border-slate-100">
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-1.5 h-5 bg-orange-500 rounded-full"></div>
-                  <h2 className="font-black text-[#1e3a8a] uppercase tracking-tighter italic text-sm">Estado de Cuenta</h2>
+                  <h2 className="font-black text-[#1e3a8a] uppercase tracking-tighter italic text-sm">
+                    Estado de Cuenta
+                  </h2>
                 </div>
                 <StudentPayments debts={debts} payments={payments} />
               </div>
@@ -129,9 +141,8 @@ const DashboardEstudiante = () => {
         <p className="mt-12 text-center text-[9px] text-slate-300 font-black uppercase tracking-[0.4em] opacity-50 italic">
           High Performance Management System · Club Gema 2026
         </p>
-
       </div>
-    </div >
+    </div>
   );
 };
 
