@@ -10,11 +10,22 @@ import StudentAnnouncements from '../components/student/StudentAnnouncements';
 import StudentPayments from '../components/student/StudentPayments';
 
 const DashboardEstudiante = () => {
-  const { user, userId } = useAuth();
+  const { user, userId, login } = useAuth();
   const [attendance, setAttendance] = useState([]);
   const [debts, setDebts] = useState([]);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (user?.debeCompletarEmail) {
+      setIsModalOpen(true);
+    }
+  }, [user]);
+
+  const handleUpdateSuccess = (updatedData) => {
+    login(updatedData);
+  };
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -47,7 +58,7 @@ const DashboardEstudiante = () => {
   const firstName = user?.nombres || 'Campeón';
   const fullName = user ? `${user.nombres} ${user.apellidos}` : 'Alumno Gema';
   const initial = user?.nombres?.charAt(0).toUpperCase() || 'G';
-  const userRole = user?.rol?.nombre || 'Estudiante'; // Ajustado según tu esquema de roles
+  const userRole = user?.rol?.nombre || 'Estudiante'; 
 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
@@ -64,7 +75,7 @@ const DashboardEstudiante = () => {
       </div>
 
       <div className="w-full md:max-w-6xl p-4 md:p-8 pb-28 relative z-10">
-        
+
         {/* --- HEADER DINÁMICO --- */}
         <header className="flex justify-between items-start mb-10 mt-2 bg-white md:bg-transparent p-5 md:p-0 rounded-[2.5rem] shadow-xl shadow-slate-200/50 md:shadow-none border border-slate-100 md:border-none">
           <div>
@@ -104,6 +115,12 @@ const DashboardEstudiante = () => {
           </div>
         </header>
 
+        <CompletarEmailModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onActionSuccess={handleUpdateSuccess}
+        />
+
         {/* Estadísticas Reales */}
         <StudentStats attendance={attendance} />
 
@@ -115,7 +132,7 @@ const DashboardEstudiante = () => {
           <div className="space-y-8 h-full">
             <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-50 flex flex-col h-full">
               <StudentAnnouncements />
-              
+
               <div className="mt-8 pt-8 border-t border-slate-100">
                 <div className="flex items-center gap-2 mb-6">
                   <div className="w-1.5 h-5 bg-orange-500 rounded-full"></div>
@@ -132,7 +149,7 @@ const DashboardEstudiante = () => {
         </p>
 
       </div>
-    </div>
+    </div >
   );
 };
 

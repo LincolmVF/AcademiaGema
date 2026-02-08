@@ -5,13 +5,16 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [userId, setUserId] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const savedUser = sessionStorage.getItem('userData');
         if (savedUser) {
             try {
-                setUser(JSON.parse(savedUser));
+                const parsedUser = JSON.parse(savedUser);
+                setUser(parsedUser);
+                setUserId(parsedUser.user.id);
             } catch (error) {
                 console.error("Error al recuperar sesión:", error);
                 sessionStorage.clear();
@@ -21,8 +24,8 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = (userData) => {
-        // Asegúrate de que userData contenga el 'id' (el backend debe enviarlo)
         setUser(userData);
+        setUserId(userData.user.id);
         sessionStorage.setItem('userData', JSON.stringify(userData));
     };
 
@@ -33,12 +36,10 @@ export const AuthProvider = ({ children }) => {
             console.error("Error en logout service:", error);
         } finally {
             setUser(null);
+            setUserId(null);
             sessionStorage.clear();
         }
     };
-
-    // Helper para obtener el ID rápidamente
-    const userId = user?.id || null;
 
     return (
         <AuthContext.Provider value={{ user, userId, login, logout, loading }}>

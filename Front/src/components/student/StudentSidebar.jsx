@@ -7,23 +7,30 @@ const StudentSidebar = () => {
   const location = useLocation();
   const { logout, user } = useAuth();
 
-  console.log("Datos del alumno:", user?.alumnos);
+  const debeCompletarEmail = user?.debeCompletarEmail;
 
   const registroCompletado = user?.alumnos &&
     user.alumnos.seguro_medico !== null &&
     user.alumnos.seguro_medico?.trim() !== "";
 
-  const menuItems = registroCompletado
-    ? [
+  const getMenuItems = () => {
+    if (debeCompletarEmail) {
+      return [{ icon: User, label: 'Verificando cuenta...', path: location.pathname }];
+    }
+
+    if (!registroCompletado) {
+      return [{ icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' }];
+    }
+
+    return [
       { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
       { icon: Home, label: 'Nueva Inscripción', path: '/dashboard/student/enrollment' },
       { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
       { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' },
-    ]
-    : [
-      { icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' },
     ];
+  };
 
+  const menuItems = getMenuItems();
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white min-h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl">
@@ -49,7 +56,10 @@ const StudentSidebar = () => {
       {/* Navegación Dinámica */}
       <nav className="flex-1 py-6 px-3 space-y-2">
         <p className="px-4 text-[10px] font-black text-blue-300/50 uppercase tracking-[0.2em] mb-4">
-          {registroCompletado ? 'Panel del Alumno' : 'Acceso Restringido'}
+          {debeCompletarEmail
+            ? 'Seguridad'
+            : (registroCompletado ? 'Panel del Alumno' : 'Acceso Restringido')
+          }
         </p>
 
         {menuItems.map((item) => {

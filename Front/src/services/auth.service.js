@@ -1,10 +1,16 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-export const loginService = async (email, password) => {
+export const loginService = async (identifier, password) => {
+  const isEmail = identifier.includes('@');
+  const payload = {
+    [isEmail ? 'email' : 'numero_documento']: identifier,
+    password,
+  };
+
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(payload),
     credentials: 'include',
   });
 
@@ -13,8 +19,6 @@ export const loginService = async (email, password) => {
   if (!response.ok) {
     throw new Error(result.message || 'Error en el servidor');
   }
-
-  localStorage.setItem('userRole', result.data.rol);
 
   return result.data;
 };
@@ -49,4 +53,25 @@ export const registerService = async (userData) => {
   }
 
   return result;
+};
+
+export const completarEmailService = async (nuevoEmail) => {
+  const response = await fetch(`${API_URL}/auth/completar-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: nuevoEmail }),
+    credentials: 'include',
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || 'Error al actualizar el correo');
+  }
+
+  const userData = JSON.parse(localStorage.getItem('userMinimalInfo'));
+  userData.debeCompletarEmail = false;
+  localStorage.setItem('userMinimalInfo', JSON.stringify(userData));
+
+  return result.data;
 };

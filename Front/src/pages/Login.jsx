@@ -6,7 +6,7 @@ import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -18,27 +18,28 @@ function Login() {
     const loadingToast = toast.loading('Iniciando sesión...');
 
     try {
-      const data = await loginService(email, password);
+      const data = await loginService(identifier, password);
+
+      if (!data || !data.user) {
+        throw new Error("Respuesta del servidor incompleta");
+      }
+
       login(data);
 
-      const { rol, nombres } = data;
+      const { rol, nombres, debeCompletarEmail } = data.user;
       toast.success(`¡Bienvenido, ${nombres}!`, { id: loadingToast });
 
-      switch (rol) {
-        case 'Administrador':
-          navigate('/dashboard/admin');
-          break;
-        case 'Profesor':
-          navigate('/dashboard/teacher');
-          break;
-        case 'Alumno':
-          navigate('/dashboard/student');
-          break;
-        default:
-          navigate('/login');
-          toast.error(`Rol no reconocido: ${rol}`, { id: loadingToast });
-          break;
+      if (debeCompletarEmail) {
+        navigate(rol === 'Alumno' ? '/dashboard/student' : '/dashboard/admin');
+      } else {
+        const routes = {
+          'Administrador': '/dashboard/admin',
+          'Profesor': '/dashboard/teacher',
+          'Alumno': '/dashboard/student'
+        };
+        navigate(routes[rol] || '/login');
       }
+
     } catch (error) {
       toast.error("Error: " + error.message, { id: loadingToast });
     }
@@ -118,11 +119,11 @@ function Login() {
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 ml-1">Identificación de Usuario</label>
               <input
-                type="email"
+                type="text"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="ejemplo@academia.pe"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="Email o número de DNI"
                 className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all placeholder:text-slate-300"
               />
             </div>
