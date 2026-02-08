@@ -11,26 +11,19 @@ const StudentSidebar = () => {
 
   const registroCompletado = user?.alumnos &&
     user.alumnos.seguro_medico !== null &&
-    user.alumnos.seguro_medico?.trim() !== "";
+    user.alumnos.seguro_medico !== undefined;
 
-  const getMenuItems = () => {
-    if (debeCompletarEmail) {
-      return [{ icon: User, label: 'Verificando cuenta...', path: location.pathname }];
-    }
-
-    if (!registroCompletado) {
-      return [{ icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' }];
-    }
-
-    return [
-      { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
-      { icon: Home, label: 'Nueva Inscripción', path: '/dashboard/student/enrollment' },
-      { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
-      { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' },
-    ];
-  };
-
-  const menuItems = getMenuItems();
+  const menuItems = debeCompletarEmail
+    ? [{ icon: User, label: 'Verificando...', path: '#' }]
+    : (registroCompletado
+      ? [
+        { icon: Home, label: 'Inicio / Horario', path: '/dashboard/student' },
+        { icon: Home, label: 'Nueva Inscripción', path: '/dashboard/student/enrollment' },
+        { icon: CreditCard, label: 'Mis Pagos', path: '/dashboard/student/payments' },
+        { icon: User, label: 'Mi Perfil', path: '/dashboard/student/profile' }
+      ]
+      : [{ icon: Check, label: 'Completa tu inscripción', path: '/dashboard/student/registration' }]
+    );
 
   return (
     <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white min-h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl">
@@ -66,12 +59,12 @@ const StudentSidebar = () => {
           const isActive = location.pathname === item.path;
           return (
             <Link
-              key={item.path}
-              to={item.path}
+              key={item.label}
+              to={debeCompletarEmail ? "#" : item.path}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
                 ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
                 : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
-                }`}
+                } ${debeCompletarEmail ? 'cursor-default opacity-60' : ''}`}
             >
               <item.icon
                 size={20}
@@ -92,7 +85,7 @@ const StudentSidebar = () => {
           className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all group"
         >
           <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="font-bold text-sm text-red-400">Cerrar Sesión</span>
+          <span className="font-bold text-sm">Cerrar Sesión</span>
         </button>
       </div>
     </aside>
