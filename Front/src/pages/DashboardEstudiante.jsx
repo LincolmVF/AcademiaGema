@@ -19,7 +19,15 @@ const DashboardEstudiante = () => {
 
   useEffect(() => {
     if (user?.debeCompletarEmail) {
-      setIsModalOpen(true);
+      return (
+        <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
+          <CompletarEmailModal
+            isOpen={true}
+            onClose={() => { }} 
+            onActionSuccess={handleUpdateSuccess}
+          />
+        </div>
+      );
     }
   }, [user]);
 
@@ -58,7 +66,7 @@ const DashboardEstudiante = () => {
   const firstName = user?.nombres || 'Campeón';
   const fullName = user ? `${user.nombres} ${user.apellidos}` : 'Alumno Gema';
   const initial = user?.nombres?.charAt(0).toUpperCase() || 'G';
-  const userRole = user?.rol?.nombre || 'Estudiante'; 
+  const userRole = user?.rol?.nombre || 'Estudiante';
 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
@@ -114,13 +122,6 @@ const DashboardEstudiante = () => {
             </div>
           </div>
         </header>
-
-        <CompletarEmailModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onActionSuccess={handleUpdateSuccess}
-        />
-
         {/* Estadísticas Reales */}
         <StudentStats attendance={attendance} />
 

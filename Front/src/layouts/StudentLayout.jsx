@@ -15,9 +15,7 @@ const StudentLayout = () => {
   if (user?.debeCompletarEmail) {
     return (
       <div className="min-h-screen bg-slate-50">
-        <div className="w-full relative">
-          <Outlet />
-        </div>
+        <Outlet />
       </div>
     );
   }
