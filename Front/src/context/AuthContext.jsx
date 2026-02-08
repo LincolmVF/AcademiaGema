@@ -24,9 +24,13 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = (userData) => {
-        setUser(userData);
-        setUserId(userData.user.id);
-        sessionStorage.setItem('userData', JSON.stringify(userData));
+        if (!userData) return;
+
+        const normalizedData = userData.user ? userData : { user: userData };
+
+        setUser(normalizedData);
+        setUserId(normalizedData.user?.id || normalizedData.id);
+        sessionStorage.setItem('userData', JSON.stringify(normalizedData));
     };
 
     const logout = async () => {

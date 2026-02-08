@@ -12,14 +12,6 @@ const StudentLayout = () => {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  if (user?.debeCompletarEmail) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <Outlet />
-      </div>
-    );
-  }
-
   const registroIncompleto = !user?.alumnos?.seguro_medico;
   const enPaginaRegistro = location.pathname === '/dashboard/student/registration';
 

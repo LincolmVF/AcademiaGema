@@ -10,30 +10,11 @@ import StudentAnnouncements from '../components/student/StudentAnnouncements';
 import StudentPayments from '../components/student/StudentPayments';
 
 const DashboardEstudiante = () => {
-  const { user, userId, login } = useAuth();
+  const { user, userId } = useAuth();
   const [attendance, setAttendance] = useState([]);
   const [debts, setDebts] = useState([]);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    if (user?.debeCompletarEmail) {
-      return (
-        <div className="min-h-screen bg-[#0f172a] flex items-center justify-center">
-          <CompletarEmailModal
-            isOpen={true}
-            onClose={() => { }} 
-            onActionSuccess={handleUpdateSuccess}
-          />
-        </div>
-      );
-    }
-  }, [user]);
-
-  const handleUpdateSuccess = (updatedData) => {
-    login(updatedData);
-  };
 
   useEffect(() => {
     const loadDashboardData = async () => {
