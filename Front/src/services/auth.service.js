@@ -1,23 +1,23 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const loginService = async (identifier, password) => {
-  const isEmail = identifier.includes('@');
+  const isEmail = identifier.includes("@");
   const payload = {
-    [isEmail ? 'email' : 'numero_documento']: identifier,
+    [isEmail ? "email" : "numero_documento"]: identifier,
     password,
   };
 
   const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-    credentials: 'include',
+    credentials: "include",
   });
 
   const result = await response.json();
 
   if (!response.ok) {
-    throw new Error(result.message || 'Error en el servidor');
+    throw new Error(result.message || "Error en el servidor");
   }
 
   return result.data;
@@ -26,8 +26,8 @@ export const loginService = async (identifier, password) => {
 export const logoutService = async () => {
   try {
     await fetch(`${API_URL}/auth/logout`, {
-      method: 'POST',
-      credentials: 'include'
+      method: "POST",
+      credentials: "include",
     });
   } catch (error) {
     console.error("Error en la petición de logout:", error);
@@ -35,21 +35,21 @@ export const logoutService = async () => {
     localStorage.clear();
     sessionStorage.clear();
 
-    window.location.href = '/login';
+    window.location.href = "/login";
   }
 };
 
 export const registerService = async (userData) => {
   const response = await fetch(`${API_URL}/usuarios/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
   });
 
   const result = await response.json();
 
   if (!response.ok) {
-    throw new Error(result.message || 'Error al registrar el usuario');
+    throw new Error(result.message || "Error al registrar el usuario");
   }
 
   return result;
@@ -57,19 +57,17 @@ export const registerService = async (userData) => {
 
 export const completarEmailService = async (nuevoEmail) => {
   const response = await fetch(`${API_URL}/auth/completar-email`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: nuevoEmail }),
-    credentials: 'include',
+    credentials: "include",
   });
 
   const result = await response.json();
 
   if (!response.ok) {
-    throw new Error(result.message || 'Error al actualizar el correo');
+    throw new Error(result.message || "Error al actualizar el correo");
   }
-
-
 
   return result.data;
 };

@@ -16,11 +16,13 @@ const StudentSidebar = () => {
   const handleUpdateSuccess = (updatedData) => {
     if (!user) return;
 
+    const plainData = updatedData?.user || updatedData;
+
     const newUserState = {
       ...user,
       user: {
         ...(user.user || user),
-        ...updatedData,
+        ...plainData,
         debeCompletarEmail: false,
       },
     };
@@ -56,7 +58,7 @@ const StudentSidebar = () => {
             label: "Completa tu inscripción",
             path: "/dashboard/student/registration",
           },
-        ];w
+        ];
 
   return (
     <>
