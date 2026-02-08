@@ -19,13 +19,13 @@ const StudentSidebar = () => {
     const newUserState = {
       ...user,
       user: {
-        ...(user.user || user), 
+        ...(user.user || user),
         ...updatedData,
         debeCompletarEmail: false 
-      },
-      debeCompletarEmail: false
+      }
     };
 
+    console.log("Actualizando estado de sesión...", newUserState);
     login(newUserState);
   };
 
