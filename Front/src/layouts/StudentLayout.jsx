@@ -12,6 +12,27 @@ const StudentLayout = () => {
 
   if (!user) return <Navigate to="/login" replace />;
 
+  const userData = user?.user || user || {};
+  const debeCompletarEmail = userData?.debeCompletarEmail === true;
+
+  const registroIncompleto = !userData?.alumnos?.seguro_medico;
+  const enPaginaRegistro = location.pathname === '/dashboard/student/registration';
+
+  if (debeCompletarEmail) {
+    return (
+      <div className="min-h-screen bg-slate-50">
+        <StudentSidebar />
+        <div className="w-full md:pl-64 pb-24 md:pb-8 relative">
+          <Outlet />
+        </div>
+      </div>
+    );
+  }
+
+  if (registroIncompleto && !enPaginaRegistro) {
+    return <Navigate to="/dashboard/student/registration" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <StudentSidebar />
