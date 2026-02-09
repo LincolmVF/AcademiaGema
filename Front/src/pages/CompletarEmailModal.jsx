@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 const CompletarEmailModal = ({ isOpen, onClose, onActionSuccess }) => {
   const [nuevoEmail, setNuevoEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { logout, login, user } = useAuth();
+  const { logout } = useAuth();
 
   if (!isOpen) return null;
 
@@ -20,24 +20,19 @@ const CompletarEmailModal = ({ isOpen, onClose, onActionSuccess }) => {
 
     try {
       const response = await completarEmailService(nuevoEmail);
-            const plainUser = response?.data?.user ?? response?.user ?? response;
+      const updatedUser = {
+        user: response?.data?.user ?? response?.user ?? response,
+        email: nuevoEmail,
+      };
 
-            const mergedUserState = {
-                user: {
-                    ...(user?.user || user || {}),
-                    ...plainUser,
-                    debeCompletarEmail: false
-                }
-            };
+      toast.success("¡Correo vinculado con éxito!", { id: loadingToast });
 
-            toast.success('¡Correo vinculado con éxito!', { id: loadingToast });
+      if (onActionSuccess) {
+        onActionSuccess(updatedUser);
+      }
 
-            login(mergedUserState);
-            if (onActionSuccess) {
-                onActionSuccess(plainUser);
-            }
-
-            onClose();
+      // Cerramos el modal
+      onClose();
     } catch (error) {
       toast.error(error.message || "Error al actualizar", { id: loadingToast });
     } finally {

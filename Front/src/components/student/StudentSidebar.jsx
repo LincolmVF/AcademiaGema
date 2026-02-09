@@ -23,7 +23,7 @@ const StudentSidebar = () => {
       user: {
         ...(user.user || user),
         ...plainData,
-        email: email,
+        email: updatedData?.email || updatedData,
         debeCompletarEmail: false,
       },
     };
