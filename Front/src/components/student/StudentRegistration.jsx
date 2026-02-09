@@ -437,7 +437,7 @@ const StudentRegistration = () => {
           <div className="space-y-6 pt-2">
             <button
               type="submit"
-              disabled={loading || !aceptarTerminos}
+              disabled={loading}
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl font-black uppercase tracking-widest shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
