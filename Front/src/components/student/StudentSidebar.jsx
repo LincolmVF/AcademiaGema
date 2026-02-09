@@ -23,11 +23,11 @@ const StudentSidebar = () => {
       user: {
         ...(user.user || user),
         ...plainData,
+        email: plainData?.email,
         debeCompletarEmail: false,
       },
     };
 
-    console.log("Actualizando estado de sesión...", newUserState);
     login(newUserState);
   };
 
