@@ -79,11 +79,22 @@ const StudentRegistration = () => {
   const PHONE_REGEX = /^\+?\d{9,15}$/;
 
   const validateForm = () => {
-    if (!formData.password || formData.password.length < 8 || !/[A-Z]/.test(formData.password) || !/[a-z]/.test(formData.password) || !/[0-9]/.test(formData.password)) {
-      throw new Error("La contraseña debe tener al menos 8 caracteres, e incluir mayúsculas, minúsculas y números");
+    if (
+      !formData.password ||
+      formData.password.length < 8 ||
+      !/[A-Z]/.test(formData.password) ||
+      !/[a-z]/.test(formData.password) ||
+      !/[0-9]/.test(formData.password)
+    ) {
+      throw new Error(
+        "La contraseña debe tener al menos 8 caracteres, e incluir mayúsculas, minúsculas y números",
+      );
     }
 
-    if (!formData.direccion_completa || formData.direccion_completa.trim().length < 5) {
+    if (
+      !formData.direccion_completa ||
+      formData.direccion_completa.trim().length < 5
+    ) {
       throw new Error("Dirección completa inválida");
     }
     if (!formData.distrito?.trim()) {
@@ -101,7 +112,9 @@ const StudentRegistration = () => {
       throw new Error("Nombre de contacto de emergencia es obligatorio");
     }
     if (!ce.telefono || !PHONE_REGEX.test(ce.telefono)) {
-      throw new Error("Teléfono de emergencia inválido (usa formato internacional, ej. +51999999999)");
+      throw new Error(
+        "Teléfono de emergencia inválido (usa formato internacional, ej. +51999999999)",
+      );
     }
     if (!ce.relacion?.trim()) {
       throw new Error("Relación/parentesco es obligatorio");
@@ -420,6 +433,20 @@ const StudentRegistration = () => {
                 </div>
               </div>
             </div>
+          </div>
+          <div className="space-y-6 pt-2">
+            <button
+              type="submit"
+              disabled={loading || !aceptarTerminos}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl font-black uppercase tracking-widest shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <Activity className="animate-spin" size={16} />
+              ) : (
+                <ChevronRight size={16} />
+              )}
+              {loading ? "Procesando..." : "Completar Registro"}
+            </button>
           </div>
         </form>
       </div>
