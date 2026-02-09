@@ -29,7 +29,6 @@ const StudentRegistration = () => {
   const { userId } = useAuth();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [aceptarTerminos, setAceptarTerminos] = useState(false);
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -128,6 +127,20 @@ const StudentRegistration = () => {
       throw new Error("Grupo sanguíneo inválido");
     }
   };
+
+  const canSubmit =
+    !!formData.password &&
+    !!confirmPassword &&
+    formData.password === confirmPassword &&
+    !!formData.direccion_completa?.trim() &&
+    !!formData.distrito?.trim() &&
+    !!formData.ciudad?.trim() &&
+    !!formData.referencia?.trim() &&
+    !!formData.contacto_emergencia?.nombre_completo?.trim() &&
+    !!formData.contacto_emergencia?.telefono?.trim() &&
+    !!formData.contacto_emergencia?.relacion?.trim() &&
+    !!formData.datosRolEspecifico?.seguro_medico?.trim() &&
+    !!formData.datosRolEspecifico?.grupo_sanguineo;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -437,7 +450,7 @@ const StudentRegistration = () => {
           <div className="space-y-6 pt-2">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !canSubmit}
               className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 text-white rounded-xl font-black uppercase tracking-widest shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
