@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { Home, CreditCard, User, LogOut, Check } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import CompletarEmailModal from "../../pages/CompletarEmailModal";
@@ -15,7 +15,6 @@ const StudentSidebar = () => {
 
   const handleUpdateSuccess = (updatedData) => {
     if (!user) return;
-
     const plainData = updatedData?.user || updatedData;
 
     const newUserState = {
@@ -23,42 +22,31 @@ const StudentSidebar = () => {
       user: {
         ...(user.user || user),
         ...plainData,
-        email: updatedData?.email || updatedData,
         debeCompletarEmail: false,
       },
+      debeCompletarEmail: false
     };
-
     login(newUserState);
   };
 
-  const menuItems = debeCompletarEmail
-    ? [{ icon: User, label: "Verificando...", path: "#" }]
-    : registroCompletado
-      ? [
-        { icon: Home, label: "Inicio / Horario", path: "/dashboard/student" },
-        {
-          icon: Home,
-          label: "Nueva Inscripción",
-          path: "/dashboard/student/enrollment",
-        },
-        {
-          icon: CreditCard,
-          label: "Mis Pagos",
-          path: "/dashboard/student/payments",
-        },
-        {
-          icon: User,
-          label: "Mi Perfil",
-          path: "/dashboard/student/profile",
-        },
-      ]
-      : [
-        {
-          icon: Check,
-          label: "Completa tu inscripción",
-          path: "/dashboard/student/registration",
-        },
-      ];
+  const getMenuItems = () => {
+    if (debeCompletarEmail) {
+      return [{ icon: User, label: "Verificando...", path: "#" }];
+    }
+
+    if (!registroCompletado) {
+      return [{ icon: Check, label: "Completa tu inscripción", path: "/dashboard/student/registration" }];
+    }
+
+    return [
+      { icon: Home, label: "Inicio / Horario", path: "/dashboard/student" },
+      { icon: Home, label: "Nueva Inscripción", path: "/dashboard/student/enrollment" },
+      { icon: CreditCard, label: "Mis Pagos", path: "/dashboard/student/payments" },
+      { icon: User, label: "Mi Perfil", path: "/dashboard/student/profile" },
+    ];
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <>
@@ -106,8 +94,8 @@ const StudentSidebar = () => {
                 key={item.label}
                 to={debeCompletarEmail ? "#" : item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
-                    ? "bg-orange-500 text-white shadow-lg shadow-orange-900/40"
-                    : "text-blue-100/60 hover:bg-white/5 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg shadow-orange-900/40"
+                  : "text-blue-100/60 hover:bg-white/5 hover:text-white"
                   } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
               >
                 <item.icon
