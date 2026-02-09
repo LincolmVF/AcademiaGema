@@ -35,37 +35,37 @@ const StudentSidebar = () => {
     ? [{ icon: User, label: "Verificando...", path: "#" }]
     : registroCompletado
       ? [
-          { icon: Home, label: "Inicio / Horario", path: "/dashboard/student" },
-          {
-            icon: Home,
-            label: "Nueva Inscripción",
-            path: "/dashboard/student/enrollment",
-          },
-          {
-            icon: CreditCard,
-            label: "Mis Pagos",
-            path: "/dashboard/student/payments",
-          },
-          {
-            icon: User,
-            label: "Mi Perfil",
-            path: "/dashboard/student/profile",
-          },
-        ]
+        { icon: Home, label: "Inicio / Horario", path: "/dashboard/student" },
+        {
+          icon: Home,
+          label: "Nueva Inscripción",
+          path: "/dashboard/student/enrollment",
+        },
+        {
+          icon: CreditCard,
+          label: "Mis Pagos",
+          path: "/dashboard/student/payments",
+        },
+        {
+          icon: User,
+          label: "Mi Perfil",
+          path: "/dashboard/student/profile",
+        },
+      ]
       : [
-          {
-            icon: Check,
-            label: "Completa tu inscripción",
-            path: "/dashboard/student/registration",
-          },
-        ];
+        {
+          icon: Check,
+          label: "Completa tu inscripción",
+          path: "/dashboard/student/registration",
+        },
+      ];
 
   return (
     <>
       {debeCompletarEmail && (
         <CompletarEmailModal
           isOpen={true}
-          onClose={() => {}}
+          onClose={() => { }}
           onActionSuccess={handleUpdateSuccess}
         />
       )}
@@ -105,11 +105,10 @@ const StudentSidebar = () => {
               <Link
                 key={item.label}
                 to={debeCompletarEmail ? "#" : item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
                     ? "bg-orange-500 text-white shadow-lg shadow-orange-900/40"
                     : "text-blue-100/60 hover:bg-white/5 hover:text-white"
-                } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
+                  } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
               >
                 <item.icon
                   size={20}

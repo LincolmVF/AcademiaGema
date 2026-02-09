@@ -12,13 +12,6 @@ const StudentLayout = () => {
 
   if (!user) return <Navigate to="/login" replace />;
 
-  const registroIncompleto = !user?.alumnos?.seguro_medico;
-  const enPaginaRegistro = location.pathname === '/dashboard/student/registration';
-
-  if (registroIncompleto && !enPaginaRegistro) {
-    return <Navigate to="/dashboard/student/registration" replace />;
-  }
-
   return (
     <div className="min-h-screen bg-slate-50">
       <StudentSidebar />
