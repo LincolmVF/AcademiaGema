@@ -5,6 +5,11 @@ import { Toaster } from "react-hot-toast";
 
 // 1. Páginas Públicas
 import Home from "./pages/Home";
+import About from "./pages/About";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
+import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
@@ -33,15 +38,33 @@ import Payments from "./pages/student/Payments";
 import Profile from "./pages/student/Profile";
 import StudentRegistration from "./components/student/StudentRegistration";
 import Enrollment from "./pages/student/enrollment";
+import Blog from "./pages/Blog";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster position="top-right" reverseOrder={false} />
 
       <Routes>
-        {/* --- RUTAS PÚBLICAS --- */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/*"
+          element={
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-grow">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
+              <Footer />
+            </div>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

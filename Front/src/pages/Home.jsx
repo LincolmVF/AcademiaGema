@@ -21,9 +21,6 @@ function Home() {
 
   return (
     <div className="bg-[#f8fafc] min-h-screen font-sans text-slate-900 flex flex-col">
-
-      <Navbar />
-
       <Hero />
 
       <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 flex-grow">
@@ -63,12 +60,12 @@ function Home() {
         {classes.length === 0 && (
           <div className="text-center py-24 bg-white rounded-[40px] border-2 border-dashed border-slate-200 shadow-inner">
             <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-               <span className="text-4xl text-slate-300">🏐</span>
+              <span className="text-4xl text-slate-300">🏐</span>
             </div>
             <h3 className="text-xl font-bold text-slate-400 uppercase tracking-widest">Sin clases disponibles</h3>
             <p className="text-slate-400 mt-2">Intenta cambiar los filtros de día o categoría.</p>
-            <button 
-              onClick={() => {setActiveDay(0); setActiveCategory('Todas');}}
+            <button
+              onClick={() => { setActiveDay(0); setActiveCategory('Todas'); }}
               className="mt-6 text-[#1e3a8a] font-black uppercase text-xs tracking-widest hover:text-orange-500 transition-colors"
             >
               Restablecer Filtros
@@ -77,10 +74,6 @@ function Home() {
         )}
 
       </main>
-
-      {/* Footer ya vendrá con sus colores aplicados por fuera */}
-      <Footer />
-
     </div>
   );
 }

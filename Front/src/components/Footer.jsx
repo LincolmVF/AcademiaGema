@@ -3,6 +3,12 @@ import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, ArrowRight, Trophy }
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const quickLinks = [
+    { name: 'Sobre Nosotros', path: '/about' },
+    { name: 'Planes y Precios', path: '/pricing' },
+    { name: 'Blog Deportivo', path: '/blog' },
+  ];
+
   return (
     <footer className="bg-[#0f172a] text-slate-400 pt-20 pb-8 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -48,14 +54,18 @@ const Footer = () => {
               Enlaces Rápidos
             </h3>
             <ul className="space-y-4 text-sm font-bold">
-              {[
-                'Sobre Nosotros', 'Nuestros Horarios', 'Planes y Precios', 'Blog Deportivo'
-              ].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-orange-500 transition-all flex items-center gap-2 group">
-                    <ArrowRight size={14} className="text-orange-500 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all" />
-                    {item}
-                  </a>
+              {quickLinks.map((item) => (
+                <li key={item.name}>
+                  <Link
+                    to={item.path}
+                    className="hover:text-orange-500 transition-all flex items-center gap-2 group text-slate-300"
+                  >
+                    <ArrowRight
+                      size={14}
+                      className="text-orange-500 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all"
+                    />
+                    {item.name}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -7,10 +7,10 @@ const Navbar = () => {
   const location = useLocation();
 
   const navLinks = [
-    { label: 'Admin', path: '/dashboard/admin' },
-    { label: 'Teacher', path: '/dashboard/teacher' },
-    { label: 'Horarios', path: '/dashboard/student' },
-    { label: 'Torneos', path: '/torneos' },
+    { label: 'Inicio', path: '/' },
+    { label: 'Nosotros', path: '/about' },
+    { label: 'Precios', path: '/pricing' },
+    { label: 'Blog', path: '/blog' },
   ];
 
   return (
@@ -51,8 +51,8 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${location.pathname === link.path
-                    ? 'text-[#1e3a8a] bg-blue-50'
-                    : 'text-slate-500 hover:text-orange-500 hover:bg-orange-50'
+                  ? 'text-[#1e3a8a] bg-blue-50'
+                  : 'text-slate-500 hover:text-orange-500 hover:bg-orange-50'
                   }`}
               >
                 {link.label}
