@@ -48,10 +48,11 @@ const DashboardEstudiante = () => {
   }, [userId]);
 
   // Variables dinámicas para el perfil
-  const firstName = user?.nombres || "Campeón";
-  const fullName = user ? `${user.nombres} ${user.apellidos}` : "Alumno Gema";
-  const initial = user?.nombres?.charAt(0).toUpperCase() || "G";
-  const userRole = user?.rol?.nombre || "Estudiante";
+  const firstName = user.user?.nombres || "Campeón";
+  console.log("Nombre del usuario:", firstName);
+  const fullName = user.user ? `${user.user.nombres} ${user.user.apellidos}` : "Alumno Gema";
+  const initial = user.user?.nombres?.charAt(0).toUpperCase() || "G";
+  const userRole = user.user?.rol?.nombre || "Estudiante";
 
   if (loading)
     return (

@@ -3,13 +3,14 @@ import { Mail, Phone, MapPin, Edit2, Shield, User, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
-  const { user } = useAuth(); // Obtenemos el usuario logueado
+  const { user } = useAuth(); 
 
-  // Datos dinámicos del usuario con valores por defecto
-  const fullName = user ? `${user.nombres} ${user.apellidos}` : 'Alumno Gema';
-  const userInitial = user?.nombres?.charAt(0).toUpperCase() || 'G';
-  const userRole = user?.rol || 'Alumno';
-  const userEmail = user?.email || 'usuario@ejemplo.com';
+  const fullName = user.user ? `${user.user.nombres} ${user.user.apellidos}` : 'Alumno Gema';
+  const userInitial = user.user?.nombres?.charAt(0).toUpperCase() || 'G';
+  const userRole = user.user?.rol || 'Alumno';
+  const userEmail = user.user?.email || 'usuario@ejemplo.com';
+  const userPhone = user.user?.telefono || '+51 987 654 321';
+  const userAddress = user.user?.direccion || 'Av. Siempre Viva 123, Lima';
 
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-8 animate-fade-in-up pb-20">
@@ -72,7 +73,7 @@ const Profile = () => {
             </div>
             <div>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-1">Teléfono / WhatsApp</p>
-                <p className="font-bold text-[#1e3a8a] tracking-tight">+51 987 654 321</p>
+                <p className="font-bold text-[#1e3a8a] tracking-tight">{userPhone}</p>
             </div>
         </div>
 
@@ -82,7 +83,7 @@ const Profile = () => {
             </div>
             <div>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mb-1">Dirección de Residencia</p>
-                <p className="font-bold text-[#1e3a8a] tracking-tight">Av. Siempre Viva 123, Lima</p>
+                <p className="font-bold text-[#1e3a8a] tracking-tight">{userAddress}</p>
             </div>
         </div>
       </div>
