@@ -6,16 +6,11 @@ import {
   ShieldCheck,
   HeartPulse,
   ChevronRight,
-  ChevronLeft,
   User,
-  Clock,
   Lock,
   Zap,
   MapPin,
   UserPlus,
-  Trophy,
-  Calendar,
-  Upload,
   Home,
   CheckCircle2,
   Users,
@@ -26,10 +21,8 @@ import { useAuth } from "../../context/AuthContext";
 
 const StudentRegistration = () => {
   const navigate = useNavigate();
-  const { userId } = useAuth();
-  const [step, setStep] = useState(1);
+  const { userId, login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [comprobanteFile, setComprobanteFile] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [formData, setFormData] = useState({
@@ -70,11 +63,7 @@ const StudentRegistration = () => {
     }
   };
 
-  const handleFileChange = (e) => {
-    setComprobanteFile(e.target.files[0]);
-  };
-
-  const BLOOD_GROUPS = ["O+", "O-", "A+", "B+"];
+  const BLOOD_GROUPS = new Set(["O+", "O-", "A+", "B+"]);
   const PHONE_REGEX = /^\+?\d{9,15}$/;
 
   const validateForm = () => {
@@ -83,7 +72,7 @@ const StudentRegistration = () => {
       formData.password.length < 8 ||
       !/[A-Z]/.test(formData.password) ||
       !/[a-z]/.test(formData.password) ||
-      !/[0-9]/.test(formData.password)
+      !/\d/.test(formData.password)
     ) {
       throw new Error(
         "La contraseña debe tener al menos 8 caracteres, e incluir mayúsculas, minúsculas y números",
@@ -123,7 +112,7 @@ const StudentRegistration = () => {
     if (!dr.seguro_medico?.trim()) {
       throw new Error("Seguro médico es obligatorio");
     }
-    if (!dr.grupo_sanguineo || !BLOOD_GROUPS.includes(dr.grupo_sanguineo)) {
+    if (!dr.grupo_sanguineo || !BLOOD_GROUPS.has(dr.grupo_sanguineo)) {
       throw new Error("Grupo sanguíneo inválido");
     }
   };
@@ -161,20 +150,18 @@ const StudentRegistration = () => {
     try {
       const payload = {
         password: formData.password,
-        direccion: {
-          direccion_completa: formData.direccion_completa,
-          distrito: formData.distrito,
-          ciudad: formData.ciudad,
-          referencia: formData.referencia,
-        },
+        direccion_completa: formData.direccion_completa,
+        distrito: formData.distrito,
+        ciudad: formData.ciudad,
+        referencia: formData.referencia,
         contacto_emergencia: formData.contacto_emergencia,
         datosRolEspecifico: formData.datosRolEspecifico,
       };
 
-      await alumnoService.update(userId, payload);
-
+      const updated = await alumnoService.update(userId, payload);
+      login(updated);
       toast.success("Datos actualizados correctamente");
-      navigate("/dashboard/student/profile");
+      navigate("/dashboard/student");
     } catch (error) {
       toast.error(error.message || "Error en el proceso");
     } finally {
@@ -207,7 +194,10 @@ const StudentRegistration = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="group space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="password"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Nueva Contraseña
                   </label>
                   <div className="relative">
@@ -216,6 +206,7 @@ const StudentRegistration = () => {
                       size={16}
                     />
                     <input
+                      id="password"
                       type="password"
                       name="password"
                       required
@@ -227,7 +218,10 @@ const StudentRegistration = () => {
                   </div>
                 </div>
                 <div className="group space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="confirm_password"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Confirmar Contraseña
                   </label>
                   <div className="relative">
@@ -236,6 +230,7 @@ const StudentRegistration = () => {
                       size={16}
                     />
                     <input
+                      id="confirm_password"
                       type="password"
                       required
                       value={confirmPassword}
@@ -258,7 +253,10 @@ const StudentRegistration = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
                 <div className="md:col-span-4 group space-y-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="direccion_completa"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Dirección Completa
                   </label>
                   <div className="relative">
@@ -267,6 +265,7 @@ const StudentRegistration = () => {
                       size={16}
                     />
                     <input
+                      id="direccion_completa"
                       type="text"
                       name="direccion_completa"
                       required
@@ -278,10 +277,14 @@ const StudentRegistration = () => {
                   </div>
                 </div>
                 <div className="md:col-span-2 group space-y-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="distrito"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Distrito
                   </label>
                   <input
+                    id="distrito"
                     type="text"
                     name="distrito"
                     required
@@ -292,10 +295,14 @@ const StudentRegistration = () => {
                   />
                 </div>
                 <div className="md:col-span-2 group space-y-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="ciudad"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Ciudad
                   </label>
                   <input
+                    id="ciudad"
                     type="text"
                     name="ciudad"
                     required
@@ -306,7 +313,10 @@ const StudentRegistration = () => {
                   />
                 </div>
                 <div className="md:col-span-4 group space-y-1">
-                  <label className="text-[10px] font-black text-slate-500 uppercase ml-1">
+                  <label
+                    htmlFor="referencia"
+                    className="text-[10px] font-black text-slate-500 uppercase ml-1"
+                  >
                     Referencia
                   </label>
                   <div className="relative">
@@ -315,6 +325,7 @@ const StudentRegistration = () => {
                       size={16}
                     />
                     <input
+                      id="referencia"
                       type="text"
                       name="referencia"
                       required
