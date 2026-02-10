@@ -1,67 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { apiFetch } from '../../interceptors/api';
-import { useAuth } from '../../context/AuthContext';
-import { Loader2, History, Wallet } from 'lucide-react';
-import toast from 'react-hot-toast';
+import React, { useState, useEffect, useCallback } from "react";
+import { apiFetch } from "../../interceptors/api";
+import { useAuth } from "../../context/AuthContext";
+import { Loader2, History, Wallet } from "lucide-react";
+import toast from "react-hot-toast";
 
 // Componentes Modulares
-import PaymentMethodCard from '../../components/student/Payments/PaymentMethodCard';
-import DebtItem from '../../components/student/Payments/DebtItem';
-import PaymentHistoryItem from '../../components/student/Payments/PaymentHistoryItem';
-import ReportPaymentModal from '../../components/student/Payments/ReportPaymentModal';
+import PaymentMethodCard from "../../components/student/Payments/PaymentMethodCard";
+import DebtItem from "../../components/student/Payments/DebtItem";
+import PaymentHistoryItem from "../../components/student/Payments/PaymentHistoryItem";
+import ReportPaymentModal from "../../components/student/Payments/ReportPaymentModal";
 
 const Payments = () => {
   const { userId } = useAuth(); // Usamos userId directamente del contexto
   const [loading, setLoading] = useState(true);
-  const [debts, setDebts] = useState([]);     // Para Cuentas por Cobrar
+  const [debts, setDebts] = useState([]); // Para Cuentas por Cobrar
   const [payments, setPayments] = useState([]); // Para Historial de Pagos
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState(null);
 
-  useEffect(() => {
-    if (userId) {
-      fetchFinancialData();
-    }
-  }, [userId]);
-
-  const fetchFinancialData = async () => {
+  const fetchFinancialData = useCallback(async () => {
     try {
       setLoading(true);
-      // Consultamos deudas e historial en paralelo
       const [resDebts, resPayments] = await Promise.all([
-        apiFetch.get('/cuentaPorCobrar'),
-        apiFetch.get('/pagos')
+        apiFetch.get("/cuentaPorCobrar"),
+        apiFetch.get("/pagos"),
       ]);
 
       const dataDebts = await resDebts.json();
       const dataPayments = await resPayments.json();
 
       if (resDebts.ok) {
-        // FILTRO CRÍTICO: Solo deudas del usuario logueado
         const myDebts = (dataDebts.data || []).filter(
-          d => d.alumno_id === userId
+          (d) => d.alumno_id === userId,
         );
         setDebts(myDebts);
       }
 
       if (resPayments.ok) {
-        // FILTRO CRÍTICO: Solo historial del usuario logueado
         const myHistory = (dataPayments.data || []).filter(
-          p => p.cuentas_por_cobrar?.alumno_id === userId
+          (p) => p.cuentas_por_cobrar?.alumno_id === userId,
         );
         setPayments(myHistory);
       }
     } catch (error) {
+      console.error(error);
       toast.error("Error de conexión con el servidor financiero");
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchFinancialData();
+    }
+  }, [userId, fetchFinancialData]);
 
   // Clasificación de la UI basada en el estado real de la BD
   // Solo se muestran en pendientes los que tienen estado "PENDIENTE"
-  const pending = debts.filter(d => d.estado === 'PENDIENTE');
+  const pending = debts.filter((d) => d.estado === "PENDIENTE");
 
   const handleOpenModal = (debt) => {
     setSelectedDebt(debt);
@@ -70,27 +68,44 @@ const Payments = () => {
 
   const handleReportSubmit = async (reportData) => {
     try {
-      const response = await apiFetch.post('/pagos/reportar', reportData);
+      let response;
+      if (reportData.voucher_file) {
+        const fd = new FormData();
+        fd.append("deuda_id", reportData.deuda_id);
+        fd.append("metodo_pago", reportData.metodo_pago);
+        fd.append("codigo_operacion", reportData.codigo_operacion);
+        fd.append("monto", reportData.monto);
+        fd.append("voucher_file", reportData.voucher_file);
+        response = await apiFetch.post("/pagos/reportar", fd);
+      } else {
+        response = await apiFetch.post("/pagos/reportar", reportData);
+      }
       if (response.ok) {
         toast.success("Pago reportado exitosamente. Pendiente de validación.");
-        fetchFinancialData(); 
+        fetchFinancialData();
       } else {
         const err = await response.json();
         toast.error(err.message || "Error al procesar el reporte");
       }
     } catch (error) {
+      console.error(error);
       toast.error("Error crítico de red");
     }
   };
 
-  if (loading) return (
-    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-      <Loader2 className="animate-spin text-orange-500" size={48} strokeWidth={3} />
-      <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest">
-        Accediendo al centro de pagos...
-      </p>
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <Loader2
+          className="animate-spin text-orange-500"
+          size={48}
+          strokeWidth={3}
+        />
+        <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest">
+          Accediendo al centro de pagos...
+        </p>
+      </div>
+    );
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 animate-fade-in-up pb-24">
@@ -112,7 +127,7 @@ const Payments = () => {
           </h2>
           <div className="space-y-6">
             {pending.length > 0 ? (
-              pending.map(d => (
+              pending.map((d) => (
                 <DebtItem key={d.id} debt={d} onReport={handleOpenModal} />
               ))
             ) : (
@@ -135,7 +150,7 @@ const Payments = () => {
           <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden min-h-[200px]">
             {payments.length > 0 ? (
               <div className="divide-y divide-slate-50">
-                {payments.map(p => (
+                {payments.map((p) => (
                   <PaymentHistoryItem key={p.id} payment={p} />
                 ))}
               </div>
@@ -151,7 +166,7 @@ const Payments = () => {
         </section>
       </div>
 
-      <ReportPaymentModal 
+      <ReportPaymentModal
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

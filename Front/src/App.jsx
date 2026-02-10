@@ -1,38 +1,38 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
 // 1. Páginas Públicas
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import NotFound from './pages/NotFound';
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
 
 // 2. Layouts (Contenedores)
-import DashboardLayout from './layouts/DashboardLayout'; // Admin (Sidebar Completo)
-import StudentLayout from './layouts/StudentLayout';     // Estudiante (Móvil + PC Sidebar)
-import TeacherLayout from './layouts/TeacherLayout';     // Profesor (Sidebar Minimalista)
+import DashboardLayout from "./layouts/DashboardLayout"; // Admin (Sidebar Completo)
+import StudentLayout from "./layouts/StudentLayout"; // Estudiante (Móvil + PC Sidebar)
+import TeacherLayout from "./layouts/TeacherLayout"; // Profesor (Sidebar Minimalista)
 
 // 3. Páginas del Dashboard Generales
-import Dashboard from './pages/Dashboard';                   // Admin: Resumen General
-import DashboardEstudiante from './pages/DashboardEstudiante'; // Estudiante: Inicio
-import DashboardTeacher from './pages/DashboardTeacher';     // Profesor: Asistencia
+import Dashboard from "./pages/Dashboard"; // Admin: Resumen General
+import DashboardEstudiante from "./pages/DashboardEstudiante"; // Estudiante: Inicio
+import DashboardTeacher from "./pages/DashboardTeacher"; // Profesor: Asistencia
 
 // 4. Nuevas Páginas de Gestión (Admin)
-import AdminLocationsManager from './pages/admin/AdminLocationsManager';
-import AdminLevelsManager from './pages/admin/AdminLevelsManager';
-import AdminTeachersManager from './pages/admin/AdminTeachersManager';
-import AdminCatalogManager from './pages/admin/AdminCatalogManager';
-import AdminSchedulesManager from './pages/admin/AdminScheduleManager';
-import AdminStudentsManager from './pages/admin/AdminStudentManager';
-import AdminPaymentManager from './pages/admin/AdminPaymentManager';
+import AdminLocationsManager from "./pages/admin/AdminLocationsManager";
+import AdminLevelsManager from "./pages/admin/AdminLevelsManager";
+import AdminTeachersManager from "./pages/admin/AdminTeachersManager";
+import AdminCatalogManager from "./pages/admin/AdminCatalogManager";
+import AdminSchedulesManager from "./pages/admin/AdminScheduleManager";
+import AdminStudentsManager from "./pages/admin/AdminStudentManager";
+import AdminPaymentManager from "./pages/admin/AdminPaymentManager";
 
 // 5. Nuevas Páginas de Estudiante
-import Payments from './pages/student/Payments';
-import Profile from './pages/student/Profile';
-import StudentRegistration from './components/student/StudentRegistration';
-import Enrollment from './pages/student/enrollment';
+import Payments from "./pages/student/Payments";
+import Profile from "./pages/student/Profile";
+import StudentRegistration from "./components/student/StudentRegistration";
+import Enrollment from "./pages/student/enrollment";
 
 function App() {
   return (
@@ -40,7 +40,6 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
 
       <Routes>
-
         {/* --- RUTAS PÚBLICAS --- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -48,17 +47,22 @@ function App() {
 
         {/* --- RUTAS PROTEGIDAS (DASHBOARD) --- */}
         <Route path="/dashboard">
-
           {/* GRUPO 1: ESTUDIANTE (Layout Móvil + Sidebar PC) */}
           <Route element={<StudentLayout />}>
             <Route path="student" element={<DashboardEstudiante />} />
             <Route path="student/payments" element={<Payments />} />
             <Route path="student/profile" element={<Profile />} />
             <Route path="student/enrollment" element={<Enrollment />} />
-            <Route path="student/registration" element={<StudentRegistration />} />
+            <Route
+              path="student/registration"
+              element={<StudentRegistration />}
+            />
 
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
-            <Route index element={<Navigate to="/dashboard/student" replace />} />
+            <Route
+              index
+              element={<Navigate to="/dashboard/student" replace />}
+            />
           </Route>
 
           {/* GRUPO 2: PROFESOR (Layout Minimalista) */}
@@ -68,7 +72,6 @@ function App() {
 
           {/* GRUPO 3: ADMINISTRADOR (Layout Completo de Gestión) */}
           <Route element={<DashboardLayout />}>
-
             {/* Resumen General */}
             <Route path="admin" element={<Dashboard role="admin" />} />
 
@@ -79,12 +82,21 @@ function App() {
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />
             <Route path="admin/locations" element={<AdminLocationsManager />} />
-            <Route path="admin/payment-validation" element={<AdminPaymentManager />} />
+            <Route
+              path="admin/payment-validation"
+              element={<AdminPaymentManager />}
+            />
 
             {/* Configuración (Placeholder) */}
-            <Route path="admin/settings" element={<div className="p-8 font-bold text-slate-500">Configuración del Sistema (En construcción)</div>} />
+            <Route
+              path="admin/settings"
+              element={
+                <div className="p-8 font-bold text-slate-500">
+                  Configuración del Sistema (En construcción)
+                </div>
+              }
+            />
           </Route>
-
         </Route>
 
         <Route path="*" element={<NotFound />} />
