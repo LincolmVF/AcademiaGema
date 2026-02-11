@@ -15,7 +15,6 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const loadingToast = toast.loading('Iniciando sesión...');
 
     try {
       const data = await loginService(identifier, password);

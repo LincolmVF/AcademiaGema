@@ -23,7 +23,21 @@ function Register() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        if (name === "telefono_personal") {
+            const onlyNums = value.replace(/\D/g, "");
+
+            if (onlyNums.length <= 9) {
+                setFormData((prev) => ({
+                    ...prev,
+                    [name]: onlyNums,
+                }));
+            }
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -45,7 +59,7 @@ function Register() {
 
             const dataToSend = {
                 ...formData,
-                fecha_nacimiento: fechaNacimientoValida, 
+                fecha_nacimiento: fechaNacimientoValida,
                 password: formData.numero_documento
             };
 
@@ -63,6 +77,17 @@ function Register() {
             setLoading(false);
         }
     };
+
+    // Obtiene la fecha de hoy
+    const hoy = new Date();
+
+    // Resta 2 años para la fecha mínima permitida
+    const fechaMinima = new Date();
+    fechaMinima.setFullYear(hoy.getFullYear() - 2);
+
+    // Formatear a YYYY-MM-DD
+    const maxDate = hoy.toISOString().split('T')[0];
+    const minDate = fechaMinima.toISOString().split('T')[0];
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">
@@ -198,19 +223,37 @@ function Register() {
                         {/* TELÉFONO, FECHA Y GÉNERO */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                             <div className="space-y-2">
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Celular *</label>
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">
+                                    Celular *
+                                </label>
                                 <div className="relative group">
                                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
-                                    <input type="tel" name="telefono_personal" required value={formData.telefono_personal} onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm" placeholder="+51..." />
+                                    <input
+                                        type="tel"
+                                        name="telefono_personal"
+                                        required
+                                        value={formData.telefono_personal.replace(/(\d{3})(?=\d)/g, "$1 ")}
+                                        onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm"
+                                        placeholder="999 999 999"
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">Fecha Nacimiento *</label>
+                                <label className="block text-[11px] font-bold uppercase text-gray-700 ml-1 tracking-wider">
+                                    Fecha Nacimiento *
+                                </label>
                                 <div className="relative group">
                                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#263e5e] transition-colors" />
-                                    <input type="date" name="fecha_nacimiento" required value={formData.fecha_nacimiento} onChange={handleChange}
-                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm text-sm" />
+                                    <input
+                                        type="date"
+                                        name="fecha_nacimiento"
+                                        required
+                                        max={minDate}
+                                        value={formData.fecha_nacimiento}
+                                        onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#263e5e]/5 focus:border-[#cd5a2c] outline-none transition-all shadow-sm text-sm"
+                                    />
                                 </div>
                             </div>
                             <div className="space-y-2">
