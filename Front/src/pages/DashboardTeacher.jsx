@@ -1,141 +1,172 @@
-import React, { useState } from 'react';
-import { Users, Clock, MapPin, CheckCircle, Calendar, Zap } from 'lucide-react';
-import { teacherData } from '../data/mockTeacher';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Users, Clock, MapPin, CheckCircle, Calendar, Zap, Loader2 } from 'lucide-react';
 import AttendanceModal from '../components/teacher/AttendanceModal';
-import { useAuth } from '../context/AuthContext'; // Importamos el contexto
+import { useAuth } from '../context/AuthContext';
+import { asistenciaService } from '../services/asistencia.service';
+import toast from 'react-hot-toast';
 
 const DashboardTeacher = () => {
   const [selectedClass, setSelectedClass] = useState(null);
-  const { user } = useAuth(); // Obtenemos el usuario real
+  const [clases, setClases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Datos dinámicos del profesor
-  const coachFirstName = user?.nombres || 'Instructor';
-  const coachFullName = user ? `${user.nombres} ${user.apellidos}` : 'Profesor Gema';
+  // Normalización de datos del usuario logueado
+  const coachFirstName = user?.user?.nombres || 'Instructor';
+  const coachFullName = user?.user ? `${user.user.nombres} ${user.user.apellidos}` : 'Profesor Gema';
+
+  const fetchAgenda = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await asistenciaService.getAgendaHoy();
+      
+      const clasesMapeadas = (data || []).map(horario => ({
+        id: horario.id,
+        title: `Entrenamiento - ${horario.niveles_entrenamiento?.nombre || 'Voleibol'}`,
+        time: horario.hora_inicio?.split(':').slice(0, 2).join(':') || '--:--',
+        court: horario.canchas?.nombre || 'Cancha principal',
+        level: horario.niveles_entrenamiento?.nombre || 'Nivel Gema',
+        totalStudents: horario.inscripciones?.length || 0,
+        attended: horario.inscripciones?.length > 0 && horario.inscripciones.every(ins => 
+          ins.registros_asistencia[0]?.estado !== 'PROGRAMADA'
+        ),
+        inscripciones: horario.inscripciones || []
+      }));
+
+      setClases(clasesMapeadas);
+    } catch (error) {
+      console.error("Error al cargar agenda:", error);
+      if (error.status === 403) {
+        toast.error("Error 403: Tu sesión no tiene permisos de Profesor. Intenta re-loguear.");
+      }
+      setClases([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAgenda();
+  }, [fetchAgenda]);
 
   const handleOpenAttendance = (clase) => {
     setSelectedClass(clase);
   };
 
-  const handleSaveAttendance = (classId) => {
-    console.log(`Guardando asistencia para la clase ${classId}...`);
+  const handleSaveAttendance = () => {
     setSelectedClass(null);
-    alert("¡Asistencia guardada correctamente!");
+    fetchAgenda(); // Recarga la lista para mostrar el check de "Completado"
   };
+
+  if (loading) return (
+    <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+      <Loader2 className="animate-spin text-[#1e3a8a]" size={48} />
+      <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest">Sincronizando Agenda...</p>
+    </div>
+  );
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10">
-
-      {/* 1. Header Dinámico con Branding */}
+      {/* 1. Header Dinámico */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-black text-[#1e3a8a] uppercase tracking-tighter italic">
-            Hola, <span className="text-orange-500">Profe {coachFirstName}</span> 👋
+          <h1 className="text-4xl font-black text-[#1e3a8a] uppercase tracking-tighter italic leading-none">
+            HOLA, <span className="text-orange-500">PROFE {coachFirstName.toUpperCase()}</span> 👋
           </h1>
-          <div className="h-1.5 w-20 bg-orange-500 rounded-full mt-2 shadow-[0_2px_10px_rgba(249,115,22,0.3)]"></div>
+          <div className="h-2 w-24 bg-orange-500 rounded-full mt-4 shadow-lg shadow-orange-500/20"></div>
           <p className="text-slate-500 mt-4 font-medium italic">Bienvenido a tu panel de gestión técnica, {coachFullName}.</p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm text-xs font-black text-[#1e3a8a] uppercase tracking-widest">
-          <Calendar size={16} className="text-orange-500" />
-          {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+        <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm text-xs font-black text-[#1e3a8a] uppercase tracking-widest">
+          <Calendar size={18} className="text-orange-500" />
+          {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase()}
         </div>
       </div>
 
-      {/* 2. Stats de Marca */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {teacherData.stats.map((stat, idx) => (
-          <div key={idx} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 flex items-center justify-between group hover:-translate-y-1 transition-all">
-            <div>
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{stat.title}</p>
-              <p className="text-3xl font-black text-[#1e3a8a] mt-1 tracking-tighter">{stat.value}</p>
-            </div>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center bg-blue-50 text-[#1e3a8a] group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300 shadow-sm">
-              <Zap size={22} fill="currentColor" className="opacity-20 group-hover:opacity-100" />
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* 2. Lista de Clases Real */}
+      <div className="space-y-6">
+        <h2 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tight flex items-center gap-3">
+            <div className="w-2 h-8 bg-[#1e3a8a] rounded-full"></div>
+            Programación del Día
+        </h2>
 
-      {/* 3. Lista de Clases Estilizada */}
-      <div>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-2 h-8 bg-[#1e3a8a] rounded-full"></div>
-          <h2 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tight">Programación del Día</h2>
-        </div>
+        <div className="grid gap-6">
+          {clases.length > 0 ? (
+            clases.map((item) => (
+              <div key={item.id} className="group bg-white rounded-[2.5rem] p-7 border border-slate-100 shadow-xl hover:shadow-2xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden border-l-8 border-l-[#1e3a8a]">
+                <div className="flex gap-6 relative z-10">
+                  <div className={`hidden md:flex flex-col items-center justify-center w-24 h-24 rounded-[1.5rem] font-black shadow-inner transition-colors ${item.attended ? 'bg-slate-50 text-slate-300' : 'bg-[#1e3a8a] text-white'}`}>
+                    <span className="text-2xl tracking-tighter">{item.time.split(':')[0]}</span>
+                    <span className="text-[10px] uppercase tracking-widest opacity-60">HRS</span>
+                  </div>
 
-        <div className="grid gap-5">
-          {teacherData.classes.map((item) => (
-            <div key={item.id} className="group bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/40 hover:shadow-2xl transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-
-              <div className="flex gap-6 relative z-10">
-                <div className={`hidden md:flex flex-col items-center justify-center w-20 h-20 rounded-2xl font-black shadow-inner transition-colors ${item.attended ? 'bg-slate-50 text-slate-300' : 'bg-[#1e3a8a] text-white'
-                  }`}>
-                  <span className="text-xl tracking-tighter">{item.time.split(':')[0]}</span>
-                  <span className="text-[10px] uppercase tracking-widest opacity-60">PM</span>
-                </div>
-
-                <div className="flex flex-col justify-center">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-orange-50 text-orange-600 text-[9px] font-black px-2.5 py-1 rounded-lg uppercase tracking-widest border border-orange-100">
-                      {item.level}
-                    </span>
-                    {item.attended && (
-                      <span className="bg-blue-50 text-blue-700 text-[9px] font-black px-2.5 py-1 rounded-lg flex items-center gap-1 uppercase tracking-widest border border-blue-100">
-                        <CheckCircle size={12} strokeWidth={3} /> Completado
+                  <div className="flex flex-col justify-center">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest border border-orange-100">
+                        {item.level}
                       </span>
-                    )}
-                  </div>
-                  <h3 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tight italic group-hover:text-orange-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-bold text-slate-400 mt-2">
-                    <span className="flex items-center gap-1.5"><Clock size={16} className="text-blue-400" /> {item.time}</span>
-                    <span className="flex items-center gap-1.5"><MapPin size={16} className="text-blue-400" /> {item.court}</span>
-                    <span className="flex items-center gap-1.5"><Users size={16} className="text-blue-400" /> {item.totalStudents} Inscritos</span>
+                      {item.attended && (
+                        <span className="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-blue-100">
+                          <CheckCircle size={14} strokeWidth={3} /> COMPLETADO
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-black text-[#1e3a8a] uppercase tracking-tight italic group-hover:text-orange-600 transition-colors leading-none mb-3">
+                      {item.title}
+                    </h3>
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-bold text-slate-400">
+                      <span className="flex items-center gap-2"><Clock size={16} className="text-blue-400" /> {item.time}</span>
+                      <span className="flex items-center gap-2"><MapPin size={16} className="text-blue-400" /> {item.court}</span>
+                      <span className="flex items-center gap-2"><Users size={16} className="text-blue-400" /> {item.totalStudents} INSCRITOS</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="relative z-10">
-                <button
-                  onClick={() => handleOpenAttendance(item)}
-                  disabled={item.attended}
-                  className={`w-full md:w-auto px-8 py-4 rounded-2xl font-black text-xs transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-lg active:scale-95 ${item.attended
-                      ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none'
-                      : 'bg-[#1e3a8a] text-white hover:bg-orange-500 shadow-blue-900/20 hover:shadow-orange-500/30'
-                    }`}
-                >
-                  {item.attended ? 'Lista Cerrada' : 'Pasar Asistencia'}
-                  {!item.attended && <ChevronRight size={16} />}
-                </button>
+                <div className="relative z-10">
+                  <button
+                    onClick={() => handleOpenAttendance(item)}
+                    disabled={item.attended}
+                    className={`w-full md:w-auto px-10 py-5 rounded-[1.5rem] font-black text-xs transition-all flex items-center justify-center gap-3 uppercase tracking-widest shadow-xl active:scale-95 ${item.attended
+                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                        : 'bg-[#1e3a8a] text-white hover:bg-orange-500 hover:shadow-orange-500/30'
+                      }`}
+                  >
+                    {item.attended ? 'LISTA CERRADA' : 'PASAR ASISTENCIA'}
+                    {!item.attended && <ChevronRight size={18} />}
+                  </button>
+                </div>
               </div>
-
-              <div className="absolute -bottom-6 -right-6 opacity-[0.03] pointer-events-none group-hover:rotate-12 transition-transform duration-700">
-                <img src="/logo.png" alt="" className="w-32 h-auto" />
-              </div>
+            ))
+          ) : (
+            <div className="bg-white p-20 rounded-[3rem] border-2 border-dashed border-slate-200 text-center flex flex-col items-center">
+               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                  <Calendar size={32} className="text-slate-200" />
+               </div>
+               <p className="font-black text-slate-300 uppercase italic tracking-[0.2em] text-sm">
+                No tienes sesiones programadas para hoy
+              </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
       {selectedClass && (
         <AttendanceModal
-          classData={selectedClass}
+          clase={selectedClass}
           onClose={() => setSelectedClass(null)}
-          onSave={handleSaveAttendance}
+          onRefresh={handleSaveAttendance}
         />
       )}
 
-      <p className="text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] opacity-50 pt-10">
+      <p className="text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.4em] opacity-50 pt-20">
         Gema Performance System · Management
       </p>
-
     </div>
   );
 };
 
 const ChevronRight = ({ size }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
     <path d="m9 18 6-6-6-6" />
   </svg>
 );

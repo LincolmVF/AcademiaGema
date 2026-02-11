@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import TeacherSidebar from '../components/teacher/TeacherSidebar';
 
@@ -8,25 +8,46 @@ const TeacherLayout = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const { user } = useAuth();
 
-    const displayName = user ? `${user.nombres} ${user.apellidos}` : 'Instructor Gema';
-    const initial = user ? user.nombres.charAt(0).toUpperCase() : 'G';
-    const userRole = user?.rol || 'Coach';
+    // 1. NORMALIZACIÓN DE DATOS: Acceso seguro al objeto user
+    const userData = user?.user || user; 
+    
+    const displayName = userData?.nombres 
+        ? `${userData.nombres} ${userData.apellidos}` 
+        : 'Instructor Gema';
+
+    const initial = userData?.nombres 
+        ? userData.nombres.charAt(0).toUpperCase() 
+        : 'G';
+
+    const userRole = userData?.rol || 'Profesor';
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] flex">
+        <div className="min-h-screen bg-[#f8fafc] flex overflow-hidden">
 
-            {/* SIDEBAR - Ahora siempre se comportará como un overlay gracias a las props y el cambio en el main */}
+            {/* SIDEBAR: Componente fijo a la izquierda */}
             <TeacherSidebar
                 isOpen={isSidebarOpen}
                 onClose={() => setSidebarOpen(false)}
             />
 
-            {/* CONTENEDOR PRINCIPAL - Quitamos md:ml-64 para que use todo el ancho */}
-            <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
+            {/* CONTENEDOR PRINCIPAL: 
+               - md:ml-64: Crea el espacio exacto para que el Sidebar no tape el contenido en PC.
+               - transition-all: Para que el movimiento sea suave si el sidebar cambia.
+            */}
+            <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 md:ml-64">
 
-                {/* HEADER */}
-                <header className="bg-white border-b-2 border-[#1e3a8a]/10 h-20 flex items-center justify-between px-4 sm:px-8 z-20 shadow-sm">
+                {/* HEADER: Barra superior blanca con sombra suave */}
+                <header className="bg-white border-b border-[#1e3a8a]/10 h-20 flex items-center justify-between px-4 sm:px-8 z-20 shadow-sm">
+                    
+                    {/* BOTÓN HAMBURGUESA: Solo visible en móviles para abrir el Sidebar */}
+                    <button 
+                        onClick={() => setSidebarOpen(true)}
+                        className="md:hidden p-2 rounded-xl bg-slate-50 text-[#1e3a8a] hover:bg-orange-500 hover:text-white transition-all"
+                    >
+                        <Menu size={24} />
+                    </button>
 
+                    {/* PERFIL DE USUARIO: Alineado a la derecha */}
                     <div className="flex items-center gap-2 sm:gap-6 ml-auto">
                         <div className="hidden sm:block w-px h-10 bg-slate-200 mx-2"></div>
 
@@ -40,6 +61,7 @@ const TeacherLayout = () => {
                                 </span>
                             </div>
 
+                            {/* AVATAR CIRCULAR */}
                             <div className="relative">
                                 <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#1e40af] to-[#0f172a] flex items-center justify-center text-white font-black border-2 border-white shadow-lg shadow-blue-900/20 group-hover:rotate-6 transition-all text-lg">
                                     {initial}
@@ -50,12 +72,15 @@ const TeacherLayout = () => {
                     </div>
                 </header>
 
-                {/* CONTENIDO DINÁMICO - Ocupa el 100% al no tener el margen del sidebar */}
+                {/* AREA DE CONTENIDO (OUTLET): Aquí es donde se carga el DashboardTeacher */}
                 <main className="flex-1 overflow-y-auto bg-[#f1f5f9] p-4 sm:p-6 lg:p-10 relative">
+                    
+                    {/* MARCA DE AGUA: Logo de fondo sutil */}
                     <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none hidden xl:block">
                         <img src="/logo.png" alt="" className="w-96 h-auto rotate-12" />
                     </div>
 
+                    {/* CONTENEDOR DE LA PÁGINA: Centrado y con ancho máximo */}
                     <div className="max-w-7xl mx-auto relative z-10">
                         <Outlet />
                     </div>
