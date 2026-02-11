@@ -16,6 +16,8 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const toastId = toast.loading('Verificando credenciales...');
+
     try {
       const data = await loginService(identifier, password);
 
@@ -26,10 +28,11 @@ function Login() {
       login(data);
 
       const { rol, nombres, debeCompletarEmail } = data.user;
-      toast.success(`¡Bienvenido, ${nombres}!`, { id: loadingToast });
+
+      toast.success(`¡Bienvenido, ${nombres}!`, { id: toastId });
 
       if (debeCompletarEmail) {
-        navigate(rol === 'Alumno' ? '/dashboard/student' : '/dashboard/admin');
+        navigate(rol.toLowerCase() === 'alumno' ? '/dashboard/student' : '/dashboard/admin');
       } else {
         const routes = {
           'Administrador': '/dashboard/admin',
@@ -40,7 +43,8 @@ function Login() {
       }
 
     } catch (error) {
-      toast.error('Credenciales inválidas', {
+      toast.error(error.message || 'Credenciales inválidas', {
+        id: toastId,
         style: {
           border: '1px solid #fee2e2',
           padding: '16px',
