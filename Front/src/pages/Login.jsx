@@ -41,7 +41,23 @@ function Login() {
       }
 
     } catch (error) {
-      toast.error("Error: " + error.message, { id: loadingToast });
+      toast.error('Credenciales inválidas', {
+        style: {
+          border: '1px solid #fee2e2',
+          padding: '16px',
+          color: '#991b1b',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          fontSize: '12px',
+          letterSpacing: '0.1em',
+          borderRadius: '16px',
+          background: '#fff',
+        },
+        iconTheme: {
+          primary: '#f97316',
+          secondary: '#fff',
+        },
+      });
     }
   };
 
