@@ -1,22 +1,50 @@
-// src/services/asistencia.service.js
 import apiFetch from '../interceptors/api';
 
 export const asistenciaService = {
-    // Obtiene la agenda agrupada para el profesor logueado
-    getAgendaHoy: async () => {
-        const response = await apiFetch.get('/asistencias/agenda/hoy');
-        if (!response.ok) throw new Error('Error al cargar la agenda');
+    /**
+     * Obtiene la agenda general para el profesor logueado.
+     */
+    getAgenda: async () => {
+        const response = await apiFetch.get('/asistencias/agenda');
+        
+        if (!response.ok) {
+            throw new Error('Error al cargar la agenda de entrenamiento');
+        }
+        
         const result = await response.json();
         return result.data;
     },
 
-    // Actualiza el estado de un alumno individual
+    /**
+     * ✅ NUEVA FUNCIÓN: Envía el array de asistencias al nuevo endpoint del backend
+     * @param {Array} asistencias - Ejemplo: [{id: 44, estado: 'PRESENTE'}, {id: 45, estado: 'FALTA'}]
+     */
+    marcarAsistenciaMasiva: async (asistencias) => {
+        // Apuntamos al endpoint POST /masiva que creamos en el backend
+        const response = await apiFetch.post('/asistencias/masiva', {
+            asistencias // El body debe coincidir con lo que espera tu controlador
+        });
+        
+        if (!response.ok) {
+            throw new Error('No se pudo procesar la asistencia grupal');
+        }
+        
+        return await response.json();
+    },
+
+    /**
+     * Actualiza un alumno de forma individual (Patch)
+     */
     marcarAsistencia: async (asistenciaId, estado, comentario = "") => {
         const response = await apiFetch.patch(`/asistencias/${asistenciaId}`, {
             estado,
             comentario
         });
-        if (!response.ok) throw new Error('Error al marcar asistencia');
+        
+        if (!response.ok) {
+            throw new Error('No se pudo actualizar la asistencia individual');
+        }
+        
         return await response.json();
     }
 };

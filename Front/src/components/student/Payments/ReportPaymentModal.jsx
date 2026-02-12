@@ -4,14 +4,15 @@ import toast from "react-hot-toast";
 
 const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
   const [loading, setLoading] = useState(false);
+  
+  // Estado adaptado: de voucher_file (archivo) a voucher_url (texto)
   const [formData, setFormData] = useState({
     metodo_pago: "YAPE",
     codigo_operacion: "",
     monto: "",
-    voucher_file: null,
+    voucher_url: "", // Cambiado aquí
   });
 
-  // Efecto para cargar el monto de la deuda por defecto al abrir el modal
   useEffect(() => {
     if (debt) {
       setFormData((prev) => ({
@@ -26,24 +27,28 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
+    // Validaciones
     if (!formData.codigo_operacion.trim())
       return toast.error("El código de operación es vital");
     if (!formData.monto || formData.monto <= 0)
       return toast.error("Ingresa un monto válido");
-    if (!formData.voucher_file)
-      return toast.error("El archivo del comprobante es obligatorio");
+    if (!formData.voucher_url.trim()) // Validación para la URL
+      return toast.error("La URL del comprobante es obligatoria");
 
     setLoading(true);
     try {
+      // Enviamos el objeto exactamente como lo necesitas
       await onSubmit({
         deuda_id: debt.id,
-        ...formData,
         monto: parseFloat(formData.monto),
+        metodo_pago: formData.metodo_pago,
+        codigo_operacion: formData.codigo_operacion,
+        voucher_url: formData.voucher_url,
       });
       onClose();
     } catch (error) {
       console.error(error);
+      toast.error("Error al reportar el pago");
     } finally {
       setLoading(false);
     }
@@ -52,7 +57,8 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#0f172a]/90 backdrop-blur-md animate-fade-in">
       <div className="bg-white w-full max-w-md rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20 animate-zoom-in">
-        {/* Header con degradado Gema */}
+        
+        {/* Header */}
         <div className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] p-8 text-white relative">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Banknote size={80} className="-rotate-12" />
@@ -76,34 +82,29 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-5">
-          {/* Input: Monto Real Pagado */}
+          {/* Monto */}
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-              <Banknote size={12} className="text-orange-500" /> Monto
-              Confirmado (S/)
+              <Banknote size={12} className="text-orange-500" /> Monto Confirmado (S/)
             </label>
             <input
               type="number"
               step="0.01"
               value={formData.monto}
-              onChange={(e) =>
-                setFormData({ ...formData, monto: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, monto: e.target.value })}
               className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-lg font-black text-[#1e3a8a] outline-none focus:border-orange-500/50 transition-all italic"
               placeholder="0.00"
             />
           </div>
 
-          {/* Input: Método de Pago */}
+          {/* Método de Pago */}
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
               Vía de Pago
             </label>
             <select
               value={formData.metodo_pago}
-              onChange={(e) =>
-                setFormData({ ...formData, metodo_pago: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, metodo_pago: e.target.value })}
               className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 outline-none focus:border-blue-500/50 transition-all appearance-none"
             >
               <option value="YAPE">YAPE</option>
@@ -112,7 +113,7 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
             </select>
           </div>
 
-          {/* Input: Código de Operación */}
+          {/* Código de Operación */}
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
               <Hash size={12} className="text-blue-500" /> Código de Operación
@@ -121,36 +122,26 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
               type="text"
               placeholder="Ej: 19283746"
               value={formData.codigo_operacion}
-              onChange={(e) =>
-                setFormData({ ...formData, codigo_operacion: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, codigo_operacion: e.target.value })}
               className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 transition-all"
             />
           </div>
 
-          {/* Input: Comprobante (Archivo) */}
+          {/* URL del Voucher (Adaptado) */}
           <div className="space-y-1">
-            <label
-              htmlFor="voucher_file"
-              className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2"
-            >
-              <Link size={12} className="text-blue-500" /> Comprobante (Archivo)
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+              <Link size={12} className="text-blue-500" /> URL del Voucher
             </label>
             <input
-              id="voucher_file"
-              type="file"
-              accept="image/*,application/pdf"
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  voucher_file: e.target.files?.[0] || null,
-                })
-              }
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none focus:border-blue-500/50 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+              type="text"
+              placeholder="https://ejemplo.com/mi-pago.jpg"
+              value={formData.voucher_url}
+              onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 transition-all"
             />
           </div>
 
-          {/* Footer del Formulario */}
+          {/* Botón de envío */}
           <div className="pt-4">
             <button
               type="submit"

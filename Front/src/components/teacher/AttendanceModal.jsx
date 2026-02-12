@@ -1,18 +1,47 @@
-import React from 'react';
-import { X, Check, UserMinus } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Check, UserMinus, Save, Loader2 } from 'lucide-react';
 import { asistenciaService } from '../../services/asistencia.service';
 import toast from 'react-hot-toast';
 
 const AttendanceModal = ({ clase, onClose, onRefresh }) => {
+    const [isSaving, setIsSaving] = useState(false);
     
-    // Función para disparar el PATCH al backend
-    const handleUpdate = async (asistenciaId, nuevoEstado) => {
+    // Inicialización basada en el desglose de fechas del Dashboard
+    const [listaAsistencia, setListaAsistencia] = useState(
+        clase.inscripcionesEnEstaFecha?.map(ins => ({
+            asistenciaId: ins.registro_especifico?.id,
+            nombreCompleto: `${ins.alumnos.usuarios.nombres} ${ins.alumnos.usuarios.apellidos}`,
+            dni: ins.alumnos.usuarios.numero_documento,
+            estado: ins.registro_especifico?.estado || 'PROGRAMADA'
+        })) || []
+    );
+
+    const handleLocalUpdate = (asistenciaId, nuevoEstado) => {
+        setListaAsistencia(prev => 
+            prev.map(item => item.asistenciaId === asistenciaId 
+                ? { ...item, estado: nuevoEstado } 
+                : item
+            )
+        );
+    };
+
+    const handleSaveAll = async () => {
+        const payload = listaAsistencia.map(item => ({
+            id: item.asistenciaId,
+            estado: item.estado,
+            comentario: "" 
+        }));
+
         try {
-            await asistenciaService.marcarAsistencia(asistenciaId, nuevoEstado);
-            toast.success(`Estado actualizado a ${nuevoEstado}`);
-            onRefresh(); // Refresca la lista en el Dashboard para ver los cambios
+            setIsSaving(true);
+            await asistenciaService.marcarAsistenciaMasiva(payload);
+            toast.success("Asistencia guardada con éxito");
+            onRefresh(); 
+            onClose();   
         } catch (error) {
-            toast.error("Error al actualizar la asistencia");
+            toast.error("Error al guardar la asistencia");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -20,14 +49,13 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
             <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-zoom-in">
                 
-                {/* Header con estilo Gema */}
                 <div className="bg-[#1e3a8a] p-8 text-white flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-black uppercase italic leading-none">
                             Control de Asistencia
                         </h2>
                         <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mt-2 italic">
-                            {clase.niveles_entrenamiento.nombre} · {clase.hora_inicio}
+                            {clase.level} · {clase.dateFormatted} · {clase.timeRange}
                         </p>
                     </div>
                     <button onClick={onClose} className="hover:bg-white/10 p-2 rounded-xl transition-colors">
@@ -35,51 +63,53 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
                     </button>
                 </div>
 
-                {/* Lista de Estudiantes mapeada desde inscripciones */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                    {clase.inscripciones?.map((ins) => {
-                        // Extraemos el registro de asistencia de hoy (array de 1 elemento según tu service)
-                        const registro = ins.registros_asistencia[0];
-                        
-                        return (
-                            <div key={ins.id} className="flex items-center justify-between p-5 bg-slate-50 rounded-3xl border border-slate-100 hover:border-blue-200 transition-all">
-                                <div>
-                                    <p className="font-black text-[#1e3a8a] uppercase text-sm tracking-tight">
-                                        {ins.alumnos.usuarios.nombres} {ins.alumnos.usuarios.apellidos}
-                                    </p>
-                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                        DNI: {ins.alumnos.usuarios.numero_documento}
-                                    </span>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    {/* Botón Presente */}
-                                    <button
-                                        onClick={() => handleUpdate(registro.id, 'PRESENTE')}
-                                        className={`p-3 rounded-2xl transition-all shadow-sm ${
-                                            registro?.estado === 'PRESENTE' 
-                                            ? 'bg-green-500 text-white shadow-green-200' 
-                                            : 'bg-white text-slate-300 border border-slate-200 hover:border-green-500 hover:text-green-500'
-                                        }`}
-                                    >
-                                        <Check size={20} strokeWidth={3} />
-                                    </button>
-
-                                    {/* Botón Falta */}
-                                    <button
-                                        onClick={() => handleUpdate(registro.id, 'FALTA')}
-                                        className={`p-3 rounded-2xl transition-all shadow-sm ${
-                                            registro?.estado === 'FALTA' 
-                                            ? 'bg-red-500 text-white shadow-red-200' 
-                                            : 'bg-white text-slate-300 border border-slate-200 hover:border-red-500 hover:text-red-500'
-                                        }`}
-                                    >
-                                        <UserMinus size={20} strokeWidth={3} />
-                                    </button>
-                                </div>
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
+                    {listaAsistencia.map((alumno) => (
+                        <div key={alumno.asistenciaId} className="flex items-center justify-between p-5 bg-white rounded-3xl border border-slate-100 shadow-sm transition-all hover:border-blue-200">
+                            <div>
+                                <p className="font-black text-[#1e3a8a] uppercase text-sm tracking-tight leading-tight">
+                                    {alumno.nombreCompleto}
+                                </p>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
+                                    DNI: {alumno.dni}
+                                </span>
                             </div>
-                        );
-                    })}
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => handleLocalUpdate(alumno.asistenciaId, 'PRESENTE')}
+                                    className={`p-3 rounded-2xl transition-all ${
+                                        alumno.estado === 'PRESENTE' 
+                                        ? 'bg-green-500 text-white shadow-lg shadow-green-200' 
+                                        : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-green-500'
+                                    }`}
+                                >
+                                    <Check size={20} strokeWidth={3} />
+                                </button>
+
+                                <button
+                                    onClick={() => handleLocalUpdate(alumno.asistenciaId, 'FALTA')}
+                                    className={`p-3 rounded-2xl transition-all ${
+                                        alumno.estado === 'FALTA' 
+                                        ? 'bg-red-500 text-white shadow-lg shadow-red-200' 
+                                        : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-red-500'
+                                    }`}
+                                >
+                                    <UserMinus size={20} strokeWidth={3} />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="p-6 bg-white border-t border-slate-100">
+                    <button
+                        onClick={handleSaveAll}
+                        disabled={isSaving || listaAsistencia.length === 0}
+                        className="w-full bg-[#1e3a8a] hover:bg-orange-500 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-xs transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-3 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none italic"
+                    >
+                        {isSaving ? <Loader2 className="animate-spin" size={20} /> : "GUARDAR ASISTENCIA DEL GRUPO"}
+                    </button>
                 </div>
             </div>
         </div>
