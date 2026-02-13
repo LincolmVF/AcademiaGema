@@ -1,9 +1,8 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const loginService = async (identifier, password) => {
-  const isEmail = identifier.includes("@");
   const payload = {
-    [isEmail ? "email" : "numero_documento"]: identifier,
+    username: identifier,
     password,
   };
 
@@ -52,7 +51,7 @@ export const registerService = async (userData) => {
     throw new Error(result.message || "Error al registrar el usuario");
   }
 
-  return result;
+  return result; 
 };
 
 export const completarEmailService = async (nuevoEmail) => {

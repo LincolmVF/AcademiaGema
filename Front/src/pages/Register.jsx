@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, CreditCard, Mail, Phone, Calendar, Users } from 'lucide-react';
 import { registerService } from '../services/auth.service';
@@ -8,11 +8,12 @@ function Register() {
     const navigate = useNavigate();
     const [aceptarTerminos, setAceptarTerminos] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [rolIdAlumno, setRolIdAlumno] = useState(null);
+
     const [formData, setFormData] = useState({
         nombres: '',
         apellidos: '',
         email: '',
-        rol_id: 'alumno',
         tipo_documento_id: 'DNI',
         numero_documento: '',
         password: '',
@@ -21,71 +22,79 @@ function Register() {
         genero: ''
     });
 
+    useEffect(() => {
+        const fetchRolId = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/roles/nombre/Alumno`);
+                const result = await response.json();
+
+                if (response.ok && result.data) {
+                    setRolIdAlumno(result.data.id);
+                } else {
+                    console.error("No se pudo obtener el ID del rol Alumno");
+                }
+            } catch (error) {
+                console.error("Error al conectar con la API de roles:", error);
+            }
+        };
+
+        fetchRolId();
+    }, []);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === "telefono_personal") {
             const onlyNums = value.replace(/\D/g, "");
-
             if (onlyNums.length <= 9) {
-                setFormData((prev) => ({
-                    ...prev,
-                    [name]: onlyNums,
-                }));
+                setFormData((prev) => ({ ...prev, [name]: onlyNums }));
             }
         } else {
-            setFormData((prev) => ({
-                ...prev,
-                [name]: value,
-            }));
+            setFormData((prev) => ({ ...prev, [name]: value }));
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!rolIdAlumno) {
+            toast.error("Error del sistema: El perfil de Alumno no está disponible actualmente.");
+            return;
+        }
+
         if (!aceptarTerminos) {
-            toast.error("Debes aceptar los términos y condiciones para continuar.");
+            toast.error("Debes aceptar los términos y condiciones.");
             return;
         }
 
-        if (!formData.email.includes('@')) {
-            toast.error("Por favor, ingresa un correo electrónico válido");
-            return;
-        }
-
+        const toastId = toast.loading('Procesando inscripción...');
         setLoading(true);
-        try {
-            const fechaNacimientoValida = formData.fecha_nacimiento || null;
 
-            const dataToSend = {
+        try {
+            const userData = {
                 ...formData,
-                fecha_nacimiento: fechaNacimientoValida,
-                password: formData.numero_documento
+                rol_id: rolIdAlumno
             };
 
-            await registerService(dataToSend);
+            const response = await registerService(userData);
 
-            toast.success("¡Registro exitoso! Serás redirigido al inicio de sesión.");
+            toast.success(`¡Bienvenido! Tu usuario autogenerado se envio por correo`, {
+                id: toastId,
+                duration: 10000
+            });
 
-            setTimeout(() => {
-                navigate('/login');
-            }, 2000);
-
+            navigate('/login');
         } catch (error) {
-            toast.error(error.message || "Hubo un problema con el registro");
+            toast.error(error.message || "Error al crear la cuenta", { id: toastId });
         } finally {
             setLoading(false);
         }
     };
 
-    // Obtiene la fecha de hoy
     const hoy = new Date();
 
-    // Resta 2 años para la fecha mínima permitida
     const fechaMinima = new Date();
     fechaMinima.setFullYear(hoy.getFullYear() - 2);
 
-    // Formatear a YYYY-MM-DD
     const maxDate = hoy.toISOString().split('T')[0];
     const minDate = fechaMinima.toISOString().split('T')[0];
 

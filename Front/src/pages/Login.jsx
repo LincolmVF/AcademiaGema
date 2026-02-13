@@ -136,13 +136,13 @@ function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 ml-1">Identificación de Usuario</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 ml-1">Nombre de Usuario</label>
               <input
                 type="text"
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Email o número de DNI"
+                placeholder="Nombre de usuario"
                 className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all placeholder:text-slate-300"
               />
             </div>
