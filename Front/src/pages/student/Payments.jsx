@@ -66,31 +66,11 @@ const Payments = () => {
     setIsModalOpen(true);
   };
 
-  const handleReportSubmit = async (reportData) => {
-    try {
-      let response;
-      if (reportData.voucher_file) {
-        const fd = new FormData();
-        fd.append("deuda_id", reportData.deuda_id);
-        fd.append("metodo_pago", reportData.metodo_pago);
-        fd.append("codigo_operacion", reportData.codigo_operacion);
-        fd.append("monto", reportData.monto);
-        fd.append("voucher_file", reportData.voucher_file);
-        response = await apiFetch.post("/pagos/reportar", fd);
-      } else {
-        response = await apiFetch.post("/pagos/reportar", reportData);
-      }
-      if (response.ok) {
-        toast.success("Pago reportado exitosamente. Pendiente de validación.");
-        fetchFinancialData();
-      } else {
-        const err = await response.json();
-        toast.error(err.message || "Error al procesar el reporte");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("Error crítico de red");
-    }
+  const handleReportSuccess = () => {
+    toast.success("Pago reportado exitosamente. Pendiente de validación.");
+    fetchFinancialData();
+    setIsModalOpen(false);
+    setSelectedDebt(null);
   };
 
   if (loading)
@@ -173,7 +153,7 @@ const Payments = () => {
           setSelectedDebt(null);
         }}
         debt={selectedDebt}
-        onSubmit={handleReportSubmit}
+        onSuccess={handleReportSuccess}
       />
     </div>
   );
