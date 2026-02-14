@@ -5,11 +5,35 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   const diasSemana = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
+  /**
+   * ✅ CORRECCIÓN FECHAS: Normaliza la zona horaria para evitar el "día anterior".
+   * Ajusta el objeto Date local sumando el offset para que 00:00 UTC sea 00:00 Local.
+   */
+  const parseLocalDate = (fechaString) => {
+    if (!fechaString) return new Date();
+    const date = new Date(fechaString);
+    date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+    return date;
+  };
+
+  /**
+   * ✅ CORRECCIÓN 1970: Extrae solo HH:mm.
+   * Evita que el navegador asigne el año 1970 a los strings de hora que vienen de la DB.
+   */
+  const formatTimeDirect = (timeSource) => {
+    if (!timeSource) return '--:--';
+    if (typeof timeSource === 'string') {
+      const match = timeSource.match(/(\d{2}:\d{2})/);
+      return match ? match[1] : timeSource.substring(0, 5);
+    }
+    return new Date(timeSource).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  };
+
   // 1. FILTRADO TÉCNICO Y ORDENAMIENTO
   const sesionesFiltradas = useMemo(() => {
     return attendance
       .filter(s => {
-        const fechaSesion = new Date(s.fecha);
+        const fechaSesion = parseLocalDate(s.fecha);
         const matchMes = filtroMes === "TODOS" || fechaSesion.getMonth().toString() === filtroMes;
         const matchAnio = fechaSesion.getFullYear().toString() === filtroAnio;
         return s?.inscripciones?.horarios_clases && matchMes && matchAnio;
@@ -20,7 +44,7 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   // 2. AGRUPACIÓN POR MES PARA LA VISTA
   const sesionesPorMes = useMemo(() => {
     return sesionesFiltradas.reduce((acc, sesion) => {
-      const fecha = new Date(sesion.fecha);
+      const fecha = parseLocalDate(sesion.fecha);
       const mesAnio = `${meses[fecha.getMonth()]} ${fecha.getFullYear()}`;
       if (!acc[mesAnio]) acc[mesAnio] = [];
       acc[mesAnio].push(sesion);
@@ -30,7 +54,7 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
 
   return (
     <div className="flex flex-col h-full bg-white rounded-[2.5rem] shadow-xl border border-slate-100 overflow-hidden animate-fade-in">
-      {/* HEADER DEL PLAN DE ENTRENAMIENTO */}
+      {/* HEADER */}
       <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
         <div className="flex items-center gap-3">
           <div className="w-2 h-8 bg-[#1e3a8a] rounded-full"></div>
@@ -42,7 +66,6 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
       <div className="p-6 space-y-8 flex-grow overflow-y-auto max-h-[750px] custom-scrollbar bg-slate-50/30">
         {Object.keys(sesionesPorMes).length > 0 ? Object.entries(sesionesPorMes).map(([mes, items]) => (
           <div key={mes} className="space-y-4">
-            {/* SEPARADOR DE MES */}
             <div className="flex items-center gap-4 py-2">
               <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em] whitespace-nowrap italic">{mes}</span>
               <div className="h-px w-full bg-slate-200"></div>
@@ -50,19 +73,19 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
 
             {items.map((sesion) => {
               const horario = sesion?.inscripciones?.horarios_clases;
-              const profesor = horario?.profesores;
-              const fechaObj = new Date(sesion.fecha);
+              
+              /**
+               * ✅ RUTA DEL NOMBRE CORREGIDA (Basado en tu JSON):
+               * Accedemos a: horario -> profesores -> usuarios -> nombres / apellidos
+               */
+              const coachData = horario?.profesores?.usuarios;
+              const nombreLider = coachData 
+                ? `${coachData.nombres.trim()} ${coachData.apellidos.trim()}`
+                : 'COACH GEMA';
+
+              const fechaObj = parseLocalDate(sesion.fecha);
               const esPresente = sesion.estado === 'PRESENTE';
               const esFalta = sesion.estado === 'FALTA';
-              
-              // Formateo de hora limpio
-              const formatTime = (time) => {
-                if (!time) return '--:--';
-                const d = new Date(time);
-                // Si viene como string "HH:mm" lo devolvemos tal cual para evitar errores de zona horaria
-                if (typeof time === 'string' && time.length === 5) return time;
-                return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-              };
 
               return (
                 <div key={sesion.id} className={`group relative rounded-[2rem] border transition-all duration-300 ${
@@ -85,7 +108,9 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                       <div className="text-left">
                         <div className="flex items-center gap-1 text-orange-500 font-black">
                           <Clock size={12} />
-                          <span className="text-[10px] uppercase tracking-tighter">{formatTime(horario?.hora_inicio)}</span>
+                          <span className="text-[10px] uppercase tracking-tighter">
+                            {formatTimeDirect(horario?.hora_inicio)}
+                          </span>
                         </div>
                         <h4 className="text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">Sesión Técnica</h4>
                       </div>
@@ -109,11 +134,12 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                         </div>
                       </div>
 
+                      {/* NOMBRE DEL LÍDER TÉCNICO DINÁMICO */}
                       <div className="space-y-1 hidden lg:block text-left">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Líder Técnico</p>
                         <div className="flex items-center gap-1.5 text-[10px] font-black text-[#1e3a8a] uppercase italic">
                           <User size={12} className="text-indigo-500" />
-                          {profesor?.usuarios?.nombres || 'Coach'}
+                          <span>{nombreLider}</span>
                         </div>
                       </div>
                     </div>
@@ -143,5 +169,4 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   );
 };
 
-// ✅ ESTO ES LO QUE FALTABA PARA ELIMINAR EL ERROR DE VITE
 export default StudentSchedule;
