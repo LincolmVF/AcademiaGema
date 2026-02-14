@@ -11,6 +11,8 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import Pricing from "./pages/Pricing";
 import Login from "./pages/Login";
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from "./pages/ResetPassword";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 
@@ -66,6 +68,8 @@ function App() {
           }
         />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
 
         {/* --- RUTAS PROTEGIDAS (DASHBOARD) --- */}
