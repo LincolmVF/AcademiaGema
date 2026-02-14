@@ -57,58 +57,56 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!formData.codigo_operacion.trim())
-      return toast.error("El código de operación es vital");
-    if (!formData.monto || formData.monto <= 0)
-      return toast.error("Ingresa un monto válido");
-    if (!voucherFile && !formData.voucher_url.trim())
-      return toast.error("Debes subir una imagen o proporcionar una URL");
-
-    setLoading(true);
-    try {
-      let finalVoucherUrl = formData.voucher_url;
-
-      // 🔥 PASO 1: Si hay archivo, subirlo primero a Cloudinary
-      if (voucherFile) {
-        const uploadData = new FormData();
-        uploadData.append('file', voucherFile);
-
-        const uploadRes = await apiFetch('/cloudinary/upload', {
-          method: 'POST',
-          body: uploadData, // Fetch con FormData no debe llevar Content-Type manual
-        });
-
-        if (!uploadRes.ok) throw new Error("Error al subir imagen");
-        const uploadResult = await uploadRes.json();
-        finalVoucherUrl = uploadResult.url; 
-      }
-
-      // ✅ PASO 2: Enviar el reporte de pago como JSON plano
-      await onSubmit({
-        deuda_id: parseInt(debt.id),
-        monto: parseFloat(formData.monto),
-        metodo_pago: formData.metodo_pago,
-        codigo_operacion: formData.codigo_operacion,
-        voucher_url: finalVoucherUrl,
-      });
-      
-      onClose();
-      handleRemoveFile();
-      setFormData({
-        metodo_pago: "YAPE",
-        codigo_operacion: "",
-        monto: "",
-        voucher_url: "",
-      });
-    } catch (error) {
-      console.error(error);
-      toast.error("Error al procesar el pago");
-    } finally {
-      setLoading(false);
+  e.preventDefault();
+  if (!formData.codigo_operacion.trim())
+    return toast.error("El código de operación es vital");
+  if (!formData.monto || formData.monto <= 0)
+    return toast.error("Ingresa un monto válido");
+  if (!voucherFile && !formData.voucher_url.trim())
+    return toast.error("Debes subir una imagen o proporcionar una URL");
+  setLoading(true);
+  try {
+    // 🚀 NUEVA FORMA: Enviar todo en un solo request con FormData
+    const paymentData = new FormData();
+    paymentData.append('deuda_id', parseInt(debt.id));
+    paymentData.append('monto', parseFloat(formData.monto));
+    paymentData.append('metodo_pago', formData.metodo_pago);
+    paymentData.append('codigo_operacion', formData.codigo_operacion);
+    
+    // Si hay archivo, agregarlo al FormData
+    if (voucherFile) {
+      paymentData.append('voucher', voucherFile);
+    } 
+    // Si no hay archivo pero hay URL, agregarla
+    else if (formData.voucher_url) {
+      paymentData.append('voucher_url', formData.voucher_url);
     }
-  };
+    // ✅ UN SOLO REQUEST: El backend se encarga de subir a Cloudinary
+    const response = await apiFetch('/pagos/reportar', {
+      method: 'POST',
+      body: paymentData, // No envíes Content-Type, fetch lo maneja automáticamente con FormData
+    });
+    if (!response.ok) throw new Error("Error al reportar pago");
+    const result = await response.json();
+    
+    toast.success("¡Pago reportado exitosamente!");
+    onSubmit(result.data); // Pasas el resultado al componente padre si es necesario
+    
+    onClose();
+    handleRemoveFile();
+    setFormData({
+      metodo_pago: "YAPE",
+      codigo_operacion: "",
+      monto: "",
+      voucher_url: "",
+    });
+  } catch (error) {
+    console.error(error);
+    toast.error(error.message || "Error al procesar el pago");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-[#0f172a]/90 backdrop-blur-md animate-fade-in">
