@@ -21,7 +21,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const StudentRegistration = () => {
   const navigate = useNavigate();
-  const { updateUserData, userId, login } = useAuth();
+  const { userId, login, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -160,16 +160,26 @@ const StudentRegistration = () => {
 
       const response = await alumnoService.update(userId, payload);
 
-      const updatedInfo = response.data || response;
+      const freshAlumniData = response.data || response;
 
-      updateUserData({
-        alumnos: updatedInfo.alumnos || updatedInfo
-      });
+      const updatedUser = {
+        ...user,
+        user: {
+          ...(user.user || user),
+          alumnos: {
+            ...(user.user?.alumnos || {}),
+            ...freshAlumniData,
+          }
+        }
+      };
 
-      toast.success("¡Registro completado!");
+      login(updatedUser);
+
+      toast.success("¡Registro completado con éxito!");
+
       navigate("/dashboard/student");
     } catch (error) {
-      toast.error(error.message || "Error en el proceso");
+      toast.error(error.message || "Error al actualizar los datos");
     } finally {
       setLoading(false);
     }
