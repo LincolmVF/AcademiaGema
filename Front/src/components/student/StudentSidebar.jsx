@@ -11,7 +11,10 @@ const StudentSidebar = () => {
   const userData = user?.user || user || {};
   const debeCompletarEmail = userData?.debeCompletarEmail === true;
 
-  const registroCompletado = !!(userData?.alumnos && userData.alumnos.seguro_medico);
+  const registroCompletado = !!(
+    (userData?.alumnos?.seguro_medico) ||
+    (user?.alumnos?.seguro_medico)
+  );
 
   const handleUpdateSuccess = (updatedData) => {
     if (!user) return;
