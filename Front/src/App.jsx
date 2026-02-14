@@ -34,6 +34,7 @@ import AdminCatalogManager from "./pages/admin/AdminCatalogManager";
 import AdminSchedulesManager from "./pages/admin/AdminScheduleManager";
 import AdminStudentsManager from "./pages/admin/AdminStudentManager";
 import AdminPaymentManager from "./pages/admin/AdminPaymentManager";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
@@ -117,11 +118,7 @@ function App() {
             {/* Configuración (Placeholder) */}
             <Route
               path="admin/settings"
-              element={
-                <div className="p-8 font-bold text-slate-500">
-                  Configuración del Sistema (En construcción)
-                </div>
-              }
+              element={<AdminSettings />}
             />
           </Route>
         </Route>

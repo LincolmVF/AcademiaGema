@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Loader2, Tag, Edit3, Plus, Filter } from 'lucide-react';
+import { Search, Loader2, Tag, Edit3, Filter } from 'lucide-react'; // Quitamos Plus de los imports
 import { apiFetch } from '../../interceptors/api';
 import AdminCatalog from './AdminCatalog';
 import toast from 'react-hot-toast';
@@ -47,6 +47,7 @@ const AdminCatalogManager = () => {
         setView('edit');
     };
 
+    // Mantenemos la lógica de edit, pero creamos una protección visual al no tener botón 'create'
     if (view === 'create' || view === 'edit') {
         return (
             <AdminCatalog 
@@ -62,7 +63,7 @@ const AdminCatalogManager = () => {
 
     return (
         <div className="space-y-6 animate-fade-in-up p-1 pb-20">
-            {/* Header */}
+            {/* Header - Botón eliminado aquí */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
@@ -75,14 +76,6 @@ const AdminCatalogManager = () => {
                         Edita los precios del catálogo de servicio, pues son parte de la lógica interna.
                     </p>
                 </div>
-
-                <button
-                    onClick={() => { setSelectedItem(null); setView('create'); }}
-                    className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg group"
-                >
-                    <Plus size={20} className="group-hover:rotate-90 transition-transform" />
-                    Nuevo Concepto
-                </button>
             </div>
 
             {/* Barra de Búsqueda y Filtro de Vigencia */}
@@ -139,7 +132,6 @@ const AdminCatalogManager = () => {
                                             </span>
                                         )}
                                     </div>
-                                    {/* Nombre visible sin truncate */}
                                     <h3 className="font-black text-slate-800 text-sm uppercase italic leading-tight min-h-[2.5rem] flex items-center">
                                         {item.nombre}
                                     </h3>
