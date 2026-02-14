@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { X, Send, Loader2, Link, Hash, Banknote } from "lucide-react";
+import { X, Send, Loader2, Link, Hash, Banknote, Upload, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
 const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
   const [loading, setLoading] = useState(false);
+  const [voucherFile, setVoucherFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   
-  // Estado adaptado: de voucher_file (archivo) a voucher_url (texto)
   const [formData, setFormData] = useState({
     metodo_pago: "YAPE",
     codigo_operacion: "",
     monto: "",
-    voucher_url: "", // Cambiado aquí
+    voucher_url: "",
   });
 
   useEffect(() => {
@@ -22,7 +23,53 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
     }
   }, [debt]);
 
+  // Cleanup preview URL when component unmounts or file changes
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   if (!isOpen || !debt) return null;
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error("Solo se permiten archivos de imagen");
+        return;
+      }
+      
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("La imagen no debe superar 5MB");
+        return;
+      }
+
+      setVoucherFile(file);
+      
+      // Create preview URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      const newPreviewUrl = URL.createObjectURL(file);
+      setPreviewUrl(newPreviewUrl);
+
+      // Clear URL field when file is selected
+      setFormData({ ...formData, voucher_url: "" });
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setVoucherFile(null);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,20 +79,46 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
       return toast.error("El código de operación es vital");
     if (!formData.monto || formData.monto <= 0)
       return toast.error("Ingresa un monto válido");
-    if (!formData.voucher_url.trim()) // Validación para la URL
-      return toast.error("La URL del comprobante es obligatoria");
+    if (!voucherFile && !formData.voucher_url.trim())
+      return toast.error("Debes subir una imagen o proporcionar una URL del comprobante");
 
     setLoading(true);
     try {
-      // Enviamos el objeto exactamente como lo necesitas
-      await onSubmit({
-        deuda_id: debt.id,
-        monto: parseFloat(formData.monto),
-        metodo_pago: formData.metodo_pago,
-        codigo_operacion: formData.codigo_operacion,
-        voucher_url: formData.voucher_url,
-      });
+      // If there's a file, we need to upload it first or send it with FormData
+      let voucherUrl = formData.voucher_url;
+      
+      if (voucherFile) {
+        // Here you would typically upload the file to your backend
+        // For now, we'll include it in the submission
+        const submitData = new FormData();
+        submitData.append('deuda_id', debt.id);
+        submitData.append('monto', parseFloat(formData.monto));
+        submitData.append('metodo_pago', formData.metodo_pago);
+        submitData.append('codigo_operacion', formData.codigo_operacion);
+        submitData.append('voucher_file', voucherFile);
+        
+        await onSubmit(submitData);
+      } else {
+        // Send regular JSON data with URL
+        await onSubmit({
+          deuda_id: debt.id,
+          monto: parseFloat(formData.monto),
+          metodo_pago: formData.metodo_pago,
+          codigo_operacion: formData.codigo_operacion,
+          voucher_url: formData.voucher_url,
+        });
+      }
+      
       onClose();
+      // Reset form
+      setVoucherFile(null);
+      setPreviewUrl(null);
+      setFormData({
+        metodo_pago: "YAPE",
+        codigo_operacion: "",
+        monto: "",
+        voucher_url: "",
+      });
     } catch (error) {
       console.error(error);
       toast.error("Error al reportar el pago");
@@ -127,23 +200,103 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
             />
           </div>
 
-          {/* URL del Voucher (Adaptado) */}
-
+          {/* Voucher Upload/URL Section */}
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-              <Link size={12} className="text-blue-500" /> Link del Comprobante (Drive/Imgur)
+              <ImageIcon size={12} className="text-blue-500" /> Comprobante de Pago
             </label>
-            <div className="relative group">
-              <input
-                type="url"
-                placeholder="https://..."
-                value={formData.voucher_url}
-                onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
-                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 focus:bg-white transition-all pr-12 text-slate-600"
-              />
-              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-all">
-                <Link size={18} />
-              </div>
+
+            {/* Image Upload with Preview */}
+            <div className="space-y-3">
+              {previewUrl ? (
+                // Preview Mode
+                <div className="relative bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 group">
+                  <div className="flex items-start gap-4">
+                    <img
+                      src={previewUrl}
+                      alt="Vista previa del voucher"
+                      className="w-32 h-32 object-cover rounded-xl border-2 border-blue-500/30"
+                    />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-slate-700">
+                            {voucherFile?.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-semibold">
+                            {(voucherFile?.size / 1024).toFixed(2)} KB
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveFile}
+                          className="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white p-2 rounded-lg transition-all"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      <p className="text-[9px] text-green-600 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <ImageIcon size={10} /> Imagen cargada exitosamente
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                // Upload Zone
+                <label className="block cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                  <div className="bg-slate-50 hover:bg-blue-50 border-2 border-slate-100 hover:border-blue-500/50 rounded-2xl px-6 py-8 text-center transition-all group">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="bg-blue-500/10 group-hover:bg-blue-500/20 p-4 rounded-2xl transition-all">
+                        <Upload size={24} className="text-blue-500" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-700">
+                          Arrastra o haz clic para subir
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-semibold mt-1">
+                          PNG, JPG, JPEG (máx. 5MB)
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </label>
+              )}
+
+              {/* Divider "O" */}
+              {!previewUrl && (
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t-2 border-slate-100"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="bg-white px-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      O
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* URL Input - only show when no file uploaded */}
+              {!previewUrl && (
+                <div className="relative group">
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/... o https://imgur.com/..."
+                    value={formData.voucher_url}
+                    onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 focus:bg-white transition-all pr-12 text-slate-600"
+                  />
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-all">
+                    <Link size={18} />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
