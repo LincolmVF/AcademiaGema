@@ -14,7 +14,8 @@ export const AuthProvider = ({ children }) => {
             try {
                 const parsedUser = JSON.parse(savedUser);
                 setUser(parsedUser);
-                setUserId(parsedUser.user.id);
+                // Aseguramos que el ID se extraiga correctamente de la estructura anidada
+                setUserId(parsedUser.user?.id || parsedUser.id);
             } catch (error) {
                 console.error("Error al recuperar sesión:", error);
                 sessionStorage.clear();
@@ -26,11 +27,34 @@ export const AuthProvider = ({ children }) => {
     const login = (userData) => {
         if (!userData) return;
 
+        // Normalizamos la data para que siempre tenga la forma { user: { ... } }
         const normalizedData = userData.user ? userData : { user: userData };
 
         setUser(normalizedData);
         setUserId(normalizedData.user?.id || normalizedData.id);
         sessionStorage.setItem('userData', JSON.stringify(normalizedData));
+    };
+
+    /**
+     * Función para actualizar partes específicas del usuario
+     * Útil para completar email o completar registro de alumno
+     */
+    const updateUserData = (newData) => {
+        setUser(prev => {
+            if (!prev) return null;
+
+            // Combinamos el estado anterior con la nueva data
+            const updatedState = {
+                ...prev,
+                user: {
+                    ...(prev.user || prev),
+                    ...newData
+                }
+            };
+
+            sessionStorage.setItem('userData', JSON.stringify(updatedState));
+            return updatedState;
+        });
     };
 
     const logout = async () => {
@@ -42,11 +66,13 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             setUserId(null);
             sessionStorage.clear();
+            // Opcional: Redirigir manualmente si es necesario
+            window.location.href = '/login';
         }
     };
 
     return (
-        <AuthContext.Provider value={{ user, userId, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, userId, login, logout, updateUserData, loading }}>
             {children}
         </AuthContext.Provider>
     );
