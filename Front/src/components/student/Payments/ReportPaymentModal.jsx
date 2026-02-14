@@ -130,14 +130,13 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
           {/* URL del Voucher (Adaptado) */}
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-              <Link size={12} className="text-blue-500" /> URL del Voucher
+              <Link size={12} className="text-blue-500" /> Subir Comprobante (Imagen)
             </label>
             <input
-              type="text"
-              placeholder="https://ejemplo.com/mi-pago.jpg"
-              value={formData.voucher_url}
-              onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 transition-all"
+              type="file"
+              accept="image/*"
+              onChange={(e) => setFormData({ ...formData, voucher_file: e.target.files[0] })}
+              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none focus:border-blue-500/50 transition-all"
             />
           </div>
 
