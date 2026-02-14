@@ -128,16 +128,23 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSubmit }) => {
           </div>
 
           {/* URL del Voucher (Adaptado) */}
+
           <div className="space-y-1">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-              <Link size={12} className="text-blue-500" /> Subir Comprobante (Imagen)
+              <Link size={12} className="text-blue-500" /> Link del Comprobante (Drive/Imgur)
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFormData({ ...formData, voucher_file: e.target.files[0] })}
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-3 text-sm font-bold outline-none focus:border-blue-500/50 transition-all"
-            />
+            <div className="relative group">
+              <input
+                type="url"
+                placeholder="https://..."
+                value={formData.voucher_url}
+                onChange={(e) => setFormData({ ...formData, voucher_url: e.target.value })}
+                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:border-blue-500/50 focus:bg-white transition-all pr-12 text-slate-600"
+              />
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-all">
+                <Link size={18} />
+              </div>
+            </div>
           </div>
 
           {/* Botón de envío */}
