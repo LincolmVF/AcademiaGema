@@ -52,9 +52,9 @@ const AdminStudentsManager = () => {
 
     // 2. Filtrado en tiempo real
     const filteredAlumnos = alumnos.filter(alum =>
-        alum.nombres.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        alum.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        alum.numero_documento.includes(searchTerm)
+        alum.nombres?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alum.apellidos?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        alum.numero_documento?.includes(searchTerm)
     );
 
     const handleViewDetails = (alumno) => {
