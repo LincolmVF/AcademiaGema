@@ -35,6 +35,7 @@ import AdminSchedulesManager from "./pages/admin/AdminScheduleManager";
 import AdminStudentsManager from "./pages/admin/AdminStudentManager";
 import AdminPaymentManager from "./pages/admin/AdminPaymentManager";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminInjuriesManager from "./pages/admin/AdminInjuriesManager";
 
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
@@ -42,6 +43,8 @@ import Profile from "./pages/student/Profile";
 import StudentRegistration from "./components/student/StudentRegistration";
 import Enrollment from "./pages/student/enrollment";
 import Blog from "./pages/Blog";
+import StudentInjuries from "./pages/student/StudentInjuries";
+import StudentRecoveries from "./pages/student/StudentRecoveries";
 
 function App() {
   return (
@@ -81,6 +84,8 @@ function App() {
             <Route path="student/payments" element={<Payments />} />
             <Route path="student/profile" element={<Profile />} />
             <Route path="student/enrollment" element={<Enrollment />} />
+            <Route path="student/injuries" element={<StudentInjuries />} />
+            <Route path="student/recoveries" element={<StudentRecoveries />} />
             <Route
               path="student/registration"
               element={<StudentRegistration />}
@@ -110,6 +115,7 @@ function App() {
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />
             <Route path="admin/locations" element={<AdminLocationsManager />} />
+            <Route path="admin/injuries" element={<AdminInjuriesManager />} />
             <Route
               path="admin/payment-validation"
               element={<AdminPaymentManager />}

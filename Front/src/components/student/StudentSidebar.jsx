@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
-import { Home, CreditCard, User, LogOut, Check } from "lucide-react";
+import { Home, CreditCard, User, LogOut, Check, Activity, Ticket } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import CompletarEmailModal from "../../pages/CompletarEmailModal";
 
@@ -46,6 +46,8 @@ const StudentSidebar = () => {
       { icon: Home, label: "Nueva Inscripción", path: "/dashboard/student/enrollment" },
       { icon: CreditCard, label: "Mis Pagos", path: "/dashboard/student/payments" },
       { icon: User, label: "Mi Perfil", path: "/dashboard/student/profile" },
+      { icon: Activity, label: "Mis Lesiones", path: "/dashboard/student/injuries" },
+      { icon: Ticket, label: "Mis Recuperaciones", path: "/dashboard/student/recoveries" }
     ];
   };
 
