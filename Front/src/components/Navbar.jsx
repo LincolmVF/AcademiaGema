@@ -9,7 +9,7 @@ const Navbar = () => {
   const navLinks = [
     { label: 'Inicio', path: '/' },
     { label: 'Nosotros', path: '/about' },
-    { label: 'Precios', path: '/pricing' },
+    { label: 'Planes', path: '/pricing' },
     { label: 'Blog', path: '/blog' },
   ];
 
@@ -17,15 +17,15 @@ const Navbar = () => {
     <nav className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Altura ajustada a h-20 para un look más compacto y moderno */}
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-24">
 
           {/* --- BLOQUE LOGO --- */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative flex-shrink-0">
               {/* Logo reducido a w-14 h-14 */}
-              <div className="w-14 h-14 bg-[#1e3a8a] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/10 group-hover:scale-105 transition-transform overflow-hidden border border-slate-50">
+              <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/10 group-hover:scale-105 transition-transform overflow-hidden border border-slate-50">
                 <img
-                  src="/logo.png"
+                  src="/logo_diamante.jpeg"
                   alt="Logo"
                   className="w-full h-full object-contain p-1.5 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                 />
@@ -36,10 +36,7 @@ const Navbar = () => {
 
             <div className="flex flex-col">
               <span className="text-lg font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
-                Academia<span className="text-orange-500">Gema</span>
-              </span>
-              <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.25em] leading-none mt-1">
-                PASIÓN EN CADA SET
+                Club<span className="text-orange-500">Gema</span>
               </span>
             </div>
           </Link>
@@ -69,7 +66,7 @@ const Navbar = () => {
               className="flex items-center gap-2.5 pl-2 group"
             >
               <div className="text-right hidden lg:block">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Portal</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Mi Portal</p>
                 <p className="text-xs font-black text-[#1e3a8a] group-hover:text-orange-500 transition-colors mt-0.5">Ingresar</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1e3a8a] group-hover:text-white transition-all border border-slate-100 shadow-sm">

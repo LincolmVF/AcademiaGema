@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     /* Reducimos la altura mínima y los paddings para compactarlo */
     <div className="relative w-full min-h-[45vh] md:min-h-[50vh] flex items-center bg-[#0f172a] overflow-hidden py-8 md:py-12">
-      
+
       {/* 1. IMAGEN DE FONDO CON TINTE GEMA */}
       <img
         src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000&auto=format&fit=crop"
@@ -22,14 +22,7 @@ const Hero = () => {
       {/* 3. CONTENIDO */}
       <div className="relative h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex flex-col justify-center">
 
-        <div className="max-w-2xl animate-fade-in-up">
-
-          {/* Badge Superior: Más compacto */}
-          <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-6 backdrop-blur-md">
-            <Trophy size={12} className="text-orange-500" />
-            <span>Academia Gema #1 en formación</span>
-          </div>
-
+        <div className="max-w-2xl animate-fade-in-up mt-8">
           {/* Título: Reducido de text-7xl a text-6xl */}
           <h1 className="text-4xl md:text-6xl font-black text-white leading-[0.95] mb-4 uppercase italic tracking-tighter">
             Eleva tu juego <br />
@@ -39,13 +32,13 @@ const Hero = () => {
           </h1>
 
           <p className="text-base md:text-lg text-slate-400 mb-8 leading-relaxed max-w-lg font-medium">
-            Entrenamientos de alto rendimiento y coaches profesionales para convertirte en un crack del voley.
+            Aprende. Juega. Compite.
           </p>
 
           {/* Botones de Acción: Más estilizados */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-orange-500/20 hover:-translate-y-1 active:scale-95 group">
-              Matricularme Ahora
+              Inscribirme Ahora
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
 
@@ -55,22 +48,11 @@ const Hero = () => {
             </button>
           </div>
 
-          {/* Stats Rápidas: Más discretas */}
-          <div className="mt-8 flex gap-6 items-center border-t border-white/5 pt-6">
-            <div>
-              <p className="text-white font-black text-xl tracking-tighter italic">+500</p>
-              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Alumnos</p>
-            </div>
-            <div className="w-px h-6 bg-white/10"></div>
-            <div>
-              <p className="text-white font-black text-xl tracking-tighter italic">15</p>
-              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Coaches</p>
-            </div>
-            <div className="w-px h-6 bg-white/10"></div>
-            <div>
-              <p className="text-white font-black text-xl tracking-tighter italic">24/7</p>
-              <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Soporte</p>
-            </div>
+          {/* Texto motivacional */}
+          <div className="mt-12 flex items-start gap-4 border-l-2 border-orange-500/30 pl-6 py-2">
+            <p className="text-sm md:text-base text-slate-400 leading-relaxed max-w-md font-medium italic">
+              "Mejora la técnica, tu rendimiento físico y gana seguridad en cada jugada."
+            </p>
           </div>
         </div>
 
