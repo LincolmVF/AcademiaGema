@@ -87,24 +87,16 @@ const DashboardEstudiante = () => {
       </div>
 
       <div className="w-full md:max-w-6xl p-4 md:p-8 pb-28 relative z-10">
-        
+
         {/* --- HEADER DINÁMICO RESTAURADO --- */}
         <header className="flex justify-between items-start mb-10 mt-2 bg-white md:bg-transparent p-5 md:p-0 rounded-[2.5rem] shadow-xl shadow-slate-200/50 md:shadow-none border border-slate-100 md:border-none">
           <div>
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest group italic"
-            >
-              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-              Volver al Inicio
-            </Link>
-
             <h1 className="text-3xl md:text-4xl font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
               Hola, <span className="text-orange-500">{firstName}</span> 👋
             </h1>
             <div className="h-1.5 w-20 bg-orange-500 rounded-full mt-3 shadow-lg shadow-orange-500/20"></div>
             <p className="text-xs md:text-sm text-slate-500 font-bold mt-4 italic uppercase tracking-wider flex items-center gap-2">
-              <Sparkles size={14} className="text-orange-400" /> Academia Gema <span className="text-slate-300 mx-2">|</span> Centro de Alto Rendimiento
+              <Sparkles size={14} className="text-orange-400" />Centro de Alto Rendimiento
             </p>
           </div>
 
@@ -112,9 +104,6 @@ const DashboardEstudiante = () => {
             <div className="hidden md:block text-right">
               <span className="block font-black text-[#1e3a8a] uppercase tracking-tight leading-tight group-hover:text-orange-600 transition-colors">
                 {fullName}
-              </span>
-              <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-600 text-[9px] font-black uppercase tracking-widest rounded-lg mt-1">
-                {userRole}
               </span>
             </div>
             <div className="relative">
@@ -133,8 +122,8 @@ const DashboardEstudiante = () => {
         <div className="flex flex-wrap items-center gap-4 bg-white/50 p-4 rounded-[2rem] border border-slate-200 backdrop-blur-sm mb-8">
           <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
             <Filter size={16} className="text-orange-500" />
-            <select 
-              value={filtroMes} 
+            <select
+              value={filtroMes}
               onChange={(e) => setFiltroMes(e.target.value)}
               className="text-[10px] font-black uppercase tracking-widest text-[#1e3a8a] outline-none cursor-pointer bg-transparent"
             >
@@ -144,8 +133,8 @@ const DashboardEstudiante = () => {
           </div>
 
           <div className="flex items-center gap-3 bg-white px-5 py-2 rounded-xl border border-slate-200 shadow-sm font-black text-[10px] text-[#1e3a8a] italic">
-             <Calendar size={14} className="text-orange-500" />
-             TEMPORADA {filtroAnio}
+            <Calendar size={14} className="text-orange-500" />
+            TEMPORADA {filtroAnio}
           </div>
         </div>
 
@@ -155,10 +144,10 @@ const DashboardEstudiante = () => {
         {/* Grid Principal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           <div className="lg:col-span-2">
-            <StudentSchedule 
-              attendance={attendance} 
-              filtroMes={filtroMes} 
-              filtroAnio={filtroAnio} 
+            <StudentSchedule
+              attendance={attendance}
+              filtroMes={filtroMes}
+              filtroAnio={filtroAnio}
             />
           </div>
 

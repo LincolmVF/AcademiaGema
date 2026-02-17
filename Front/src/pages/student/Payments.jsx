@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "../../interceptors/api";
 import { useAuth } from "../../context/AuthContext";
-import { Loader2, History, Wallet } from "lucide-react";
+import { Loader2, History, Wallet, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 
 // Componentes Modulares
@@ -9,6 +9,7 @@ import PaymentMethodCard from "../../components/student/Payments/PaymentMethodCa
 import DebtItem from "../../components/student/Payments/DebtItem";
 import PaymentHistoryItem from "../../components/student/Payments/PaymentHistoryItem";
 import ReportPaymentModal from "../../components/student/Payments/ReportPaymentModal";
+import { Link } from "react-router-dom";
 
 const Payments = () => {
   const { userId } = useAuth(); // Usamos userId directamente del contexto
@@ -89,6 +90,10 @@ const Payments = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-8 animate-fade-in-up pb-24">
+      <Link to="/dashboard/student" className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest italic">
+        <ArrowLeft size={14} /> Volver
+      </Link>
+      
       <div className="mb-10 text-center md:text-left">
         <h1 className="text-4xl font-black text-[#1e3a8a] uppercase tracking-tighter italic leading-none">
           Centro de <span className="text-orange-500">Pagos</span>

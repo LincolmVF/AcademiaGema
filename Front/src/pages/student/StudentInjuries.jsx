@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import lesionService from '../../services/lesion.service';
 // Importamos los componentes
 import InjuryRequestForm from '../../components/student/Injuries/InjuryRequestForm';
 import InjuryHistoryItem from '../../components/student/Injuries/InjuryHistoryItem';
+import { Link } from 'react-router-dom';
 
 const StudentInjuries = () => {
     const [activeTab, setActiveTab] = useState('request');
@@ -29,6 +30,10 @@ const StudentInjuries = () => {
 
     return (
         <div className="p-6 max-w-5xl mx-auto">
+            <Link to="/dashboard/student" className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest italic">
+                <ArrowLeft size={14} /> Volver
+            </Link>
+
             <div className="mb-8">
                 <h1 className="text-4xl font-black text-[#1e3a8a] italic uppercase tracking-tighter">
                     Gestión de <span className="text-orange-500">Lesiones</span>

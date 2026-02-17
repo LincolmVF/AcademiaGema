@@ -40,7 +40,6 @@ import AdminInjuriesManager from "./pages/admin/AdminInjuriesManager";
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
 import Profile from "./pages/student/Profile";
-import StudentRegistration from "./components/student/StudentRegistration";
 import Enrollment from "./pages/student/enrollment";
 import Blog from "./pages/Blog";
 import StudentInjuries from "./pages/student/StudentInjuries";
@@ -86,10 +85,6 @@ function App() {
             <Route path="student/enrollment" element={<Enrollment />} />
             <Route path="student/injuries" element={<StudentInjuries />} />
             <Route path="student/recoveries" element={<StudentRecoveries />} />
-            <Route
-              path="student/registration"
-              element={<StudentRegistration />}
-            />
 
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
             <Route

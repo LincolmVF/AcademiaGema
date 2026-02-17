@@ -92,6 +92,9 @@ const StudentRecoveries = () => {
 
     return (
         <div className="p-6 md:p-10 max-w-7xl mx-auto min-h-screen">
+            <Link to="/dashboard/student" className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest italic">
+                <ArrowLeft size={14} /> Volver
+            </Link>
             {/* Header */}
             <div className="mb-8">
                 <div className="flex justify-between items-end">

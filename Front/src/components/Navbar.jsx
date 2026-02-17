@@ -35,7 +35,7 @@ const Navbar = () => {
             </div>
 
             <div className="flex flex-col">
-              <span className="text-lg font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
+              <span className="text-2xl font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
                 Club<span className="text-orange-500">Gema</span>
               </span>
             </div>

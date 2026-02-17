@@ -6,7 +6,6 @@ import StudentSidebar from '../components/student/StudentSidebar';
 
 const StudentLayout = () => {
   const { user, loading } = useAuth();
-  const location = useLocation();
 
   if (loading) return null;
 
@@ -14,9 +13,6 @@ const StudentLayout = () => {
 
   const userData = user?.user || user || {};
   const debeCompletarEmail = userData?.debeCompletarEmail === true;
-
-  const registroIncompleto = !userData?.alumnos?.seguro_medico;
-  const enPaginaRegistro = location.pathname === '/dashboard/student/registration';
 
   if (debeCompletarEmail) {
     return (
@@ -27,10 +23,6 @@ const StudentLayout = () => {
         </div>
       </div>
     );
-  }
-
-  if (registroIncompleto && !enPaginaRegistro) {
-    return <Navigate to="/dashboard/student/registration" replace />;
   }
 
   return (
