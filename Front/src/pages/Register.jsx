@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, CreditCard, Mail, Phone, Calendar, Users, Hash, AlertCircle, Heart, X, FileText, ArrowLeft, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { User, CreditCard, Mail, Phone, Calendar, Users, Hash, AlertCircle, Heart, X, FileText, ArrowLeft, ShieldCheck, CheckCircle2, Lock, EyeOff, Eye } from 'lucide-react';
 import { registerService } from '../services/auth.service';
 import toast from 'react-hot-toast';
 
@@ -8,9 +8,10 @@ function Register() {
     const navigate = useNavigate();
     const [aceptarTerminos, setAceptarTerminos] = useState(false);
     const [modalAbierto, setModalAbierto] = useState(false);
-    const [lecturaCompletada, setLecturaCompletada] = useState(false); // Bloqueo del checkbox
+    const [lecturaCompletada, setLecturaCompletada] = useState(false);
     const [loading, setLoading] = useState(false);
     const [rolIdAlumno, setRolIdAlumno] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const [formData, setFormData] = useState({
         nombres: '',
@@ -51,7 +52,7 @@ function Register() {
 
     const cerrarModal = () => {
         setModalAbierto(false);
-        setLecturaCompletada(true); // Habilita el checkbox al cerrar
+        setLecturaCompletada(true);
     };
 
     const handleSubmit = async (e) => {
@@ -117,13 +118,56 @@ function Register() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* FILA 1: EMAIL */}
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico *</label>
-                            <div className="relative group">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
-                                <input type="email" name="email" required value={formData.email} onChange={handleChange} placeholder="ejemplo@correo.com"
-                                    className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:border-orange-500 focus:bg-white outline-none transition-all text-sm font-semibold" />
+                        {/* FILA 1: CREDENCIALES (EMAIL Y CONTRASEÑA) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico *</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        required
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        placeholder="ejemplo@correo.com"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 focus:bg-white outline-none transition-all text-sm font-semibold"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex flex-col space-y-1">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                                        Contraseña *
+                                    </label>
+                                    {/* Instrucción de formato sutil */}
+                                    <span className="text-[9px] text-slate-400 italic ml-1 leading-none">
+                                        Mínimo 8 caracteres, incluye una mayúscula, una minúscula y un número.
+                                    </span>
+                                </div>
+
+                                <div className="relative group">
+                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
+
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        required
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        placeholder="********"
+                                        className="w-full pl-12 pr-12 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 focus:bg-white outline-none transition-all text-sm font-semibold shadow-sm"
+                                    />
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#1e3a8a] transition-colors p-1.5"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -133,16 +177,31 @@ function Register() {
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombres *</label>
                                 <div className="relative group">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
-                                    <input type="text" name="nombres" required value={formData.nombres} onChange={handleChange} placeholder="Carlos"
-                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all" />
+                                    <input
+                                        type="text"
+                                        name="nombres"
+                                        required
+                                        value={formData.nombres}
+                                        onChange={handleChange}
+                                        placeholder="Carlos"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all text-sm font-semibold"
+                                    />
                                 </div>
                             </div>
+
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Apellidos *</label>
                                 <div className="relative group">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
-                                    <input type="text" name="apellidos" required value={formData.apellidos} onChange={handleChange} placeholder="Rodríguez"
-                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all" />
+                                    <input
+                                        type="text"
+                                        name="apellidos"
+                                        required
+                                        value={formData.apellidos}
+                                        onChange={handleChange}
+                                        placeholder="Rodríguez"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all text-sm font-semibold"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -185,15 +244,33 @@ function Register() {
                                     className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all" />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Parentesco *</label>
-                                <select name="parentesco" required value={formData.parentesco} onChange={handleChange}
-                                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all text-sm font-bold cursor-pointer">
-                                    <option value="">Elegir...</option>
-                                    <option value="familiar">Familiar</option>
-                                    <option value="pareja">Pareja</option>
-                                    <option value="amistad">Amistad</option>
-                                    <option value="otro">Otro</option>
-                                </select>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                                    Parentesco *
+                                </label>
+
+                                <div className="relative group">
+                                    <Heart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors pointer-events-none z-10" />
+
+                                    <select
+                                        name="parentesco"
+                                        required
+                                        value={formData.parentesco}
+                                        onChange={handleChange}
+                                        className="w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 focus:bg-white outline-none transition-all text-sm font-bold cursor-pointer appearance-none"
+                                    >
+                                        <option value="">Elegir...</option>
+                                        <option value="familiar">Familiar</option>
+                                        <option value="pareja">Pareja</option>
+                                        <option value="amistad">Amistad</option>
+                                        <option value="otro">Otro</option>
+                                    </select>
+
+                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

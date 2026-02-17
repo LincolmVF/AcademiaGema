@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { loginService } from '../services/auth.service';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
@@ -159,9 +159,15 @@ function Login() {
               </div>
 
               {/* Texto informativo en su posición original, estilizado */}
-              <p className="text-[11px] mt-1 font-bold text-slate-400 tracking-wider ml-1">
-                *Ingrese nombre de usuario brindado al registrarse
-              </p>
+              <div className="mt-2 flex items-start gap-2 px-1">
+                <AlertCircle size={12} className="text-orange-500 mt-0.5 flex-shrink-0" />
+                <p className="text-[10px] text-slate-400 leading-tight italic font-medium">
+                  Ingresa la contraseña de tu registro web.
+                  <span className="block text-slate-500 not-italic mt-1">
+                    Nota: Si no te registraste por la web, tu contraseña es tu mismo nombre de usuario por defecto.
+                  </span>
+                </p>
+              </div>
             </div>
 
             {/* Botón Principal: Usando el azul institucional */}
