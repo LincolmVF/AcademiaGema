@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Trophy, RefreshCcw, Users, Gift, HeartPulse } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Trophy, RefreshCcw, Users, Gift, HeartPulse, Sparkles } from 'lucide-react';
 
 const StudentAnnouncements = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -7,117 +7,117 @@ const StudentAnnouncements = () => {
   const beneficios = [
     {
       id: 1,
-      tipo: 'RECUPERACIÓN',
-      titulo: 'Recupera tus clases faltantes',
-      descripcion: 'Si entrenas 2 o 3 veces/semana, recupera hasta 2 clases. Si vas 4 veces, ¡hasta 4! Máximo hasta el mes siguiente.',
-      icon: <RefreshCcw size={18} />,
-      color: 'bg-orange-500',
-      iconColor: 'bg-orange-100 text-orange-600'
+      tipo: 'SISTEMA DE RECUPERACIÓN',
+      titulo: '¡No pierdas tu progreso!',
+      descripcion: 'Entrena 2-3 veces/semana y recupera hasta 2 clases. Si vas 4 veces, ¡recupera hasta 4! Tienes hasta el mes siguiente.',
+      icon: <RefreshCcw size={32} />,
+      gradient: 'from-[#1e3a8a] to-blue-600',
+      badge: 'FLEXIBILIDAD'
     },
     {
       id: 2,
-      tipo: 'REFERIDOS',
-      titulo: 'Trae a un amigo y ahorra',
-      descripcion: 'Por cada referido que se inscriba, obtén S/ 10 de descuento directo en tu siguiente pago.',
-      icon: <Users size={18} />,
-      color: 'bg-blue-500',
-      iconColor: 'bg-blue-100 text-blue-600'
+      tipo: 'PROGRAMA REFERIDOS',
+      titulo: 'Entrenar con amigos paga',
+      descripcion: 'Por cada referido que se inscriba, obtén S/ 10 de descuento directo en tu siguiente mensualidad. ¡Sin límites!',
+      icon: <Users size={32} />,
+      gradient: 'from-orange-600 to-orange-400',
+      badge: 'AHORRO'
     },
     {
       id: 3,
-      tipo: 'SALUD',
-      titulo: 'Gestión de Lesiones',
-      descripcion: '¿Te lesionaste? No pierdas tus clases. Puedes recuperarlas todas dentro de tu mes pagado o el siguiente.',
-      icon: <HeartPulse size={18} />,
-      color: 'bg-red-500',
-      iconColor: 'bg-red-100 text-red-600'
+      tipo: 'GESTIÓN DE SALUD',
+      titulo: 'Tu salud es prioridad',
+      descripcion: '¿Te lesionaste? Congelamos tus clases para que las recuperes todas dentro de tu mes pagado o el siguiente.',
+      icon: <HeartPulse size={32} />,
+      gradient: 'from-red-600 to-red-400',
+      badge: 'CUIDADO'
     },
     {
       id: 4,
-      tipo: 'PREMIO',
+      tipo: 'DISCIPLINA GEMA',
       titulo: 'Bonos por Rendimiento',
-      descripcion: 'Premiaremos tu esfuerzo y disciplina en la cancha con beneficios exclusivos de la Academia.',
-      icon: <Trophy size={18} />,
-      color: 'bg-yellow-500',
-      iconColor: 'bg-yellow-100 text-yellow-600'
+      descripcion: 'Premiamos tu esfuerzo constante en la cancha con beneficios y merchandising exclusivo de la Academia.',
+      icon: <Trophy size={32} />,
+      gradient: 'from-yellow-600 to-yellow-400',
+      badge: 'PREMIO'
     }
   ];
 
-  // Auto-play cada 5 segundos
   useEffect(() => {
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
+    const interval = setInterval(() => nextSlide(), 6000);
     return () => clearInterval(interval);
   }, [currentIndex]);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === beneficios.length - 1 ? 0 : prev + 1));
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev === 0 ? beneficios.length - 1 : prev - 1));
-  };
+  const nextSlide = () => setCurrentIndex((prev) => (prev === beneficios.length - 1 ? 0 : prev + 1));
+  const prevSlide = () => setCurrentIndex((prev) => (prev === 0 ? beneficios.length - 1 : prev - 1));
 
   const item = beneficios[currentIndex];
 
   return (
-    <div className="flex flex-col w-full">
-      {/* Header con flechas de control */}
-      <div className="flex items-center justify-between mb-4 text-[#1e3a8a]">
+    <div className="w-full">
+      {/* Header del Carrusel */}
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Gift size={18} className="text-orange-500 fill-orange-500/10" />
-          <h2 className="font-black uppercase tracking-tighter text-xs italic text-slate-700">Beneficios Gema</h2>
-        </div>
-        <div className="flex gap-1">
-          <button onClick={prevSlide} className="p-1 hover:bg-slate-100 rounded-full transition-colors">
-            <ChevronLeft size={16} className="text-slate-400" />
-          </button>
-          <button onClick={nextSlide} className="p-1 hover:bg-slate-100 rounded-full transition-colors">
-            <ChevronRight size={16} className="text-slate-400" />
-          </button>
+          <div className="bg-orange-500 p-1.5 rounded-lg shadow-lg shadow-orange-500/20">
+            <Gift size={16} className="text-white" />
+          </div>
+          <h2 className="font-black uppercase tracking-[0.2em] text-[11px] italic text-[#1e3a8a]">
+            Beneficios Exclusivos <span className="text-orange-500">Gema</span>
+          </h2>
         </div>
       </div>
 
-      {/* Contenedor del Slide con animación simple */}
-      <div className="relative overflow-hidden min-h-[120px]">
-        <div 
-          key={item.id} 
-          className="animate-in fade-in slide-in-from-right-4 duration-500 relative bg-slate-50 rounded-[2rem] p-5 border border-slate-100"
-        >
-          {/* Indicador lateral */}
-          <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full ${item.color}`}></div>
-
-          <div className="flex gap-4">
-            <div className={`shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center ${item.iconColor} shadow-sm`}>
-              {item.icon}
-            </div>
-            <div className="space-y-1">
-              <span className="text-[7px] font-black text-slate-400 tracking-widest uppercase">
-                {item.tipo}
-              </span>
-              <h4 className="text-[11px] font-black text-[#1e3a8a] leading-tight uppercase italic">
-                {item.titulo}
-              </h4>
-              <p className="text-[10px] text-slate-500 font-medium leading-tight">
-                {item.descripcion}
-              </p>
-            </div>
+      {/* Main Card */}
+      <div className="relative group h-[200px] md:h-[180px] w-full overflow-hidden rounded-[2.5rem] shadow-2xl shadow-slate-300/50 border-4 border-white">
+        {/* Fondo con Gradiente Dinámico */}
+        <div className={`absolute inset-0 transition-all duration-700 ease-in-out bg-gradient-to-br ${item.gradient}`}>
+          {/* Decoración de fondo */}
+          <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12">
+             <Sparkles size={120} />
           </div>
         </div>
-      </div>
 
-      {/* Indicadores (Dots) */}
-      <div className="flex justify-center gap-1.5 mt-4">
-        {beneficios.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`h-1 rounded-full transition-all ${
-              index === currentIndex ? 'w-4 bg-orange-500' : 'w-1.5 bg-slate-200'
-            }`}
+        {/* Contenido del Slide */}
+        <div className="relative h-full p-6 md:p-8 text-white flex flex-col md:flex-row items-center gap-6 z-10">
+          <div className="bg-white/20 backdrop-blur-md p-4 rounded-[2rem] border border-white/30 hidden md:block">
+            {item.icon}
+          </div>
+
+          <div className="flex-1 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+              <span className="bg-white/20 text-[8px] font-black px-3 py-1 rounded-full backdrop-blur-md uppercase tracking-widest">
+                {item.badge}
+              </span>
+              <span className="text-[10px] font-bold opacity-80 uppercase italic tracking-tighter">
+                {item.tipo}
+              </span>
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black uppercase italic leading-none mb-2 tracking-tighter">
+              {item.titulo}
+            </h3>
+            <p className="text-xs md:text-sm font-medium opacity-90 leading-snug max-w-xl">
+              {item.descripcion}
+            </p>
+          </div>
+
+          {/* Navegación lateral integrada */}
+          <div className="flex gap-2">
+            <button onClick={prevSlide} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-all border border-white/10 backdrop-blur-sm">
+              <ChevronLeft size={20} />
+            </button>
+            <button onClick={nextSlide} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-all border border-white/10 backdrop-blur-sm">
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Barra de progreso inferior */}
+        <div className="absolute bottom-0 left-0 h-1 bg-black/20 w-full">
+          <div 
+            className="h-full bg-white transition-all duration-[6000ms] ease-linear"
+            style={{ width: `${((currentIndex + 1) / beneficios.length) * 100}%` }}
           />
-        ))}
+        </div>
       </div>
     </div>
   );
