@@ -9,11 +9,11 @@ const DashboardTeacher = () => {
   const [selectedClass, setSelectedClass] = useState(null);
   const [clases, setClases] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Filtros: Iniciamos en TODOS para ver toda la temporada
   const [filtroMes, setFiltroMes] = useState("TODOS");
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear().toString());
-  
+
   const { user } = useAuth();
   const hoyRef = useRef(null);
 
@@ -35,8 +35,8 @@ const DashboardTeacher = () => {
           ins.registros_asistencia.forEach(reg => {
             const fechaObj = new Date(reg.fecha);
             const fechaKey = reg.fecha.split('T')[0];
-            const fechaDate = fechaObj.setHours(0,0,0,0);
-            
+            const fechaDate = fechaObj.setHours(0, 0, 0, 0);
+
             if (!fechasUnicas[fechaKey]) {
               fechasUnicas[fechaKey] = {
                 id: `${horario.id}-${fechaKey}`,
@@ -60,7 +60,7 @@ const DashboardTeacher = () => {
 
         Object.values(fechasUnicas).forEach(sesion => {
           const completada = sesion.inscripcionesEnEstaFecha.every(al => al.registro_especifico.estado !== 'PROGRAMADA');
-          todasLasSesiones.push({ ...sesion, attended: completada });
+          todasLasSesiones.push({ ...sesion, attended: completada, totalStudents: sesion.inscripcionesEnEstaFecha.length });
         });
       });
 
@@ -93,7 +93,7 @@ const DashboardTeacher = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-fade-in-up pb-10 px-4">
-      
+
       {/* HEADER ORIGINAL RESTAURADO */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
@@ -113,8 +113,8 @@ const DashboardTeacher = () => {
       <div className="flex flex-wrap items-center gap-4 bg-slate-100/50 p-4 rounded-[2rem] border border-slate-200">
         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
           <Filter size={16} className="text-orange-500" />
-          <select 
-            value={filtroMes} 
+          <select
+            value={filtroMes}
             onChange={(e) => setFiltroMes(e.target.value)}
             className="text-[10px] font-black uppercase tracking-widest text-[#1e3a8a] outline-none cursor-pointer bg-transparent"
           >
@@ -125,8 +125,8 @@ const DashboardTeacher = () => {
 
         <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
           <Calendar size={16} className="text-orange-500" />
-          <select 
-            value={filtroAnio} 
+          <select
+            value={filtroAnio}
             onChange={(e) => setFiltroAnio(e.target.value)}
             className="text-[10px] font-black uppercase tracking-widest text-[#1e3a8a] outline-none cursor-pointer bg-transparent"
           >
@@ -138,16 +138,16 @@ const DashboardTeacher = () => {
       {/* AGENDA DEPORTIVA */}
       <div className="space-y-6">
         <h2 className="text-xl font-black text-[#1e3a8a] uppercase tracking-tight flex items-center gap-3 italic">
-            <div className="w-2 h-8 bg-[#1e3a8a] rounded-full"></div>
-            Agenda de Entrenamiento
+          <div className="w-2 h-8 bg-[#1e3a8a] rounded-full"></div>
+          Agenda de Entrenamiento
         </h2>
 
         <div className="grid gap-6">
           {clases
             .filter(c => (filtroMes === "TODOS" || c.mes === filtroMes) && c.anio === filtroAnio)
             .map((item) => (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 ref={item.isToday ? hoyRef : null}
                 className={`group relative bg-white rounded-[2.5rem] p-7 border transition-all flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden border-l-8 
                   ${item.isToday ? 'border-orange-500 shadow-2xl scale-[1.01]' : 'border-[#1e3a8a] shadow-xl hover:shadow-2xl'}
@@ -197,8 +197,8 @@ const DashboardTeacher = () => {
                   </div>
                 )}
               </div>
-          ))}
-          
+            ))}
+
           {clases.filter(c => (filtroMes === "TODOS" || c.mes === filtroMes) && c.anio === filtroAnio).length === 0 && (
             <div className="bg-white p-20 rounded-[3rem] border-2 border-dashed border-slate-200 text-center">
               <p className="font-black text-slate-300 uppercase italic tracking-widest text-xs">No hay sesiones para este período</p>
