@@ -64,7 +64,7 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
                                     <div className="flex items-center gap-3 mb-3">
                                         {getStatusBadge(ticket.estado)}
                                         <span className="text-xs text-gray-500 group-hover:text-gray-300 transition-colors font-medium">
-                                            Fecha de falta: {new Date(ticket.fecha_falta).toLocaleDateString()}
+                                            Fecha de falta: {new Date(ticket.fecha_falta).toLocaleDateString('es-ES', { year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'UTC' })}
                                         </span>
                                         {ticket.es_por_lesion && (
                                             <span className="text-[10px] bg-orange-100 text-orange-600 border border-orange-200 px-2 py-0.5 rounded uppercase font-black">
@@ -77,7 +77,7 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
                                     {ticket.fecha_programada && ticket.horarios_clases ? (
                                         <div className="mt-2">
                                             <p className="text-slate-800 font-bold group-hover:text-white transition-colors text-lg">
-                                                {new Date(ticket.fecha_programada).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                                {new Date(ticket.fecha_programada).toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' })}
                                             </p>
                                             <div className="flex items-center gap-4 mt-1">
                                                 <p className="text-sm font-medium text-slate-500 group-hover:text-blue-200 flex items-center gap-1">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RefreshCw, AlertCircle, CalendarPlus, History } from 'lucide-react';
+import { ArrowLeft, RefreshCw, AlertCircle, CalendarPlus, History, Activity, ShieldPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext';
@@ -24,6 +24,13 @@ const StudentRecoveries = () => {
     const [horariosPatron, setHorariosPatron] = useState([]);
     const [historial, setHistorial] = useState([]);
 
+    // Stats para detalle de recuperaciones del alumno
+    const [stats, setStats] = useState({
+        normalesUsadas: 0,
+        normalesLimite: 2,
+        lesionUsadas: 0
+    });
+
     // Interacción
     const [selectedTicket, setSelectedTicket] = useState(null);
     const [availableSlots, setAvailableSlots] = useState([]);
@@ -40,6 +47,9 @@ const StudentRecoveries = () => {
             setTickets(ticketsData);
             setHorariosPatron(horariosData);
             setHistorial(historialData);
+
+            setStats(ticketsData.stats);
+
         } catch (error) {
             toast.error("Error cargando información de recuperaciones");
             console.error(error);
@@ -56,13 +66,50 @@ const StudentRecoveries = () => {
     useEffect(() => {
         if (selectedTicket && horariosPatron.length > 0) {
             // Generamos clases para las próximas 3 semanas
-            const slots = generarClasesDisponibles(horariosPatron, 3);
-            setAvailableSlots(slots);
+            const rawSlots = generarClasesDisponibles(horariosPatron, 4);
+
+            // Filtramos para quitar las que ya tiene ocupadas
+            const slotsLimpios = rawSlots.filter(slot => {
+                const slotDate = new Date(slot.fecha);
+                // Buscamos si el alumno ya tiene algo agendado ('PROGRAMADA') en este mismo día y a esta misma hora
+                const yaLoTieneOcupado = historial.some(ticket => {
+                    if (ticket.estado !== 'PROGRAMADA') return false;
+
+                    // Comparamos si las fechas y el horario coinciden
+                    const mismaFecha = ticket.fecha_programada && new Date(ticket.fecha_programada).toLocaleDateString('es-ES', { timeZone: 'UTC' }) === slotDate.toLocaleDateString('es-ES', { timeZone: 'UTC' });
+                    const mismoHorario = ticket.horario_destino_id === slot.horarioData.id;
+
+                    return mismaFecha && mismoHorario;
+                });
+
+                //Verificamos ahora con el horario regular del alumno.
+                let esHorarioRegularProtegido = false;
+
+                // Si el ticket seleccionado NO es por lesión, aplicamos la regla de los 30 días
+                if (stats.fin_ciclo_regular && stats.horarios_regulares) {
+                    const finCicloDate = new Date(stats.fin_ciclo_regular);
+
+                    // Si el slot que está viendo cae dentro de sus primeros 30 días
+                    if (slotDate <= finCicloDate) {
+
+                        // const indiceDiaSlot = (slotDate.getUTCDay() === 0) ? 7 : slotDate.getUTCDay();
+
+                        // Comprobamos si el turno seleccionado corresponde con uno de sus horarios regulares.
+                        esHorarioRegularProtegido = stats.horarios_regulares.includes(slot.horarioData.id);
+                    }
+                }
+
+
+                // Si no lo tiene ocupado y no es parte de su horario regular, lo dejamos en la lista disponible
+                return !yaLoTieneOcupado && !esHorarioRegularProtegido;
+            });
+
+            setAvailableSlots(slotsLimpios);
             toast.success("Horarios disponibles cargados 👇", { id: 'slots-loaded' });
         } else {
             setAvailableSlots([]);
         }
-    }, [selectedTicket, horariosPatron]);
+    }, [selectedTicket, horariosPatron, historial, stats]);
 
     // 3. Manejar el canje
     const handleSlotClick = async (slot) => {
@@ -116,6 +163,9 @@ const StudentRecoveries = () => {
         }
     };
 
+    // Helper para saber si ya llegó al límite visualmente
+    const alLimite = stats.recuperacion_usadas >= stats.limite_permitido;
+
     return (
         <div className="p-6 md:p-10 max-w-7xl mx-auto min-h-screen">
             <Link to="/dashboard/student" className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all mb-4 text-[10px] font-black uppercase tracking-widest italic">
@@ -132,6 +182,43 @@ const StudentRecoveries = () => {
                     <button onClick={loadData} className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-white transition-colors">
                         <RefreshCw size={20} className={loading ? "animate-spin" : ""} />
                     </button>
+                </div>
+            </div>
+
+            {/* Tarjetas de Estadísticas del Ciclo Actual */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {/* Tarjeta Normales */}
+                <div className={`p-5 rounded-3xl border flex items-center justify-between ${alLimite ? 'bg-orange-50 border-orange-200' : 'bg-white border-gray-200 shadow-sm'}`}>
+                    <div className="flex items-center gap-4">
+                        <div className={`p-3 rounded-2xl ${alLimite ? 'bg-orange-100 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
+                            <Activity size={24} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recuperaciones Normales</p>
+                            <div className="flex items-baseline gap-2">
+                                <span className={`text-2xl font-black ${alLimite ? 'text-orange-600' : 'text-slate-800'}`}>
+                                    {stats.recuperacion_usadas}
+                                </span>
+                                <span className="text-sm font-bold text-slate-400">/ {stats.limite_permitido} usadas</span>
+                            </div>
+                        </div>
+                    </div>
+                    {alLimite && (
+                        <span className="text-[10px] font-bold bg-orange-200 text-orange-700 px-3 py-1 rounded-full uppercase">Límite Alcanzado</span>
+                    )}
+                </div>
+
+                {/* Tarjeta Lesiones */}
+                <div className="bg-white border border-gray-200 shadow-sm p-5 rounded-3xl flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-emerald-50 text-emerald-600">
+                        <ShieldPlus size={24} />
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Recuperaciones por Lesión</p>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-sm font-bold text-emerald-500 uppercase text-[10px]">Sin límite</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 

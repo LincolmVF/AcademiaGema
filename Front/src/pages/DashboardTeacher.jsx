@@ -49,7 +49,7 @@ const DashboardTeacher = () => {
                 mes: new Date(reg.fecha).getMonth().toString(),
                 isToday: fechaDate === hoy,
                 isPast: fechaDate < hoy,
-                dateFormatted: new Date(reg.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }).toUpperCase().replace('.', ''),
+                dateFormatted: new Date(reg.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', timeZone: 'UTC' }).toUpperCase().replace('.', ''),
                 totalStudents: horario.inscripciones.length,
                 inscripcionesEnEstaFecha: []
               };

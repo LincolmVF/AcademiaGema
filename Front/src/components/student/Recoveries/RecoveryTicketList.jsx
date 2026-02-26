@@ -13,7 +13,7 @@ const RecoveryTicketList = ({ tickets, selectedTicket, onSelect }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {tickets.map((ticket) => {
+            {tickets.tickets.map((ticket) => {
                 const isSelected = selectedTicket?.id === ticket.id;
                 const isVip = ticket.es_por_lesion;
                 const fechaVencimiento = ticket.fecha_caducidad;
@@ -43,7 +43,7 @@ const RecoveryTicketList = ({ tickets, selectedTicket, onSelect }) => {
                                     Falta del
                                 </p>
                                 <p className="text-white font-bold text-lg leading-none">
-                                    {new Date(ticket.fecha_falta).toLocaleDateString('es-PE', { day: '2-digit', month: 'long' })}
+                                    {new Date(ticket.fecha_falta).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', timeZone: 'UTC' })}
                                 </p>
                             </div>
                         </div>
@@ -53,7 +53,7 @@ const RecoveryTicketList = ({ tickets, selectedTicket, onSelect }) => {
                             {isVip || !fechaVencimiento ? (
                                 <span>Sin fecha de vencimiento</span>
                             ) : (
-                                <span><strong className={isSelected ? "text-white" : "text-blue-200"}>Vence: {new Date(fechaVencimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' })}</strong></span>
+                                <span><strong className={isSelected ? "text-white" : "text-blue-200"}>Vence: {new Date(fechaVencimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'UTC' })}</strong></span>
                             )}
                         </div>
 
