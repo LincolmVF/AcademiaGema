@@ -36,6 +36,10 @@ import AdminStudentsManager from "./pages/admin/AdminStudentManager";
 import AdminPaymentManager from "./pages/admin/AdminPaymentManager";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminInjuriesManager from "./pages/admin/AdminInjuriesManager";
+import AdminBenefits from "./pages/admin/AdminBenefits";
+import AdminCreateBenefits from "./pages/admin/AdminCreateBenefits";
+
+
 
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
@@ -106,6 +110,8 @@ function App() {
             {/* Gestión CRUD */}
             <Route path="admin/students" element={<AdminStudentsManager />} />
             <Route path="admin/teachers" element={<AdminTeachersManager />} />
+            <Route path="admin/benefits" element={<AdminBenefits/>} />
+            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits/>} />
             <Route path="admin/schedule" element={<AdminSchedulesManager />} />
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />

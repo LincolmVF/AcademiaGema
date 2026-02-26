@@ -5,7 +5,7 @@ import {
     Settings, LogOut, MapPin, BarChart3, DollarSign,
     ChevronDown,
     CheckCircle,
-    Activity
+    Activity, TicketPercent,
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -52,6 +52,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 { icon: MapPin, label: 'Sedes y Canchas', path: '/dashboard/admin/locations' },
                 { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
                 { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
+                 { icon: TicketPercent, label: 'Crear Beneficio', path: '/dashboard/admin/CreateBenefits' },
             ]
         },
         {
@@ -60,6 +61,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             items: [
                 { icon: UserCog, label: 'Profesores', path: '/dashboard/admin/teachers' },
                 { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
+                { icon: TicketPercent, label: 'Beneficios', path: '/dashboard/admin/benefits' },
             ]
         },
         {
