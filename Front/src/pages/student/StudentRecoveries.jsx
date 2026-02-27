@@ -122,7 +122,7 @@ const StudentRecoveries = () => {
         try {
             const promise = recuperacionService.agendar({
                 alumnoId: userId,
-                fechaFalta: selectedTicket.fecha_falta,
+                recuperacionId: selectedTicket.id,
                 horarioDestinoId: slot.horarioData.id,
                 fechaProgramada: slot.fecha
             });

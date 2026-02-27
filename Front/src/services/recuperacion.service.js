@@ -11,7 +11,7 @@ const recuperacionService = {
 
     // Canjear el ticket
     agendar: async (data) => {
-        // data = { alumnoId, fechaFalta, horarioDestinoId, fechaProgramada }
+        // data = { alumnoId, recuperacionId, horarioDestinoId, fechaProgramada }
         const response = await apiFetch.post('/recuperaciones/agendar-recuperacion', data);
         const result = await response.json();
         if (!response.ok) throw new Error(result.message || "Error al agendar");
