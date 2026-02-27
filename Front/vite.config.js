@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   preview: {
     allowedHosts: [
-      'frontend-gema-production.up.railway.app'
+      'all'
     ]
   },
   server: {
