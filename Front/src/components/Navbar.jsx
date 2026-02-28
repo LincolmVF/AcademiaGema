@@ -23,7 +23,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center gap-3 group">
             <div className="relative flex-shrink-0">
               {/* Logo reducido a w-14 h-14 */}
-              <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/10 group-hover:scale-105 transition-transform overflow-hidden border border-slate-50">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center shadow-lg shadow-blue-900/10 group-hover:scale-105 transition-transform overflow-hidden border border-slate-50">
                 <img
                   src="/logo_diamante.jpeg"
                   alt="Logo"
