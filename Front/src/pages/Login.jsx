@@ -31,15 +31,18 @@ function Login() {
 
       toast.success(`¡Bienvenido, ${nombres}!`, { id: toastId });
 
+      const routes = {
+        'Administrador': '/dashboard/admin',
+        'Coordinador': '/dashboard/teacher',
+        'Alumno': '/dashboard/student'
+      };
+
+      const targetRoute = routes[rol] || '/login';
+
       if (debeCompletarEmail) {
-        navigate(rol.toLowerCase() === 'alumno' ? '/dashboard/student' : '/dashboard/admin');
+        navigate(targetRoute);
       } else {
-        const routes = {
-          'Administrador': '/dashboard/admin',
-          'Coordinador': '/dashboard/teacher',
-          'Alumno': '/dashboard/student'
-        };
-        navigate(routes[rol] || '/login');
+        navigate(targetRoute);
       }
 
     } catch (error) {
