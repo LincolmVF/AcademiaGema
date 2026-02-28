@@ -23,22 +23,21 @@ function Home() {
     <div className="bg-[#f8fafc] min-h-screen font-sans text-slate-900 flex flex-col">
       <Hero />
 
-      <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 flex-grow">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 md:py-16 flex-grow">
 
-        {/* Sección de Encabezado de Clases */}
-        <div className="mb-8 md:mb-12 px-4 md:px-0"> {/* Añadido padding lateral en móvil */}
+        {/* Sección de Encabezado */}
+        <div className="mb-8 md:mb-12">
           <div className="flex items-center gap-3 mb-2">
             <div className="h-6 w-1.5 md:h-8 bg-[#cd5a2c] rounded-full"></div>
-            <h2 className="text-2xl md:text-3xl font-black text-[#263e5e] uppercase italic tracking-tighter leading-none">
+            <h2 className="text-xl md:text-3xl font-black text-[#263e5e] uppercase italic tracking-tighter leading-tight">
               Programación <span className="text-[#cd5a2c]">Semanal</span>
             </h2>
           </div>
-          <p className="text-sm md:text-base text-slate-500 font-medium ml-4.5 md:ml-4">
+          <p className="text-xs md:text-base text-slate-500 font-medium ml-4.5">
             Reserva tu cupo en nuestras clases de alto rendimiento.
           </p>
 
-          {/* Filtros: En móvil ocupan el ancho completo y permiten scroll si es necesario */}
-          <div className="mt-6 md:mt-8 bg-white p-1.5 md:p-2 rounded-2xl md:rounded-3xl shadow-sm border border-slate-100 overflow-x-auto">
+          <div className="mt-6 md:mt-8 bg-white p-2 rounded-2xl shadow-sm border border-slate-100 overflow-x-auto whitespace-nowrap scrollbar-hide">
             <Filters
               activeDay={activeDay}
               setActiveDay={setActiveDay}
@@ -48,36 +47,30 @@ function Home() {
           </div>
         </div>
 
-        {/* Grid Responsivo con Hover Effects */}
-        <div className="px-4 md:px-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-10">
           {classes.map((clase) => (
-            <div key={clase.id} className="transform transition-transform duration-300 hover:-translate-y-2">
+            <div key={clase.id} className="transform transition-all duration-300 active:scale-[0.98] md:hover:-translate-y-2">
               <ClassCard {...clase} />
             </div>
           ))}
         </div>
 
-        {/* Estado vacío (si no hay clases) */}
         {classes.length === 0 && (
-          <div className="mx-4 md:mx-0 text-center py-16 md:py-24 bg-white rounded-[32px] md:rounded-[40px] border-2 border-dashed border-slate-200 shadow-inner">
-            <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl md:text-4xl text-slate-300">🏐</span>
+          <div className="text-center py-12 md:py-24 bg-white rounded-[32px] border-2 border-dashed border-slate-200">
+            <div className="w-14 h-14 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl md:text-4xl">🏐</span>
             </div>
-            <h3 className="text-lg md:text-xl font-bold text-slate-400 uppercase tracking-widest px-4">
+            <h3 className="text-base md:text-xl font-bold text-slate-400 uppercase tracking-widest px-4">
               Sin clases disponibles
             </h3>
-            <p className="text-sm md:text-base text-slate-400 mt-2 px-6">
-              Intenta cambiar los filtros de día o categoría.
-            </p>
             <button
               onClick={() => { setActiveDay(0); setActiveCategory('Todas'); }}
-              className="mt-6 text-[#1e3a8a] font-black uppercase text-[10px] md:text-xs tracking-widest hover:text-orange-500 transition-colors p-2"
+              className="mt-6 text-[#1e3a8a] font-black uppercase text-[10px] tracking-widest"
             >
               Restablecer Filtros
             </button>
           </div>
         )}
-
       </main>
     </div>
   );
