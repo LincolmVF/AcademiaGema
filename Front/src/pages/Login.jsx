@@ -49,7 +49,7 @@ function Login() {
       const serverMessage = error?.message || "Error de conexión";
       const cleanMessage = serverMessage.replace(/\x1B\[[0-9;]*m/g, "");
       
-      toast.error(cleanMessage || 'Credenciales inválidas', {
+      toast.error(cleanMessage, {
         id: toastId,
         style: {
           border: '1px solid #fee2e2',
