@@ -59,10 +59,9 @@ function App() {
         <Route
           path="/*"
           element={
-            <div className="flex flex-col min-h-screen bg-slate-50"> 
+            <div className="flex flex-col min-h-screen">
               <Navbar />
-
-              <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12">
+              <main className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<About />} />
@@ -71,7 +70,6 @@ function App() {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
-
               <Footer />
             </div>
           }
@@ -112,8 +110,8 @@ function App() {
             {/* Gestión CRUD */}
             <Route path="admin/students" element={<AdminStudentsManager />} />
             <Route path="admin/teachers" element={<AdminTeachersManager />} />
-            <Route path="admin/benefits" element={<AdminBenefits />} />
-            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits />} />
+            <Route path="admin/benefits" element={<AdminBenefits/>} />
+            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits/>} />
             <Route path="admin/schedule" element={<AdminSchedulesManager />} />
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />
