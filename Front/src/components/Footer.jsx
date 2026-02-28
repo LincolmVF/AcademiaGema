@@ -92,7 +92,7 @@ const Footer = () => {
         {/* BARRA INFERIOR */}
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em]">
           <p className="text-slate-600 italic">
-            © 2026 Academia Gema. <span className="text-orange-500/50">High Performance Training.</span>
+            © 2026 Club Gema. <span className="text-orange-500/50">High Performance Training.</span>
           </p>
           <div className="flex gap-8">
             {['Términos', 'Privacidad'].map((link) => (
