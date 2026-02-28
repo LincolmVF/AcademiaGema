@@ -73,35 +73,33 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
 
             {items.map((sesion) => {
               const horario = sesion?.inscripciones?.horarios_clases;
-              
+
               /**
                * ✅ RUTA DEL NOMBRE CORREGIDA (Basado en tu JSON):
-               * Accedemos a: horario -> profesores -> usuarios -> nombres / apellidos
+               * Accedemos a: horario -> coordinadores -> usuarios -> nombres / apellidos
                */
-              const coachData = horario?.profesores?.usuarios;
-              const nombreLider = coachData 
-                ? `${coachData.nombres.trim()} ${coachData.apellidos.trim()}`
-                : 'COACH GEMA';
+              const coordinatorData = horario?.coordinadores?.usuarios;
+              const nombreLider = coordinatorData
+                ? `${coordinatorData.nombres.trim()} ${coordinatorData.apellidos.trim()}`
+                : 'COORDINATOR GEMA';
 
               const fechaObj = parseLocalDate(sesion.fecha);
               const esPresente = sesion.estado === 'PRESENTE';
               const esFalta = sesion.estado === 'FALTA';
 
               return (
-                <div key={sesion.id} className={`group relative rounded-[2rem] border transition-all duration-300 ${
-                  esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' : 
+                <div key={sesion.id} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
                   esFalta ? 'bg-red-50/50 border-red-200 shadow-sm' :
-                  'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
-                }`}>
+                    'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
+                  }`}>
                   <div className="p-5 flex flex-col md:flex-row items-center gap-6">
-                    
+
                     {/* INDICADOR DE FECHA DEPORTIVO */}
                     <div className="flex items-center gap-4 min-w-[140px]">
-                      <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl font-black shadow-md ${
-                        esPresente ? 'bg-green-600 text-white' : 
+                      <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl font-black shadow-md ${esPresente ? 'bg-green-600 text-white' :
                         esFalta ? 'bg-red-600 text-white' :
-                        'bg-[#1e3a8a] text-white'
-                      }`}>
+                          'bg-[#1e3a8a] text-white'
+                        }`}>
                         <span className="text-[9px] opacity-70 uppercase italic">{diasSemana[fechaObj.getDay()]}</span>
                         <span className="text-2xl leading-none">{fechaObj.getDate()}</span>
                       </div>
@@ -125,7 +123,7 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                           {horario?.canchas?.nombre || 'T1'}
                         </div>
                       </div>
-                      
+
                       <div className="space-y-1 text-left">
                         <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Nivel Pro</p>
                         <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 uppercase italic">
@@ -145,12 +143,11 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                     </div>
 
                     {/* STATUS BADGE */}
-                    <div className={`shrink-0 flex items-center justify-center min-w-[100px] gap-2 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase italic shadow-sm border ${
-                      esPresente ? 'bg-green-100 text-green-700 border-green-200' : 
+                    <div className={`shrink-0 flex items-center justify-center min-w-[100px] gap-2 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase italic shadow-sm border ${esPresente ? 'bg-green-100 text-green-700 border-green-200' :
                       esFalta ? 'bg-red-100 text-red-700 border-red-200' :
-                      'bg-blue-50 text-blue-600 border-blue-100'
-                    }`}>
-                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3}/> : <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
+                        'bg-blue-50 text-blue-600 border-blue-100'
+                      }`}>
+                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> : <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
                       {sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
                     </div>
                   </div>

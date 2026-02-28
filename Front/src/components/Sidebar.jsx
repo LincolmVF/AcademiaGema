@@ -52,14 +52,14 @@ const Sidebar = ({ isOpen, onClose }) => {
                 { icon: MapPin, label: 'Sedes y Canchas', path: '/dashboard/admin/locations' },
                 { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
                 { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
-                 { icon: TicketPercent, label: 'Crear Beneficio', path: '/dashboard/admin/CreateBenefits' },
+                { icon: TicketPercent, label: 'Crear Beneficio', path: '/dashboard/admin/CreateBenefits' },
             ]
         },
         {
             title: 'Comunidad',
             type: 'dropdown',
             items: [
-                { icon: UserCog, label: 'Profesores', path: '/dashboard/admin/teachers' },
+                { icon: UserCog, label: 'Coordinadores', path: '/dashboard/admin/teachers' },
                 { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
                 { icon: TicketPercent, label: 'Beneficios', path: '/dashboard/admin/benefits' },
             ]

@@ -19,12 +19,12 @@ import NotFound from "./pages/NotFound";
 // 2. Layouts (Contenedores)
 import DashboardLayout from "./layouts/DashboardLayout"; // Admin (Sidebar Completo)
 import StudentLayout from "./layouts/StudentLayout"; // Estudiante (Móvil + PC Sidebar)
-import TeacherLayout from "./layouts/TeacherLayout"; // Profesor (Sidebar Minimalista)
+import TeacherLayout from "./layouts/TeacherLayout"; // Coordinador (Sidebar Minimalista)
 
 // 3. Páginas del Dashboard Generales
 import Dashboard from "./pages/Dashboard"; // Admin: Resumen General
 import DashboardEstudiante from "./pages/DashboardEstudiante"; // Estudiante: Inicio
-import DashboardTeacher from "./pages/DashboardTeacher"; // Profesor: Asistencia
+import DashboardTeacher from "./pages/DashboardTeacher"; // Coordinador: Asistencia
 
 // 4. Nuevas Páginas de Gestión (Admin)
 import AdminLocationsManager from "./pages/admin/AdminLocationsManager";
@@ -97,7 +97,7 @@ function App() {
             />
           </Route>
 
-          {/* GRUPO 2: PROFESOR (Layout Minimalista) */}
+          {/* GRUPO 2: COORDINADOR (Layout Minimalista) */}
           <Route element={<TeacherLayout />}>
             <Route path="teacher" element={<DashboardTeacher />} />
           </Route>
@@ -110,8 +110,8 @@ function App() {
             {/* Gestión CRUD */}
             <Route path="admin/students" element={<AdminStudentsManager />} />
             <Route path="admin/teachers" element={<AdminTeachersManager />} />
-            <Route path="admin/benefits" element={<AdminBenefits/>} />
-            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits/>} />
+            <Route path="admin/benefits" element={<AdminBenefits />} />
+            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits />} />
             <Route path="admin/schedule" element={<AdminSchedulesManager />} />
             <Route path="admin/levels" element={<AdminLevelsManager />} />
             <Route path="admin/catalog" element={<AdminCatalogManager />} />

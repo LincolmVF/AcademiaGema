@@ -17,7 +17,7 @@ const AvailableSlotsGrid = ({ slots, onSlotClick, loading }) => {
             {slots.map((slot) => {
                 const horario = slot.horarioData;
                 const fechaObj = new Date(slot.fecha);
-                const coachName = horario.profesores?.usuarios?.nombres || "Coach Gema";
+                const coordinatorName = horario.coordinadores?.usuarios?.nombres || "Coordinator Gema";
                 const horaInicio = horario.hora_inicio.substring(0, 5);
 
                 return (
@@ -57,7 +57,7 @@ const AvailableSlotsGrid = ({ slots, onSlotClick, loading }) => {
                             </div>
                             <div className="flex items-center gap-2 text-xs text-gray-300">
                                 <User size={14} className="text-indigo-400" />
-                                <span className="uppercase font-bold text-[10px] tracking-wide">{coachName}</span>
+                                <span className="uppercase font-bold text-[10px] tracking-wide">{coordinatorName}</span>
                             </div>
                         </div>
                     </button>

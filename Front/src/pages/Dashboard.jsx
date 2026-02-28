@@ -37,7 +37,7 @@ const Dashboard = ({ role = 'student' }) => {
                     const result = await response.json();
 
                     if (response.ok && result.data) {
-                        const { alumno, profesor } = result.data;
+                        const { alumno, coordinador } = result.data;
 
                         setStats(prevStats =>
                             prevStats.map(stat => {
@@ -47,8 +47,8 @@ const Dashboard = ({ role = 'student' }) => {
                                     return { ...stat, value: (alumno || 0).toString() };
                                 }
 
-                                if (titleLower.includes("profesores") || titleLower.includes("entrenadores")) {
-                                    return { ...stat, value: (profesor || 0).toString() };
+                                if (titleLower.includes("coordinadores") || titleLower.includes("entrenadores")) {
+                                    return { ...stat, value: (coordinador || 0).toString() };
                                 }
 
                                 return stat;

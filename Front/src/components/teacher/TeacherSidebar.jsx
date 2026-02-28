@@ -46,7 +46,7 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
           </div>
           <div className="text-center mt-4">
             <span className="block font-black text-xl tracking-tighter uppercase italic text-white leading-none">
-              Gema<span className="text-orange-500 font-black">Coach</span>
+              Gema<span className="text-orange-500 font-black">Coordinator</span>
             </span>
             <div className="h-1 w-8 bg-orange-500 mx-auto mt-2 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
           </div>
@@ -55,7 +55,7 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
         {/* NAVEGACIÓN: Con scroll interno oculto */}
         <nav className="flex-1 py-6 px-3 space-y-2 overflow-y-auto scrollbar-hide">
           <p className="px-4 text-[10px] font-black text-blue-300/50 uppercase tracking-[0.2em] mb-4">
-            Panel de Instructor
+            Panel de Coordinador
           </p>
 
           {clasesItems(menuItems, location, onClose)}
@@ -93,8 +93,8 @@ const clasesItems = (items, location, onClose) => items.map((item) => {
       to={item.path}
       onClick={onClose}
       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group ${isActive
-          ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
-          : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
+        ? 'bg-orange-500 text-white shadow-lg shadow-orange-900/40'
+        : 'text-blue-100/60 hover:bg-white/5 hover:text-white'
         }`}
     >
       <item.icon

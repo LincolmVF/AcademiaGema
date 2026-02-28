@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, User, Clock, ArrowRight } from 'lucide-react';
 
-const ClassCard = ({ category, title, time, location, coach, spots, price, image }) => {
+const ClassCard = ({ category, title, time, location, coordinator, spots, price, image }) => {
   const isSoldOut = spots === 0;
 
   return (
@@ -36,7 +36,7 @@ const ClassCard = ({ category, title, time, location, coach, spots, price, image
         <div className="space-y-2 mt-4 mb-6">
           <div className="flex items-center gap-2 text-slate-500 text-sm">
             <User size={16} className="text-slate-400" />
-            <span>Coach {coach}</span>
+            <span>Coordinator {coordinator}</span>
           </div>
           <div className="flex items-center gap-2 text-slate-500 text-sm">
             <MapPin size={16} className="text-slate-400" />

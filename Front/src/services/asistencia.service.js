@@ -2,15 +2,15 @@ import apiFetch from '../interceptors/api';
 
 export const asistenciaService = {
     /**
-     * Obtiene la agenda general para el profesor logueado.
+     * Obtiene la agenda general para el coordinador logueado.
      */
     getAgenda: async () => {
         const response = await apiFetch.get('/asistencias/agenda');
-        
+
         if (!response.ok) {
             throw new Error('Error al cargar la agenda de entrenamiento');
         }
-        
+
         const result = await response.json();
         return result.data;
     },
@@ -24,11 +24,11 @@ export const asistenciaService = {
         const response = await apiFetch.post('/asistencias/masiva', {
             asistencias // El body debe coincidir con lo que espera tu controlador
         });
-        
+
         if (!response.ok) {
             throw new Error('No se pudo procesar la asistencia grupal');
         }
-        
+
         return await response.json();
     },
 
@@ -40,11 +40,11 @@ export const asistenciaService = {
             estado,
             comentario
         });
-        
+
         if (!response.ok) {
             throw new Error('No se pudo actualizar la asistencia individual');
         }
-        
+
         return await response.json();
     }
 };

@@ -7,14 +7,14 @@ import toast from 'react-hot-toast';
 const AdminTeachersManager = () => {
     const [view, setView] = useState('list');
     const [selectedTeacher, setSelectedTeacher] = useState(null);
-    const [profesores, setProfesores] = useState([]);
+    const [coordinadores, setCoordinadores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const fetchProfesores = async () => {
+    const fetchCoordinadores = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/usuarios/role/profesor');
+            const response = await apiFetch.get('/usuarios/role/coordinador');
             const result = await response.json();
 
             if (response.ok) {
@@ -23,30 +23,30 @@ const AdminTeachersManager = () => {
                     nombres: user.nombres,
                     apellidos: user.apellidos,
                     email: user.email,
-                    rol_id: "Profesor", // Etiqueta visual
+                    rol_id: "Coordinador", // Etiqueta visual
                     telefono_personal: user.telefono_personal || 'No registrado',
                     tipo_documento_id: user.tipo_documento_id,
                     numero_documento: user.numero_documento,
                     fecha_nacimiento: user.fecha_nacimiento ? new Date(user.fecha_nacimiento).toLocaleDateString() : '---',
                     genero: user.genero,
                     datosRolEspecifico: {
-                        especializacion: user.profesores?.especializacion || 'Instructor General'
+                        especializacion: user.coordinadores?.especializacion || 'Coordinador General'
                     }
                 }));
-                setProfesores(formattedData);
+                setCoordinadores(formattedData);
             }
         } catch (error) {
-            toast.error("Error al cargar la lista de profesores");
+            toast.error("Error al cargar la lista de coordinadores");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (view === 'list') fetchProfesores();
+        if (view === 'list') fetchCoordinadores();
     }, [view]);
 
-    const filteredTeachers = profesores.filter(t => {
+    const filteredTeachers = coordinadores.filter(t => {
         const fullSearch = `${t.nombres} ${t.apellidos} ${t.datosRolEspecifico.especializacion}`.toLowerCase();
         return fullSearch.includes(searchTerm.toLowerCase());
     });
@@ -187,9 +187,9 @@ const AdminTeachersManager = () => {
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel <span className="text-[#1e3a8a]">Docente</span></h1>
+                <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel <span className="text-[#1e3a8a]">Coordinador</span></h1>
                 <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all hover:bg-orange-500 shadow-lg">
-                    <Plus size={20} /> Registrar Profe
+                    <Plus size={20} /> Registrar Coordinador
                 </button>
             </div>
 

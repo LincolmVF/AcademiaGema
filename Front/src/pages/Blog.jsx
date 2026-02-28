@@ -9,7 +9,7 @@ const Blog = () => {
       titulo: "5 ejercicios para mejorar tu salto vertical",
       resumen: "Descubre la rutina de pliometría que utilizan nuestros atletas de élite para dominar la red.",
       categoria: "Entrenamiento",
-      autor: "Coach Roberto",
+      autor: "Coordinator Roberto",
       fecha: "10 Feb, 2026",
       imagen: "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
       tiempo: "5 min"
@@ -38,7 +38,7 @@ const Blog = () => {
 
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900 overflow-x-hidden">
-      
+
       {/* --- HERO SECTION: Blog --- */}
       <section className="relative bg-[#0f172a] py-28 md:py-36 px-6 overflow-hidden z-0">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
@@ -51,7 +51,7 @@ const Blog = () => {
             <Trophy size={14} className="text-orange-500" />
             <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Blog Academia Gema</span>
           </div>
-          
+
           <h1 className="text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
             ADN <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Deportivo</span>
           </h1>
@@ -65,8 +65,8 @@ const Blog = () => {
       <section className="relative z-20 -mt-16 max-w-7xl mx-auto px-6">
         <div className="bg-white rounded-[48px] overflow-hidden shadow-2xl border border-slate-100 flex flex-col lg:flex-row group">
           <div className="lg:w-1/2 overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000" 
+            <img
+              src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               alt="Destacado"
             />
@@ -140,9 +140,9 @@ const Blog = () => {
           <h3 className="text-3xl md:text-5xl font-black text-[#1e3a8a] uppercase italic mb-6">Suscríbete al boletín</h3>
           <p className="text-slate-500 mb-10 max-w-xl mx-auto font-medium text-lg">Recibe consejos de entrenamiento y noticias de la academia directamente en tu correo.</p>
           <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
-            <input 
-              type="email" 
-              placeholder="tu@email.com" 
+            <input
+              type="email"
+              placeholder="tu@email.com"
               className="flex-grow px-6 py-4 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold"
             />
             <button className="bg-orange-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-orange-500/20 hover:bg-orange-600 transition-all">

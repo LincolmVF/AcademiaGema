@@ -17,8 +17,8 @@ const DashboardTeacher = () => {
   const { user } = useAuth();
   const hoyRef = useRef(null);
 
-  const coachFirstName = user?.user?.nombres || 'Instructor';
-  const coachFullName = user?.user ? `${user.user.nombres} ${user.user.apellidos}` : 'Profesor Gema';
+  const coordinatorFirstName = user?.user?.nombres || 'Coordinador';
+  const coordinatorFullName = user?.user ? `${user.user.nombres} ${user.user.apellidos}` : 'Coordinador Gema';
 
   const fetchAgenda = useCallback(async () => {
     try {
@@ -98,10 +98,10 @@ const DashboardTeacher = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h1 className="text-4xl font-black text-[#1e3a8a] uppercase tracking-tighter italic leading-none">
-            HOLA, <span className="text-orange-500">PROFE {coachFirstName.toUpperCase()}</span> 👋
+            HOLA, <span className="text-orange-500">COORDINADOR {coordinatorFirstName.toUpperCase()}</span> 👋
           </h1>
           <div className="h-2 w-24 bg-orange-500 rounded-full mt-4 shadow-lg shadow-orange-500/20"></div>
-          <p className="text-slate-500 mt-4 font-medium italic">Gestión de rendimiento para {coachFullName}.</p>
+          <p className="text-slate-500 mt-4 font-medium italic">Gestión de rendimiento para {coordinatorFullName}.</p>
         </div>
         <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border border-slate-200 shadow-sm text-xs font-black text-[#1e3a8a] uppercase tracking-widest italic">
           <Calendar size={18} className="text-orange-500" />

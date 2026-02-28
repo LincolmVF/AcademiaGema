@@ -10,13 +10,13 @@ const AdminSchedule = ({ onBack, initialData }) => {
 
     const [sedes, setSedes] = useState([]);
     const [canchas, setCanchas] = useState([]);
-    const [profesores, setProfesores] = useState([]);
+    const [coordinadores, setCoordinadores] = useState([]);
     const [niveles, setNiveles] = useState([]);
 
     const [commonData, setCommonData] = useState({
         sede_id: initialData?.cancha?.sede?.id?.toString() || '',
         cancha_id: initialData?.cancha?.id?.toString() || '',
-        profesor_id: initialData?.profesor?.id?.toString() || '',
+        coordinador_id: initialData?.coordinador?.id?.toString() || '',
         nivel_id: initialData?.nivel?.id?.toString() || '',
         capacidad_max: initialData?.capacidad_max || 20
     });
@@ -36,14 +36,14 @@ const AdminSchedule = ({ onBack, initialData }) => {
         const loadInitialData = async () => {
             try {
                 setFetchingData(true);
-                const [resSedes, resProfesores, resNiveles] = await Promise.all([
+                const [resSedes, resCoordinadores, resNiveles] = await Promise.all([
                     apiFetch.get('/sedes'),
-                    apiFetch.get('/usuarios/role/profesor'),
+                    apiFetch.get('/usuarios/role/coordinador'),
                     apiFetch.get('/niveles')
                 ]);
 
                 if (resSedes.ok) setSedes((await resSedes.json()).data || []);
-                if (resProfesores.ok) setProfesores((await resProfesores.json()).data || []);
+                if (resCoordinadores.ok) setCoordinadores((await resCoordinadores.json()).data || []);
                 if (resNiveles.ok) setNiveles((await resNiveles.json()).data || []);
 
                 const sId = initialData?.cancha?.sede?.id || initialData?.sede_id;
@@ -92,7 +92,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        if (!commonData.cancha_id || !commonData.profesor_id || !commonData.nivel_id) {
+        if (!commonData.cancha_id || !commonData.coordinador_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
         setLoading(true);
@@ -100,7 +100,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    profesor_id: Number(commonData.profesor_id),
+                    coordinador_id: Number(commonData.coordinador_id),
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
                     dia_semana: Number(bloque.dia_semana),
@@ -191,14 +191,14 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         </div>
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Profesor</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
                                 <select
-                                    value={commonData.profesor_id}
-                                    onChange={(e) => setCommonData({ ...commonData, profesor_id: e.target.value })}
+                                    value={commonData.coordinador_id}
+                                    onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
                                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                                 >
-                                    <option value="">Seleccione Profesor</option>
-                                    {profesores.map(p => (
+                                    <option value="">Seleccione Coordinador</option>
+                                    {coordinadores.map(p => (
                                         <option key={p.id} value={p.id.toString()}>
                                             {p.nombre_completo || `${p.nombres} ${p.apellidos}`}
                                         </option>

@@ -12,7 +12,7 @@ const AdminSchedulesManager = () => {
     // --- ESTADOS DE FILTRO ---
     const [filterDia, setFilterDia] = useState('');
     const [filterSede, setFilterSede] = useState('');
-    const [filterProfesor, setFilterProfesor] = useState('');
+    const [filterCoordinador, setFilterCoordinador] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedHorario, setSelectedHorario] = useState(null);
 
@@ -52,14 +52,14 @@ const AdminSchedulesManager = () => {
         return horarios.filter(h => {
             const matchesDia = filterDia === '' || h.dia_semana.toString() === filterDia;
             const matchesSede = filterSede === '' || h.cancha.sede.nombre === filterSede;
-            const matchesProf = filterProfesor === '' || h.profesor.nombre_completo === filterProfesor;
+            const matchesProf = filterCoordinador === '' || h.coordinador.nombre_completo === filterCoordinador;
             const matchesSearch = searchTerm === '' ||
-                h.profesor.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                h.coordinador.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 h.cancha.nombre.toLowerCase().includes(searchTerm.toLowerCase());
 
             return matchesDia && matchesSede && matchesProf && matchesSearch;
         });
-    }, [horarios, filterDia, filterSede, filterProfesor, searchTerm]);
+    }, [horarios, filterDia, filterSede, filterCoordinador, searchTerm]);
 
     // --- LÓGICA DE PAGINACIÓN ---
     const totalPages = Math.ceil(filteredHorarios.length / itemsPerPage);
@@ -70,7 +70,7 @@ const AdminSchedulesManager = () => {
 
     // Obtener opciones únicas para los selects de filtro
     const uniqueSedes = [...new Set(horarios.map(h => h.cancha.sede.nombre))];
-    const uniqueProfesores = [...new Set(horarios.map(h => h.profesor.nombre_completo))];
+    const uniqueCoordinadores = [...new Set(horarios.map(h => h.coordinador.nombre_completo))];
 
     if (view === 'create') return <AdminSchedule onBack={() => setView('list')} />;
     if (view === 'edit') return <AdminSchedule onBack={() => { setView('list'); setSelectedHorario(null); }} initialData={selectedHorario} />;
@@ -123,11 +123,11 @@ const AdminSchedulesManager = () => {
                 </select>
                 <select
                     className="bg-slate-50 border-none rounded-2xl px-4 py-2 text-xs font-bold outline-none"
-                    value={filterProfesor}
-                    onChange={(e) => { setFilterProfesor(e.target.value); setCurrentPage(1); }}
+                    value={filterCoordinador}
+                    onChange={(e) => { setFilterCoordinador(e.target.value); setCurrentPage(1); }}
                 >
-                    <option value="">Todos los Profesores</option>
-                    {uniqueProfesores.map(p => <option key={p} value={p}>{p}</option>)}
+                    <option value="">Todos los Coordinadores</option>
+                    {uniqueCoordinadores.map(p => <option key={p} value={p}>{p}</option>)}
                 </select>
             </div>
 
@@ -180,7 +180,7 @@ const AdminSchedulesManager = () => {
                                         <div className="flex items-center gap-2 text-slate-500">
                                             <User size={14} className="shrink-0 text-orange-500" />
                                             <span className="text-[11px] font-bold uppercase truncate">
-                                                {h.profesor.nombre_completo}
+                                                {h.coordinador.nombre_completo}
                                             </span>
                                         </div>
                                         <div className="flex items-center gap-2 text-slate-500">

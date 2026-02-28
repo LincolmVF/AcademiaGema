@@ -37,7 +37,7 @@ const AdminTeachers = ({ onBack }) => {
             password: formData.numero_documento, // Password por defecto
             nombres: formData.nombres,
             apellidos: formData.apellidos,
-            rol_id: "profesor",
+            rol_id: "coordinador",
             tipo_documento_id: formData.tipo_documento_id,
             numero_documento: formData.numero_documento,
             telefono_personal: formData.telefono_personal,
@@ -49,10 +49,10 @@ const AdminTeachers = ({ onBack }) => {
         };
 
         try {
-            const response = await apiFetch.post('/usuarios/register', payload); 
-            
+            const response = await apiFetch.post('/usuarios/register', payload);
+
             if (response.ok) {
-                toast.success("¡Profesor registrado exitosamente!");
+                toast.success("¡Coordinador registrado exitosamente!");
                 onBack(); // Regresa al listado
             } else {
                 const errorData = await response.json();
@@ -82,7 +82,7 @@ const AdminTeachers = ({ onBack }) => {
                         <div className="flex items-center gap-2 mb-0.5">
                             <div className="h-5 w-1 bg-orange-500 rounded-full"></div>
                             <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">
-                                Registro de <span className="text-[#1e3a8a]">Docente</span>
+                                Registro de <span className="text-[#1e3a8a]">Coordinador</span>
                             </h1>
                         </div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-3">Creación de cuenta federada</p>
@@ -152,7 +152,7 @@ const AdminTeachers = ({ onBack }) => {
                         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Email Corporativo</label>
-                                <input name="email" type="email" placeholder="profesor.nuevo@gema.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
+                                <input name="email" type="email" placeholder="coordinador.nuevo@gema.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Teléfono Personal</label>
@@ -184,7 +184,7 @@ const AdminTeachers = ({ onBack }) => {
                             <Lock size={28} className="text-orange-500 mb-4" />
                             <h4 className="font-black uppercase italic tracking-tighter text-lg leading-tight">Clave Temporal</h4>
                             <p className="text-[10px] text-slate-400 font-bold uppercase mt-3 leading-relaxed">
-                                Una vez registrado, el profesor podrá ingresar usando su número de documento como contraseña inicial.
+                                Una vez registrado, el coordinador podrá ingresar usando su número de documento como contraseña inicial.
                             </p>
                         </div>
                         <ShieldCheck size={100} className="absolute -right-6 -bottom-6 opacity-5 rotate-12" />

@@ -8,8 +8,8 @@ const StudentEnrollment = ({ schedule, isSelected, onSelect }) => {
     <div
       onClick={() => onSelect(schedule.id)}
       className={`relative p-8 rounded-[2.5rem] border-2 transition-all duration-500 cursor-pointer overflow-hidden group ${isSelected
-          ? 'border-[#1e3a8a] bg-white shadow-2xl shadow-blue-900/10 scale-[1.02]'
-          : 'border-slate-100 bg-white hover:border-blue-200 hover:shadow-xl'
+        ? 'border-[#1e3a8a] bg-white shadow-2xl shadow-blue-900/10 scale-[1.02]'
+        : 'border-slate-100 bg-white hover:border-blue-200 hover:shadow-xl'
         }`}
     >
       {/* Fondo decorativo: El trofeo solo se ilumina sutilmente */}
@@ -77,7 +77,7 @@ const StudentEnrollment = ({ schedule, isSelected, onSelect }) => {
             <div className="text-left">
               <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mb-0.5">Entrenador</p>
               <p className={`text-xs font-black leading-tight transition-colors ${isSelected ? 'text-slate-800' : 'text-slate-600'}`}>
-                {schedule.profesor?.nombre_completo || 'Staff Gema'}
+                {schedule.coordinador?.nombre_completo || 'Staff Gema'}
               </p>
             </div>
           </div>

@@ -35,7 +35,7 @@ const About = () => {
             { label: 'Atletas', val: '+500', icon: Users },
             { label: 'Sedes', val: '03', icon: Shield },
             { label: 'Títulos', val: '12', icon: Trophy },
-            { label: 'Coaches', val: '15', icon: Award }
+            { label: 'Coordinators', val: '15', icon: Award }
           ].map((s, i) => (
             <div key={i} className="text-center group">
               <p className="text-3xl font-black text-[#1e3a8a] italic tracking-tighter group-hover:text-orange-500 transition-colors">{s.val}</p>
