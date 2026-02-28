@@ -46,7 +46,7 @@ function Login() {
       }
 
     } catch (error) {
-      const serverMessage = error.response?.data?.message || "Error de conexión";
+      const serverMessage = error?.message || "Error de conexión";
       const cleanMessage = serverMessage.replace(/\x1B\[[0-9;]*m/g, "");
       
       toast.error(cleanMessage || 'Credenciales inválidas', {
