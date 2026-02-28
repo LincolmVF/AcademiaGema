@@ -36,7 +36,7 @@ function Login() {
       } else {
         const routes = {
           'Administrador': '/dashboard/admin',
-          'Profesor': '/dashboard/teacher',
+          'Coordinador': '/dashboard/teacher',
           'Alumno': '/dashboard/student'
         };
         navigate(routes[rol] || '/login');
