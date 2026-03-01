@@ -1,23 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; //
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Filters from '../components/Home/Filters';
 import ClassCard from '../components/Home/ClassCard';
 import Hero from '../components/Home/Hero';
+import horarioService from '../services/horario.service'; // Importamos el servicio
 
 function Home() {
   const [activeDay, setActiveDay] = useState(0);
   const [activeCategory, setActiveCategory] = useState('Todas');
+  const [classes, setClasses] = useState([]); // Estado para las clases de la BD
+  const [loading, setLoading] = useState(true); // Estado de carga
 
-  // Datos simulados (Mock Data)
-  const classes = [
-    { id: 1, title: "Fundamentos de Voleibol", category: "Principiantes", time: "08:00 AM", location: "Cancha Techada 1", coordinator: "Ana Martínez", spots: 8, price: 15, image: "https://i.ytimg.com/vi/_EtzSWP8Yd0/maxresdefault.jpg" },
-    { id: 2, title: "Táctica Defensiva Pro", category: "Avanzados", time: "10:00 AM", location: "Cancha Principal", coordinator: "Roberto Gómez", spots: 0, price: 25, image: "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80" },
-    { id: 3, title: "Vóley Playa Mixto", category: "Vóley Playa", time: "15:00 PM", location: "Arena Externa", coordinator: "Carla & Diego", spots: 4, price: 20, image: "https://f.rpp-noticias.io/2025/06/06/064106_1754638.jpg?width=860&quality=80" },
-    { id: 4, title: "Saque y Recepción", category: "Intermedios", time: "17:30 PM", location: "Cancha Techada 2", coordinator: "Ana Martínez", spots: 12, price: 18, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNfPHjsadDY9cAN3LfzJAte6vKJOHfvcydUQ&s" },
-    { id: 5, title: "Entrenamiento Físico", category: "Todas", time: "19:00 PM", location: "Gimnasio A", coordinator: "Marcos Fit", spots: 20, price: 10, image: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80" },
-    { id: 6, title: "Liga Nocturna", category: "Avanzados", time: "20:30 PM", location: "Coliseo Central", coordinator: "Staff Gema", spots: 2, price: 30, image: "https://pbs.twimg.com/media/EP456OMX4AEymmk.jpg" },
-  ];
+  // Mapeo de IDs de días (0-6) a nombres en español según tu lógica de BD
+  const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+  useEffect(() => {
+    const fetchHorarios = async () => {
+      try {
+        setLoading(true);
+        const data = await horarioService.obtenerDisponibles(); //
+
+        // Transformamos los datos de la BD al formato que espera ClassCard
+        const formattedClasses = data.map(h => ({
+          id: h.id_horario,
+          title: h.nivel?.nombre || "Clase de Voleibol",
+          category: h.nivel?.nombre || "General",
+          time: h.hora_inicio,
+          location: h.sede?.nombre || "Sede Principal",
+          coordinator: h.profesor ? `${h.profesor.nombre} ${h.profesor.apellido}` : "Staff Gema",
+          spots: h.cupos_disponibles,
+          price: h.precio || 0,
+          image: h.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
+          dia_nombre: h.dia_semana 
+        }));
+
+        setClasses(formattedClasses);
+      } catch (error) {
+        console.error("Error al cargar horarios:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHorarios();
+  }, []);
+
+  // Lógica de filtrado
+  const filteredClasses = classes.filter(clase => {
+    const matchDay = clase.dia_nombre === diasSemana[activeDay];
+    const matchCategory = activeCategory === 'Todas' || clase.category === activeCategory;
+    return matchDay && matchCategory;
+  });
 
   return (
     <div className="bg-[#f8fafc] min-h-screen font-sans text-slate-900 flex flex-col overflow-x-hidden">
@@ -37,7 +71,6 @@ function Home() {
             Reserva tu cupo en nuestras clases de alto rendimiento.
           </p>
 
-          {/* Contenedor de Filtros: Optimizado para scroll táctil suave */}
           <div className="mt-5 md:mt-8 bg-white p-1 md:p-2 rounded-xl md:rounded-3xl shadow-sm border border-slate-100 overflow-x-auto overflow-y-hidden scrollbar-hide touch-pan-x">
             <div className="inline-block min-w-full align-middle">
               <Filters
@@ -50,20 +83,26 @@ function Home() {
           </div>
         </div>
 
-        {/* Grid: Gap reducido en móvil para que las tarjetas se sientan conectadas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
-          {classes.map((clase) => (
-            <div
-              key={clase.id}
-              className="transform transition-all duration-300 active:scale-[0.97] md:hover:-translate-y-2"
-            >
-              <ClassCard {...clase} />
-            </div>
-          ))}
-        </div>
+        {/* Grid de Clases o Cargando */}
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cd5a2c]"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-10">
+            {filteredClasses.map((clase) => (
+              <div
+                key={clase.id}
+                className="transform transition-all duration-300 active:scale-[0.97] md:hover:-translate-y-2"
+              >
+                <ClassCard {...clase} />
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Estado vacío: Más compacto en móvil */}
-        {classes.length === 0 && (
+        {/* Estado vacío */}
+        {!loading && filteredClasses.length === 0 && (
           <div className="text-center py-10 md:py-24 bg-white rounded-[24px] md:rounded-[40px] border-2 border-dashed border-slate-200 shadow-inner mx-2 md:mx-0">
             <div className="w-12 h-12 md:w-20 md:h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3">
               <span className="text-xl md:text-4xl">🏐</span>
@@ -80,6 +119,7 @@ function Home() {
           </div>
         )}
       </main>
+      <Footer />
     </div>
   );
 }
