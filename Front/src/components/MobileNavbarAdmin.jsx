@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, CheckCircle, Users, Menu, X, 
   MapPin, CalendarRange, BarChart3, TicketPercent, 
-  UserCog, GraduationCap, DollarSign, Activity, Settings, LogOut 
+  UserCog, GraduationCap, DollarSign, Activity, Settings, LogOut,
+  Megaphone // <-- Icono añadido
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -57,6 +58,8 @@ const MobileNavbarAdmin = () => {
                                 <p className="px-4 text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-2">Comunidad</p>
                                 <NavLink to="/dashboard/admin/teachers" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><UserCog size={18}/> Profesores</NavLink>
                                 <NavLink to="/dashboard/admin/benefits" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><TicketPercent size={18}/> Lista Beneficios</NavLink>
+                                {/* 👇 Enlace a Publicaciones añadido aquí */}
+                                <NavLink to="/dashboard/admin/publications" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><Megaphone size={18}/> Publicaciones</NavLink>
                             </div>
 
                             <div className="space-y-1">

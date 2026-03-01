@@ -38,6 +38,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminInjuriesManager from "./pages/admin/AdminInjuriesManager";
 import AdminBenefits from "./pages/admin/AdminBenefits";
 import AdminCreateBenefits from "./pages/admin/AdminCreateBenefits";
+import AdminPublications from "./pages/admin/AdminPublications";
 
 
 
@@ -117,6 +118,7 @@ function App() {
             <Route path="admin/catalog" element={<AdminCatalogManager />} />
             <Route path="admin/locations" element={<AdminLocationsManager />} />
             <Route path="admin/injuries" element={<AdminInjuriesManager />} />
+            <Route path="admin/publications" element={<AdminPublications />} />
             <Route
               path="admin/payment-validation"
               element={<AdminPaymentManager />}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Edit2, Shield, Star, ArrowLeft, HeartPulse } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { Link } from 'react-router-dom';
-import EditProfileModal from '../../components/student/DataUsuario/EditProfileModal.jsx'; // Asegúrate de que el nombre del archivo coincida
+import EditProfileModal from '../../components/student/DataUsuario/EditProfileModal.jsx';
 
 const Profile = () => {
   const { user, updateUserData } = useAuth();
@@ -41,23 +41,16 @@ const Profile = () => {
         <div className="h-1.5 w-20 bg-orange-500 rounded-full mt-2 shadow-[0_2px_10px_rgba(249,115,22,0.3)] mx-auto md:mx-0"></div>
       </div>
 
-      {/* TARJETA DE CABECERA - El 'relative' aquí es CLAVE */}
       <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/60 mb-8 flex flex-col md:flex-row items-center gap-8 text-center md:text-left relative overflow-hidden">
-
-        {/* Decoración de fondo */}
         <div className="absolute -top-10 -right-10 opacity-[0.03] pointer-events-none">
           <img src="/logo.png" alt="" className="w-40 h-auto rotate-12" />
         </div>
 
-        {/* BOTÓN EDITAR - Ahora con fondo naranja para que resalte */}
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsEditModalOpen(true);
-          }}
-          className="absolute top-6 right-6 z-[100] cursor-pointer bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white p-3 rounded-2xl transition-all duration-300 shadow-xl border border-orange-100 flex items-center justify-center"
+          onClick={() => setIsEditModalOpen(true)}
+          className="absolute top-6 right-6 z-20 bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white p-3 rounded-2xl transition-all duration-300 shadow-sm border border-orange-100"
         >
-          <Edit2 size={20} strokeWidth={2.5} className="pointer-events-none" />
+          <Edit2 size={20} strokeWidth={2.5} />
         </button>
 
         <div className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-[#1e40af] to-[#0f172a] border-4 border-white shadow-2xl flex items-center justify-center text-4xl font-black text-white transform rotate-3 hover:rotate-0 transition-transform duration-500 shrink-0">
@@ -65,46 +58,24 @@ const Profile = () => {
         </div>
 
         <div className="flex-1 relative z-10">
-          <h2 className="text-3xl font-black text-[#1e3a8a] uppercase tracking-tighter italic">{fullName}</h2>
-          <p className="text-slate-400 font-black uppercase tracking-widest text-xs mt-1 italic">Club Gema</p>
-
-          <div className="flex items-center justify-center md:justify-start gap-3 mt-4">
-            <span className="bg-orange-100 text-orange-600 text-[10px] font-black px-4 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-widest border border-orange-200">
-              <Shield size={12} strokeWidth={3} /> {userRole}
-            </span>
-            <span className="bg-blue-50 text-blue-600 text-[10px] font-black px-4 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-widest border border-blue-100">
-              <Star size={12} strokeWidth={3} /> Activo
-            </span>
-          </div>
+          <h2 className="text-3xl font-black text-[#1e3a8a] uppercase tracking-tighter italic leading-tight">
+            {fullName}
+          </h2>
+          <p className="text-slate-400 font-black uppercase tracking-widest text-xs mt-1 italic">
+            Academia Gema · Alumno
+          </p>
         </div>
       </div>
 
-      {/* CUERPO DE DATOS */}
       <div className="space-y-4">
-        <ProfileInfoBox
-          icon={<Mail size={22} />}
-          label="Correo Electrónico"
-          value={userEmail}
-          color="blue"
-        />
-        <ProfileInfoBox
-          icon={<Phone size={22} />}
-          label="Teléfono / WhatsApp"
-          value={userPhone}
-          color="orange"
-        />
-        <ProfileInfoBox
-          icon={<MapPin size={22} />}
-          label="Dirección"
-          value={userAddress}
-          color="indigo"
-        />
-        <ProfileInfoBox
-          icon={<HeartPulse size={22} />}
-          label="Alergias / Condiciones"
-          value={userMedical}
-          color="rose"
-        />
+        <ProfileInfoBox icon={<Mail size={22} />} label="Correo Electrónico" value={userEmail} color="blue" />
+        <ProfileInfoBox icon={<Phone size={22} />} label="Teléfono / WhatsApp" value={userPhone} color="orange" />
+        <ProfileInfoBox icon={<MapPin size={22} />} label="Dirección" value={userAddress} color="indigo" />
+        
+        {/* 🧪 TARJETA DE PRUEBA: El cursor-pointer indica que es clickable */}
+        <div onClick={() => setIsEditModalOpen(true)} className="cursor-pointer transform hover:scale-[1.02] transition-transform">
+          <ProfileInfoBox icon={<HeartPulse size={22} />} label="Alergias / Condiciones (Clic para editar)" value={userMedical} color="rose" />
+        </div>
       </div>
 
       <EditProfileModal
@@ -117,7 +88,6 @@ const Profile = () => {
   );
 };
 
-// Componente auxiliar para los items del perfil
 const ProfileInfoBox = ({ icon, label, value, color }) => {
   const colors = {
     blue: "bg-blue-50 text-[#1e3a8a] group-hover:bg-[#1e3a8a]",
@@ -127,7 +97,7 @@ const ProfileInfoBox = ({ icon, label, value, color }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center gap-5 group hover:border-[#1e3a8a]/20 transition-all duration-300">
+    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40 flex items-center gap-5 group transition-all duration-300">
       <div className={`p-4 rounded-2xl transition-all duration-300 shadow-sm group-hover:text-white ${colors[color]}`}>
         {icon}
       </div>
