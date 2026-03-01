@@ -48,10 +48,10 @@ const CompletarEmailModal = ({ isOpen, onClose, onActionSuccess }) => {
             <Mail className="text-blue-600" size={32} />
           </div>
           <h3 className="text-2xl font-black text-slate-900 uppercase italic">
-            Paso Final
+            Vincula un correo electrónico para tu cuenta
           </h3>
           <p className="text-slate-500 text-sm mt-2">
-            Vincula tu correo para garantizar el acceso a tus notas y pagos.
+            Vincula tu correo para poder recuperar tu cuenta en caso de olvido de contraseña.
           </p>
         </div>
 

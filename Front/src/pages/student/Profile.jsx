@@ -16,11 +16,11 @@ const Profile = () => {
   const fullName = `${currentUser.nombres || ''} ${currentUser.apellidos || ''}`.trim() || 'Alumno Gema';
   const userInitial = currentUser.nombres?.charAt(0).toUpperCase() || 'G';
   const userRole = currentUser.rol || 'Alumno';
-  
+
   const userEmail = currentUser.email || 'No registrado';
   const userPhone = currentUser.telefono_personal || 'No registrado';
-  const userAddress = direccionesData.direccion_completa 
-    ? `${direccionesData.direccion_completa}, ${direccionesData.distrito || ''}` 
+  const userAddress = direccionesData.direccion_completa
+    ? `${direccionesData.direccion_completa}, ${direccionesData.distrito || ''}`
     : 'Dirección no registrada';
   const userMedical = alumnosData.condiciones_medicas || 'Ninguna registrada';
 
@@ -43,18 +43,21 @@ const Profile = () => {
 
       {/* TARJETA DE CABECERA - El 'relative' aquí es CLAVE */}
       <div className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/60 mb-8 flex flex-col md:flex-row items-center gap-8 text-center md:text-left relative overflow-hidden">
-        
+
         {/* Decoración de fondo */}
         <div className="absolute -top-10 -right-10 opacity-[0.03] pointer-events-none">
           <img src="/logo.png" alt="" className="w-40 h-auto rotate-12" />
         </div>
 
         {/* BOTÓN EDITAR - Ahora con fondo naranja para que resalte */}
-        <button 
-          onClick={() => setIsEditModalOpen(true)}
-          className="absolute top-6 right-6 z-10 bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white p-3 rounded-2xl transition-all duration-300 shadow-sm border border-orange-100"
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsEditModalOpen(true);
+          }}
+          className="absolute top-6 right-6 z-[100] cursor-pointer bg-orange-50 text-orange-500 hover:bg-orange-500 hover:text-white p-3 rounded-2xl transition-all duration-300 shadow-xl border border-orange-100 flex items-center justify-center"
         >
-          <Edit2 size={20} strokeWidth={2.5} />
+          <Edit2 size={20} strokeWidth={2.5} className="pointer-events-none" />
         </button>
 
         <div className="w-28 h-28 rounded-[2rem] bg-gradient-to-br from-[#1e40af] to-[#0f172a] border-4 border-white shadow-2xl flex items-center justify-center text-4xl font-black text-white transform rotate-3 hover:rotate-0 transition-transform duration-500 shrink-0">
@@ -78,35 +81,35 @@ const Profile = () => {
 
       {/* CUERPO DE DATOS */}
       <div className="space-y-4">
-        <ProfileInfoBox 
-          icon={<Mail size={22} />} 
-          label="Correo Electrónico" 
-          value={userEmail} 
-          color="blue" 
+        <ProfileInfoBox
+          icon={<Mail size={22} />}
+          label="Correo Electrónico"
+          value={userEmail}
+          color="blue"
         />
-        <ProfileInfoBox 
-          icon={<Phone size={22} />} 
-          label="Teléfono / WhatsApp" 
-          value={userPhone} 
-          color="orange" 
+        <ProfileInfoBox
+          icon={<Phone size={22} />}
+          label="Teléfono / WhatsApp"
+          value={userPhone}
+          color="orange"
         />
-        <ProfileInfoBox 
-          icon={<MapPin size={22} />} 
-          label="Dirección" 
-          value={userAddress} 
-          color="indigo" 
+        <ProfileInfoBox
+          icon={<MapPin size={22} />}
+          label="Dirección"
+          value={userAddress}
+          color="indigo"
         />
-        <ProfileInfoBox 
-          icon={<HeartPulse size={22} />} 
-          label="Alergias / Condiciones" 
-          value={userMedical} 
-          color="rose" 
+        <ProfileInfoBox
+          icon={<HeartPulse size={22} />}
+          label="Alergias / Condiciones"
+          value={userMedical}
+          color="rose"
         />
       </div>
 
-      <EditProfileModal 
-        isOpen={isEditModalOpen} 
-        onClose={() => setIsEditModalOpen(false)} 
+      <EditProfileModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
         currentUser={currentUser}
         onSuccess={handleProfileUpdate}
       />
