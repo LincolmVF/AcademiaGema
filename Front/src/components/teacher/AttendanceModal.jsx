@@ -1,25 +1,27 @@
 import React, { useState } from 'react';
-import { X, Check, UserMinus, Save, Loader2 } from 'lucide-react';
+import { X, Check, UserMinus, Save, Loader2, ShieldAlert, RefreshCw } from 'lucide-react';
 import { asistenciaService } from '../../services/asistencia.service';
 import toast from 'react-hot-toast';
 
 const AttendanceModal = ({ clase, onClose, onRefresh }) => {
     const [isSaving, setIsSaving] = useState(false);
-    
+
     // Inicialización basada en el desglose de fechas del Dashboard
     const [listaAsistencia, setListaAsistencia] = useState(
         clase.inscripcionesEnEstaFecha?.map(ins => ({
             asistenciaId: ins.registro_especifico?.id,
             nombreCompleto: `${ins.alumnos.usuarios.nombres} ${ins.alumnos.usuarios.apellidos}`,
             dni: ins.alumnos.usuarios.numero_documento,
-            estado: ins.registro_especifico?.estado || 'PROGRAMADA'
+            estado: ins.registro_especifico?.estado || 'PROGRAMADA',
+            esRecuperacion: ins.estado === 'RECUPERACION',
+            esLesion: ins.registro_especifico?.estado === 'JUSTIFICADO_LESION'
         })) || []
     );
 
     const handleLocalUpdate = (asistenciaId, nuevoEstado) => {
-        setListaAsistencia(prev => 
-            prev.map(item => item.asistenciaId === asistenciaId 
-                ? { ...item, estado: nuevoEstado } 
+        setListaAsistencia(prev =>
+            prev.map(item => item.asistenciaId === asistenciaId
+                ? { ...item, estado: nuevoEstado }
                 : item
             )
         );
@@ -29,15 +31,15 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
         const payload = listaAsistencia.map(item => ({
             id: item.asistenciaId,
             estado: item.estado,
-            comentario: "" 
+            comentario: ""
         }));
 
         try {
             setIsSaving(true);
             await asistenciaService.marcarAsistenciaMasiva(payload);
             toast.success("Asistencia guardada con éxito");
-            onRefresh(); 
-            onClose();   
+            onRefresh();
+            onClose();
         } catch (error) {
             toast.error("Error al guardar la asistencia");
         } finally {
@@ -48,7 +50,7 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
             <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-zoom-in">
-                
+
                 <div className="bg-[#1e3a8a] p-8 text-white flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-black uppercase italic leading-none">
@@ -73,27 +75,37 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
                                     DNI: {alumno.dni}
                                 </span>
+                                <div className="flex gap-2">
+                                    {alumno.esRecuperacion && (
+                                        <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-blue-100 flex items-center gap-1 italic">
+                                            <RefreshCw size={10} /> RECUPERACIÓN
+                                        </span>
+                                    )}
+                                    {alumno.esLesion && (
+                                        <span className="bg-orange-50 text-orange-600 text-[8px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-orange-100 flex items-center gap-1 italic">
+                                            <ShieldAlert size={10} /> JUSTIFICADO MÉD.
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => handleLocalUpdate(alumno.asistenciaId, 'PRESENTE')}
-                                    className={`p-3 rounded-2xl transition-all ${
-                                        alumno.estado === 'PRESENTE' 
-                                        ? 'bg-green-500 text-white shadow-lg shadow-green-200' 
+                                    className={`p-3 rounded-2xl transition-all ${alumno.estado === 'PRESENTE'
+                                        ? 'bg-green-500 text-white shadow-lg shadow-green-200'
                                         : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-green-500'
-                                    }`}
+                                        }`}
                                 >
                                     <Check size={20} strokeWidth={3} />
                                 </button>
 
                                 <button
                                     onClick={() => handleLocalUpdate(alumno.asistenciaId, 'FALTA')}
-                                    className={`p-3 rounded-2xl transition-all ${
-                                        alumno.estado === 'FALTA' 
-                                        ? 'bg-red-500 text-white shadow-lg shadow-red-200' 
+                                    className={`p-3 rounded-2xl transition-all ${alumno.estado === 'FALTA'
+                                        ? 'bg-red-500 text-white shadow-lg shadow-red-200'
                                         : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-red-500'
-                                    }`}
+                                        }`}
                                 >
                                     <UserMinus size={20} strokeWidth={3} />
                                 </button>

@@ -54,4 +54,11 @@ apiFetch.put = (endpoint, body, options = {}) =>
 apiFetch.delete = (endpoint, options = {}) =>
   apiFetch(endpoint, { ...options, method: 'DELETE' });
 
+apiFetch.patch = (endpoint, body, options = {}) =>
+  apiFetch(endpoint, {
+    ...options,
+    method: 'PATCH',
+    body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined
+  });
+
 export default apiFetch;

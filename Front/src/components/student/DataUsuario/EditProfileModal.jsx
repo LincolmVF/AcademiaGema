@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader2, Phone, HeartPulse, MapPin } from 'lucide-react';
-import apiFetch from '../../../interceptors/api.js'; 
+import apiFetch from '../../../interceptors/api.js';
 import toast from 'react-hot-toast';
 
 const EditProfileModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
@@ -39,12 +39,12 @@ const EditProfileModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
         Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
       );
 
-      const response = await apiFetch.put('/alumno/mi-perfil', dataClean);
+      const response = await apiFetch.patch('/alumno/mi-perfil', dataClean);
       const result = await response.json();
       if (!response.ok) throw new Error(result.message);
 
       toast.success("¡Datos guardados!");
-      if (onSuccess) onSuccess(result.data); 
+      if (onSuccess) onSuccess(result.data);
       onClose();
     } catch (err) {
       toast.error(err.message);
@@ -64,9 +64,9 @@ const EditProfileModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
         </div>
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <input type="text" placeholder="Teléfono" value={formData.telefono_personal} onChange={e => setFormData({...formData, telefono_personal: e.target.value})} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
-             <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
-             <input type="text" placeholder="Condiciones Médicas" value={formData.condiciones_medicas} onChange={e => setFormData({...formData, condiciones_medicas: e.target.value})} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500 md:col-span-2" />
+            <input type="text" placeholder="Teléfono" value={formData.telefono_personal} onChange={e => setFormData({ ...formData, telefono_personal: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+            <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+            <input type="text" placeholder="Condiciones Médicas" value={formData.condiciones_medicas} onChange={e => setFormData({ ...formData, condiciones_medicas: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500 md:col-span-2" />
           </div>
           <button type="submit" disabled={loading} className="w-full bg-[#1e3a8a] hover:bg-orange-600 text-white font-black py-5 rounded-[2rem] transition-all flex items-center justify-center gap-3">
             {loading ? <Loader2 className="animate-spin" /> : <Save />} {loading ? "GUARDANDO..." : "GUARDAR CAMBIOS"}

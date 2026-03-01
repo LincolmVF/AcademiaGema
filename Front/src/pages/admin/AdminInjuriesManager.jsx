@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import lesionService from '../../services/lesion.service';
 // Importamos el Modal
@@ -10,6 +10,8 @@ const AdminInjuriesManager = () => {
     const [loading, setLoading] = useState(false);
     const [selectedSolicitud, setSelectedSolicitud] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [evidenceViewerOpen, setEvidenceViewerOpen] = useState(false);
+    const [evidenceUrl, setEvidenceUrl] = useState('');
 
     const fetchPendientes = async () => {
         try {
@@ -30,6 +32,11 @@ const AdminInjuriesManager = () => {
     const openEvaluateModal = (sol) => {
         setSelectedSolicitud(sol);
         setModalOpen(true);
+    };
+
+    const openEvidenceViewer = (url) => {
+        setEvidenceUrl(url);
+        setEvidenceViewerOpen(true);
     };
 
     return (
@@ -73,7 +80,13 @@ const AdminInjuriesManager = () => {
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-300">{sol.descripcion_lesion}</td>
                                         <td className="px-6 py-4 text-center">
-                                            <a href={sol.url_evidencia_medica} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/30 text-blue-300 hover:bg-blue-400 hover:text-blue-700"><Eye size={16} /></a>
+                                            <button
+                                                onClick={() => openEvidenceViewer(sol.url_evidencia_medica)}
+                                                className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-500/30 text-blue-300 hover:bg-blue-400 hover:text-blue-700 transition-colors"
+                                                title="Ver Evidencia"
+                                            >
+                                                <Eye size={16} />
+                                            </button>
                                         </td>
                                         <td className="px-6 py-4 text-center text-sm text-gray-300">{new Date(sol.fecha_solicitud).toLocaleDateString()}</td>
                                         <td className="px-6 py-4 flex justify-center">
@@ -94,6 +107,27 @@ const AdminInjuriesManager = () => {
                 solicitud={selectedSolicitud}
                 onEvaluateSuccess={fetchPendientes}
             />
+
+            {evidenceViewerOpen && (
+                <div
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
+                    onClick={() => setEvidenceViewerOpen(false)} // Cierra al hacer clic fuera
+                >
+                    <div className="relative max-w-4xl max-h-[90vh] w-full flex justify-center items-center" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            onClick={() => setEvidenceViewerOpen(false)}
+                            className="absolute -top-12 right-0 md:-right-12 text-white/70 hover:text-white transition-colors"
+                        >
+                            <X size={36} />
+                        </button>
+                        <img
+                            src={evidenceUrl}
+                            alt="Evidencia Médica"
+                            className="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl ring-1 ring-white/20"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

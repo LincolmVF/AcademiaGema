@@ -6,6 +6,7 @@ import lesionService from '../../../services/lesion.service';
 const InjuryRequestForm = ({ onSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({ descripcion: '', evidencia: null });
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,7 +26,8 @@ const InjuryRequestForm = ({ onSuccess }) => {
             await lesionService.crearSolicitud(payload);
 
             toast.success('Solicitud enviada correctamente');
-            setFormData({ descripcion: '', urlEvidencia: null });
+            setFormData({ descripcion: '', evidencia: null });
+            setPreviewUrl(null);
 
             e.target.reset();
 
@@ -56,7 +58,7 @@ const InjuryRequestForm = ({ onSuccess }) => {
                     />
                 </div>
 
-                <div>
+                {/* <div>
                     <label className="block text-xs font-bold text-blue-200 uppercase mb-2">Evidencia Médica</label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -74,6 +76,34 @@ const InjuryRequestForm = ({ onSuccess }) => {
                     <p className="text-[10px] text-gray-400 mt-2 ml-1">
                         * Sube tu evidencia médica (JPG, PNG).
                     </p>
+                </div> */}
+
+                <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Evidencia Médica</label>
+                    <p className="text-[10px] text-gray-400 mt-2 ml-1">* Subir imagen (JPG, JPEG o PNG).</p>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        id="evidencia-input"
+                        onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (e.target.files[0]) {
+                                setFormData({ ...formData, evidencia: file });
+                                setPreviewUrl(URL.createObjectURL(file));
+                            }
+                        }}
+                    />
+                    <label htmlFor="evidencia-input" className="block bg-black/20 border-2 border-dashed border-white/10 rounded-3xl py-8 text-center cursor-pointer hover:bg-gray-500 hover:border-gray-400 transition-all">
+                        {previewUrl ? (
+                            <img src={previewUrl} className="h-32 mx-auto rounded-2xl shadow-md" alt="Evidencia médica" />
+                        ) : (
+                            <>
+                                <Upload size={32} className="mx-auto text-slate-300 mb-2" />
+                                <p className="text-[10px] font-black text-slate-400 uppercase">Subir Foto</p>
+                            </>
+                        )}
+                    </label>
                 </div>
 
                 <button
