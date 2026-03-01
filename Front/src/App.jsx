@@ -49,6 +49,8 @@ import Enrollment from "./pages/student/enrollment";
 import Blog from "./pages/Blog";
 import StudentInjuries from "./pages/student/StudentInjuries";
 import StudentRecoveries from "./pages/student/StudentRecoveries";
+import StudentNews from "./pages/student/StudentNews";
+
 
 function App() {
   return (
@@ -90,6 +92,7 @@ function App() {
             <Route path="student/enrollment" element={<Enrollment />} />
             <Route path="student/injuries" element={<StudentInjuries />} />
             <Route path="student/recoveries" element={<StudentRecoveries />} />
+            <Route path="student/news" element={<StudentNews />} />
 
             {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
             <Route

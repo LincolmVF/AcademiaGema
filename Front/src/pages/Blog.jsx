@@ -1,135 +1,228 @@
-import React from 'react';
-import { Calendar, User, ArrowRight, Trophy, Zap, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { 
+  Calendar, User, ArrowRight, Trophy, 
+  Zap, Clock, Megaphone, Loader2, Star,
+  Award, TrendingUp
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { apiFetch } from '../interceptors/api';
 
 const Blog = () => {
-  const posts = [
-    {
-      id: 1,
-      titulo: "5 ejercicios para mejorar tu salto vertical",
-      resumen: "Descubre la rutina de pliometría que utilizan nuestros atletas de élite para dominar la red.",
-      categoria: "Entrenamiento",
-      autor: "Coordinator Roberto",
-      fecha: "10 Feb, 2026",
-      imagen: "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
-      tiempo: "5 min"
-    },
-    {
-      id: 2,
-      titulo: "Nutrición: Qué comer antes de un partido",
-      resumen: "La energía es clave. Aprende a cargar glucógeno de manera eficiente sin sentir pesadez.",
-      categoria: "Nutrición",
-      autor: "Dra. Ana M.",
-      fecha: "08 Feb, 2026",
-      imagen: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80",
-      tiempo: "4 min"
-    },
-    {
-      id: 3,
-      titulo: "Mentalidad Ganadora: El set invisible",
-      resumen: "Cómo manejar la presión en puntos de partido y mantener la concentración bajo estrés.",
-      categoria: "Psicología",
-      autor: "Staff Gema",
-      fecha: "05 Feb, 2026",
-      imagen: "https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=800&q=80",
-      tiempo: "7 min"
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [featuredPost, setFeaturedPost] = useState(null);
+
+  const fetchPublicaciones = async () => {
+    setLoading(true);
+    try {
+      const response = await apiFetch.get('/publicaciones');
+      const result = await response.json();
+      if (response.ok) {
+        const ordenadas = (result.data || []).sort((a, b) => 
+          new Date(b.creado_en) - new Date(a.creado_en)
+        );
+        setPosts(ordenadas);
+        setFeaturedPost(ordenadas[0]);
+      }
+    } catch (error) {
+      console.error("Error al cargar el blog:", error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchPublicaciones();
+  }, []);
+
+  const handleSelectPost = (post) => {
+    setFeaturedPost(post);
+    window.scrollTo({ top: 350, behavior: 'smooth' });
+  };
+
+  if (loading) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0f172a]">
+      <Loader2 className="animate-spin text-orange-500 mb-4" size={48} />
+      <p className="font-black text-white uppercase italic text-xs tracking-widest">ADN GEMA CARGANDO...</p>
+    </div>
+  );
 
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900 overflow-x-hidden">
 
-      {/* --- HERO SECTION: Blog --- */}
-      <section className="relative bg-[#0f172a] py-28 md:py-36 px-6 overflow-hidden z-0">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full"></div>
-          <div className="absolute -bottom-[10%] -left-[5%] w-[400px] h-[400px] bg-blue-500/10 blur-[120px] rounded-full"></div>
+      {/* --- HERO SECTION --- */}
+      <section className="relative bg-[#0f172a] py-28 md:py-36 px-6 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full -z-10">
+          <div className="absolute -top-[10%] -right-[5%] w-[600px] h-[600px] bg-orange-500/10 blur-[130px] rounded-full"></div>
+          <div className="absolute -bottom-[10%] -left-[5%] w-[500px] h-[500px] bg-blue-500/10 blur-[130px] rounded-full"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-md">
-            <Trophy size={14} className="text-orange-500" />
-            <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Blog Club Gema</span>
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-6 py-2 rounded-full mb-8 backdrop-blur-md">
+            <Trophy size={16} className="text-orange-500" />
+            <span className="text-white text-[11px] font-black uppercase tracking-[0.3em]">Muro de Noticias Oficial</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
-            ADN <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Deportivo</span>
+          <h1 className="text-6xl md:text-9xl font-black text-white uppercase italic tracking-tighter leading-[0.85]">
+            ADN <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">GEMA</span>
           </h1>
-          <p className="mt-8 text-slate-400 max-w-2xl mx-auto text-lg font-medium leading-relaxed">
-            Consejos técnicos, nutrición y actualidad del voleibol para llevar tu juego al siguiente nivel.
+          <p className="mt-8 text-slate-400 max-w-2xl mx-auto text-xl font-medium italic">
+            "Donde el talento se encuentra con la disciplina para crear leyendas."
           </p>
         </div>
       </section>
 
-      {/* --- ARTÍCULO DESTACADO --- */}
-      <section className="relative z-20 -mt-16 max-w-7xl mx-auto px-6">
-        <div className="bg-white rounded-[48px] overflow-hidden shadow-2xl border border-slate-100 flex flex-col lg:flex-row group">
-          <div className="lg:w-1/2 overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              alt="Destacado"
-            />
-          </div>
-          <div className="lg:w-1/2 p-10 md:p-16 flex flex-col justify-center space-y-6">
-            <span className="bg-orange-100 text-orange-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest w-fit">
-              Tendencia
-            </span>
-            <h2 className="text-4xl font-black text-[#1e3a8a] uppercase italic tracking-tighter leading-tight">
-              La evolución técnica del remate en el 2026
-            </h2>
-            <p className="text-slate-500 font-medium leading-relaxed">
-              Analizamos las nuevas tendencias tácticas que están revolucionando las ligas profesionales de voleibol este año.
-            </p>
-            <div className="flex items-center gap-6 text-slate-400 text-xs font-bold uppercase tracking-widest pt-4 border-t border-slate-50">
-              <span className="flex items-center gap-2"><User size={14} /> Staff Gema</span>
-              <span className="flex items-center gap-2"><Clock size={14} /> 10 min lectura</span>
+      {/* --- ARTÍCULO DESTACADO DINÁMICO --- */}
+      {featuredPost && (
+        <section className="relative z-20 -mt-16 max-w-7xl mx-auto px-6">
+          <div className="bg-white rounded-[50px] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] border border-slate-100 flex flex-col lg:flex-row group transition-all duration-500 hover:border-orange-200">
+            <div className="lg:w-1/2 h-[400px] lg:h-auto overflow-hidden bg-slate-100 relative">
+              <img
+                src={featuredPost.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=1200"}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                alt="Destacado"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
             </div>
-            <button className="bg-[#1e3a8a] text-white w-fit px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-orange-500 transition-all flex items-center gap-3">
-              Leer Artículo <ArrowRight size={16} />
-            </button>
+            <div className="lg:w-1/2 p-12 md:p-20 flex flex-col justify-center space-y-8">
+              <div className="flex items-center gap-3 text-orange-600">
+                 <TrendingUp size={22} strokeWidth={3} />
+                 <span className="text-sm font-black uppercase tracking-[0.2em]">Lectura Principal</span>
+              </div>
+              <h2 className="text-5xl md:text-6xl font-black text-[#1e3a8a] uppercase italic tracking-tighter leading-[0.9]">
+                {featuredPost.titulo}
+              </h2>
+              <p className="text-slate-500 text-lg font-medium leading-relaxed italic line-clamp-4">
+                {featuredPost.contenido}
+              </p>
+              <div className="flex items-center gap-8 text-slate-400 text-xs font-bold uppercase tracking-widest pt-8 border-t border-slate-100">
+                <span className="flex items-center gap-2"><Calendar size={16} /> {new Date(featuredPost.creado_en).toLocaleDateString()}</span>
+                <div className="flex items-center gap-3 text-[#1e3a8a]">
+                   {/* LOGO MÁS GRANDE CON FONDO BLANCO */}
+                   <div className="w-12 h-12 bg-white border-2 border-slate-100 rounded-2xl p-1.5 shadow-md">
+                      <img src="/Logo con borde blanco.png" alt="Gema" className="w-full h-full object-contain" />
+                   </div>
+                   <span className="font-black italic text-sm">Gema Academy Oficial</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* --- GRID DE NOTICIAS --- */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
-        <div className="flex items-center gap-3 mb-12">
-          <div className="h-10 w-2 bg-orange-500 rounded-full"></div>
-          <h2 className="text-3xl font-black text-[#1e3a8a] uppercase italic tracking-tighter">Últimas Publicaciones</h2>
+      <section className="max-w-7xl mx-auto px-6 py-32">
+        <div className="flex items-center gap-4 mb-20">
+          <div className="h-12 w-3 bg-orange-500 rounded-full shadow-[0_0_15px_rgba(249,115,22,0.4)]"></div>
+          <h2 className="text-5xl font-black text-[#1e3a8a] uppercase italic tracking-tighter">Muro de Campeones</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {posts.map((post) => (
-            <article key={post.id} className="bg-white rounded-[40px] border border-slate-100 overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col">
-              <div className="h-64 relative overflow-hidden">
-                <img src={post.imagen} className="w-full h-full object-cover" alt={post.titulo} />
-                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-[#1e3a8a]">
-                  {post.categoria}
-                </span>
-              </div>
-              <div className="p-8 flex flex-col flex-grow space-y-4">
-                <div className="flex items-center gap-4 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                  <span className="flex items-center gap-1"><Calendar size={12} /> {post.fecha}</span>
-                  <span className="flex items-center gap-1"><Clock size={12} /> {post.tiempo}</span>
+        {posts.length === 0 ? (
+          <div className="bg-slate-50 rounded-[3rem] p-24 text-center border-4 border-dashed border-slate-200">
+             <Megaphone className="mx-auto text-slate-200 mb-4" size={80} />
+             <p className="font-black text-slate-400 uppercase italic text-xl">Preparando nuevas noticias...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
+            {posts.map((post) => (
+              <article 
+                key={post.id} 
+                onClick={() => handleSelectPost(post)}
+                className={`bg-white rounded-[50px] border-2 cursor-pointer overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 flex flex-col group ${featuredPost?.id === post.id ? 'border-orange-500 ring-4 ring-orange-500/10' : 'border-slate-50'}`}
+              >
+                <div className="h-72 relative overflow-hidden bg-slate-100">
+                  <img 
+                    src={post.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80"} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
+                    alt={post.titulo} 
+                  />
+                  {/* LOGO EN CARDS: MÁS GRANDE Y FONDO BLANCO */}
+                  <div className="absolute top-6 left-6 bg-white px-4 py-2 rounded-2xl flex items-center gap-3 shadow-2xl border border-slate-100">
+                    <div className="w-8 h-8 bg-white rounded-lg p-0.5">
+                       <img src="/Logo con borde blanco.png" alt="Gema" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-[#1e3a8a] italic tracking-widest">Gema News</span>
+                  </div>
                 </div>
-                <h3 className="text-xl font-black text-[#1e3a8a] uppercase italic tracking-tighter group-hover:text-orange-500">
-                  {post.titulo}
-                </h3>
-                <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                  {post.resumen}
-                </p>
-                <div className="pt-6 mt-auto border-t border-slate-50 flex justify-between items-center">
-                  <span className="text-[10px] font-black uppercase text-slate-400">Por {post.autor}</span>
-                  <button className="text-orange-500 font-black uppercase text-[10px] tracking-widest flex items-center gap-2 hover:gap-3 transition-all">
-                    Leer más <ArrowRight size={14} />
-                  </button>
+                
+                <div className="p-10 flex flex-col flex-grow">
+                  <div className="flex items-center gap-4 text-slate-400 text-[11px] font-black uppercase tracking-widest mb-6">
+                    <span className="flex items-center gap-1.5"><Calendar size={14} /> {new Date(post.creado_en).toLocaleDateString()}</span>
+                  </div>
+                  <h3 className="text-2xl font-black text-[#1e3a8a] uppercase italic tracking-tighter group-hover:text-orange-500 transition-colors line-clamp-2 leading-none mb-6">
+                    {post.titulo}
+                  </h3>
+                  <p className="text-slate-500 text-sm font-medium leading-relaxed italic line-clamp-3 mb-8">
+                    {post.contenido}
+                  </p>
+                  <div className="pt-8 mt-auto border-t border-slate-50 flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-orange-500">
+                       <Award size={16} strokeWidth={3} />
+                       <span className="text-[10px] font-black uppercase italic tracking-tighter">Formando Campeones</span>
+                    </div>
+                    <button className="text-[#1e3a8a] font-black uppercase text-[10px] tracking-widest flex items-center gap-2 group-hover:text-orange-600">
+                      Leer <ArrowRight size={14} strokeWidth={3} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
+
+      {/* FOOTER OFICIAL GEMA (Eliminado el doble footer) */}
+      <footer className="bg-[#0f172a] pt-24 pb-12 px-6 border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 mb-20">
+            <div className="space-y-8">
+              <div className="w-24 h-24 bg-white rounded-3xl p-3 shadow-2xl border-4 border-orange-500/20">
+                <img src="/Logo con borde blanco.png" className="w-full h-full object-contain" alt="Logo" />
+              </div>
+              <h3 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
+                GEMA <span className="text-orange-500">ACADEMY</span>
+              </h3>
+              <p className="text-slate-400 font-medium italic leading-relaxed">
+                Formando atletas de alto rendimiento desde 2015. Nuestra metodología se basa en la disciplina y la pasión por el voleibol profesional.
+              </p>
+            </div>
+            
+            <div className="space-y-8">
+              <h4 className="text-orange-500 font-black uppercase italic tracking-widest text-sm flex items-center gap-2">
+                <div className="w-4 h-1 bg-orange-500 rounded-full"></div> Enlaces Rápidos
+              </h4>
+              <ul className="space-y-4 text-white/60 font-black uppercase italic text-xs tracking-widest">
+                <li><Link to="/login" className="hover:text-white transition-colors">Acceso Alumnos</Link></li>
+                <li><Link to="#" className="hover:text-white transition-colors">Inscripciones</Link></li>
+                <li><Link to="#" className="hover:text-white transition-colors">Sobre Nosotros</Link></li>
+              </ul>
+            </div>
+
+            <div className="space-y-8">
+              <h4 className="text-orange-500 font-black uppercase italic tracking-widest text-sm flex items-center gap-2">
+                <div className="w-4 h-1 bg-orange-500 rounded-full"></div> Contáctanos
+              </h4>
+              <ul className="space-y-4 text-white/60 font-black uppercase italic text-xs tracking-widest">
+                <li className="flex items-center gap-3 italic underline decoration-orange-500/50">Sede San Martín de Porres, Lima</li>
+                <li>info@gemavolley.com</li>
+                <li className="text-white text-lg">+51 999 123 456</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="h-px w-full bg-white/5 mb-12"></div>
+          
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.5em] italic">
+              © 2026 CLUB GEMA | DESARROLLADO POR GEMA TECH
+            </p>
+            <div className="flex gap-8 text-white/20 text-[10px] font-black uppercase tracking-widest">
+               <Link to="#" className="hover:text-white transition-colors">Privacidad</Link>
+               <Link to="#" className="hover:text-white transition-colors">Términos</Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
