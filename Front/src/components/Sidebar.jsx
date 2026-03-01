@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             items: [
                 { icon: UserCog, label: 'Coordinadores', path: '/dashboard/admin/teachers' },
                 { icon: GraduationCap, label: 'Alumnos', path: '/dashboard/admin/students' },
-                { icon: TicketPercent, label: 'Beneficios', path: '/dashboard/admin/benefits' },
+                { icon: TicketPercent, label: 'Asignar Beneficios', path: '/dashboard/admin/benefits' },
             ]
         },
         {

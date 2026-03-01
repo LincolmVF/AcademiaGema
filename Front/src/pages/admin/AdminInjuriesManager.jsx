@@ -40,13 +40,13 @@ const AdminInjuriesManager = () => {
                         Control de <span className="text-orange-500">Lesiones</span>
                     </h1>
                 </div>
-                <button onClick={fetchPendientes} className="text-sm text-[#1e3a8a] hover:text-blue-400">Refrescar</button>
+                <button onClick={fetchPendientes} className="text-sm text-slate-400 hover:text-slate-600">Refrescar</button>
             </div>
 
-            <div className="bg-[#1e293b] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-white p-3 rounded-2xl border border-slate-200 overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-[#0f172a] text-blue-200/60 text-xs uppercase font-bold tracking-wider">
+                        <thead className="bg-slate-50 text-slate-600 text-xs uppercase font-bold tracking-wider">
                             <tr>
                                 <th className="px-6 py-4 text-left">Alumno</th>
                                 <th className="px-6 py-4 text-left">Motivo</th>

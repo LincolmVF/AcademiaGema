@@ -69,11 +69,11 @@ const AdminCatalogManager = () => {
                     <div className="flex items-center gap-2 mb-1">
                         <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
                         <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
-                            Catálogo de <span className="text-[#1e3a8a]">Servicios</span>
+                            Catálogo de <span className="text-[#1e3a8a]">Precios</span>
                         </h1>
                     </div>
                     <p className="text-slate-500 text-[11px] font-bold uppercase tracking-wider">
-                        Edita los precios del catálogo de servicio, pues son parte de la lógica interna.
+                        Edita los precios del catálogo, ya que son parte de la lógica interna.
                     </p>
                 </div>
             </div>
