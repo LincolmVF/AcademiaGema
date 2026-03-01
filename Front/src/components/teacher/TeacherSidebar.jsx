@@ -46,7 +46,7 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
           </div>
           <div className="text-center mt-4">
             <span className="block font-black text-xl tracking-tighter uppercase italic text-white leading-none">
-              Gema<span className="text-orange-500 font-black">Coordinator</span>
+              Gema<span className="text-orange-500 font-black">Coordinador</span>
             </span>
             <div className="h-1 w-8 bg-orange-500 mx-auto mt-2 rounded-full shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>
           </div>
