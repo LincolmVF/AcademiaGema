@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 // Agrega DollarSign aquí (línea 2 aprox.)
 import { Search, Loader2, User, ChevronRight, AlertCircle, Calendar, Filter, DollarSign } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion'; 
+import { motion, AnimatePresence } from 'framer-motion';
 import { apiFetch } from '../../interceptors/api';
 import AdminPaymentValidation from './AdminPaymentValidation';
 import AdminPaymentStats from './AdminPaymentStats'; // Importamos el componente nuevo
@@ -12,11 +12,11 @@ const AdminPaymentManager = () => {
     const [loading, setLoading] = useState(true);
     const [payments, setPayments] = useState([]);
     const [selectedPayment, setSelectedPayment] = useState(null);
-    
+
     // Filtros de búsqueda
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('PENDIENTE');
-    
+
     // --- NUEVOS FILTROS DE FECHA ---
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
     const [selectedMonth, setSelectedMonth] = useState('ALL');
@@ -43,13 +43,13 @@ const AdminPaymentManager = () => {
             const yearMatch = date.getFullYear().toString() === selectedYear;
             const monthMatch = selectedMonth === 'ALL' || date.getMonth().toString() === selectedMonth;
             const statusMatch = statusFilter === '' || p.estado_validacion === statusFilter;
-            
+
             const nombres = p.cuentas_por_cobrar?.alumnos?.usuarios?.nombres || '';
             const apellidos = p.cuentas_por_cobrar?.alumnos?.usuarios?.apellidos || '';
             const alumnoNombre = `${nombres} ${apellidos}`.toLowerCase();
-            const searchMatch = searchTerm === '' || 
-                                alumnoNombre.includes(searchTerm.toLowerCase()) || 
-                                p.codigo_operacion?.toLowerCase().includes(searchTerm.toLowerCase());
+            const searchMatch = searchTerm === '' ||
+                alumnoNombre.includes(searchTerm.toLowerCase()) ||
+                p.codigo_operacion?.toLowerCase().includes(searchTerm.toLowerCase());
 
             return yearMatch && monthMatch && statusMatch && searchMatch;
         });
@@ -67,7 +67,7 @@ const AdminPaymentManager = () => {
             if (date.getFullYear().toString() !== selectedYear) return;
 
             if (p.estado_validacion === 'PENDIENTE') pendientes++;
-            
+
             if (p.estado_validacion === 'APROBADO') {
                 const mesIdx = date.getMonth();
                 recaudacionMes[mesIdx] = (recaudacionMes[mesIdx] || 0) + parseFloat(p.monto_pagado);
@@ -83,11 +83,11 @@ const AdminPaymentManager = () => {
             .filter(p => p.estado_validacion === 'APROBADO')
             .reduce((acc, curr) => acc + parseFloat(curr.monto_pagado), 0);
 
-        return { 
-            chartData, 
-            totalAprobado, 
-            pendientes, 
-            maxRecaudacion: Math.max(...chartData.map(d => d.total), 1) 
+        return {
+            chartData,
+            totalAprobado,
+            pendientes,
+            maxRecaudacion: Math.max(...chartData.map(d => d.total), 1)
         };
     }, [payments, selectedYear, filteredPayments]);
 
@@ -107,16 +107,17 @@ const AdminPaymentManager = () => {
         <div className="space-y-6 animate-fade-in-up p-1 pb-20">
             <header className="flex justify-between items-center">
                 <div>
+                    <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
                     <h1 className="text-2xl font-black text-slate-900 uppercase italic tracking-tight">
                         Gestión de <span className="text-[#1e3a8a]">Ingresos</span>
                     </h1>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitor de pagos - Academia Gema</p>
                 </div>
-                
+
                 {/* Selector de Año Rápido */}
                 <div className="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
                     {['2025', '2026'].map(year => (
-                        <button 
+                        <button
                             key={year}
                             onClick={() => setSelectedYear(year)}
                             className={`px-4 py-1.5 rounded-lg text-[10px] font-black transition-all ${selectedYear === year ? 'bg-[#1e3a8a] text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
@@ -142,12 +143,12 @@ const AdminPaymentManager = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2">
                     {/* Filtro Mes */}
                     <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
                         <Calendar size={14} className="text-slate-400" />
-                        <select 
+                        <select
                             className="bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer text-slate-600"
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.target.value)}
@@ -162,7 +163,7 @@ const AdminPaymentManager = () => {
                     {/* Filtro Estado */}
                     <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
                         <Filter size={14} className="text-slate-400" />
-                        <select 
+                        <select
                             className="bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer text-slate-600"
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
@@ -185,7 +186,7 @@ const AdminPaymentManager = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <AnimatePresence>
                         {filteredPayments.map((p) => (
-                            <motion.div 
+                            <motion.div
                                 layout
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
