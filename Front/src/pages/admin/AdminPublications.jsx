@@ -55,41 +55,40 @@ const AdminPublications = () => {
     };
 
     // Envío del formulario usando FormData
-   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!titulo.trim() || !contenido.trim()) return toast.error("Completa los campos");
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!titulo.trim() || !contenido.trim()) return toast.error("Completa los campos");
 
-    setSubmitting(true);
-    try {
-        const data = new FormData();
-        data.append('titulo', titulo);
-        data.append('contenido', contenido);
-        data.append('autor_id', parseInt(userId)); // Usamos el 13 que ya vimos que existe
+        setSubmitting(true);
+        try {
+            const data = new FormData();
+            data.append('titulo', titulo);
+            data.append('contenido', contenido);
+            data.append('autor_id', parseInt(userId)); // Usamos el 13 que ya vimos que existe
 
-        if (imagenFile) {
-            // Asegúrate de que la llave sea 'imagen'
-            data.append('imagen', imagenFile); 
+            if (imagenFile) {
+                // Asegúrate de que la llave sea 'imagen'
+                data.append('imagen', imagenFile);
+            }
+
+            // 🚀 LLAMADA LIMPIA: No pases {} como tercer argumento si no es necesario
+            const response = await apiFetch.post('/publicaciones', data);
+
+            if (response.ok) {
+                toast.success("¡Publicado!");
+                setView('list');
+                fetchPublicaciones();
+            } else {
+                const errorRes = await response.json();
+                console.error("Error Backend:", errorRes);
+                toast.error(errorRes.message || "Error 500");
+            }
+        } catch (error) {
+            toast.error("Error de conexión");
+        } finally {
+            setSubmitting(false);
         }
-
-        // 🚀 LLAMADA LIMPIA: No pases {} como tercer argumento si no es necesario
-        console.log(data);
-        const response = await apiFetch.post('/publicaciones', data);
-        
-        if (response.ok) {
-            toast.success("¡Publicado!");
-            setView('list');
-            fetchPublicaciones();
-        } else {
-            const errorRes = await response.json();
-            console.error("Error Backend:", errorRes);
-            toast.error(errorRes.message || "Error 500");
-        }
-    } catch (error) {
-        toast.error("Error de conexión");
-    } finally {
-        setSubmitting(false);
-    }
-};
+    };
 
     const handleDelete = async (id) => {
         if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
