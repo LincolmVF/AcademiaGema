@@ -107,11 +107,13 @@ const AdminPaymentManager = () => {
         <div className="space-y-6 animate-fade-in-up p-1 pb-20">
             <header className="flex justify-between items-center">
                 <div>
-                    <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
-                    <h1 className="text-2xl font-black text-slate-900 uppercase italic tracking-tight">
-                        Gestión de <span className="text-[#1e3a8a]">Ingresos</span>
-                    </h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitor de pagos - Academia Gema</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
+                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                            Gestión de <span className="text-[#1e3a8a]">Ingresos</span>
+                        </h1>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitor de pagos - Club Gema</p>
                 </div>
 
                 {/* Selector de Año Rápido */}

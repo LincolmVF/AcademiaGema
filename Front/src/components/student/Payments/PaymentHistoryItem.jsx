@@ -25,7 +25,7 @@ const PaymentHistoryItem = ({ payment }) => {
           <div>
             <div className="flex items-center gap-3">
               <h4 className="font-black text-slate-700 text-sm uppercase italic leading-none tracking-tight">
-                {payment.cuentas_por_cobrar?.detalle_adicional || 'CUOTA ACADEMIA'}
+                {payment.cuentas_por_cobrar?.detalle_adicional || 'CUOTA CLUB GEMA'}
               </h4>
               {esAbono && (
                 <span className="bg-[#1e3a8a] text-white text-[8px] px-2 py-0.5 rounded-full font-black uppercase italic tracking-widest">

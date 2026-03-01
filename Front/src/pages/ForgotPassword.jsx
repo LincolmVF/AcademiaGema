@@ -36,7 +36,7 @@ export const ForgotPassword = () => {
                 {/* Card Principal */}
                 <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10">
 
-                    {/* Encabezado con Degradado Estilo Academia Gema */}
+                    {/* Encabezado con Degradado Estilo Club Gema */}
                     <div className="bg-gradient-to-br from-blue-900 to-blue-800 p-10 text-center relative overflow-hidden">
                         {/* Círculos decorativos de fondo */}
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full"></div>
@@ -106,7 +106,7 @@ export const ForgotPassword = () => {
 
                 {/* Footer Decorativo con texto más claro para fondo oscuro */}
                 <p className="text-center text-slate-500 text-[10px] mt-10 font-bold uppercase tracking-[0.2em] opacity-60">
-                    Academia Gema © 2026 · Sports Management System
+                    Club Gema © 2026 · Sports Management System
                 </p>
             </div>
         </div>

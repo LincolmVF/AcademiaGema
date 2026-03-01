@@ -187,8 +187,12 @@ const AdminTeachersManager = () => {
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Panel <span className="text-[#1e3a8a]">Coordinador</span></h1>
-                <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all hover:bg-orange-500 shadow-lg">
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
+                    <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                        Panel <span className="text-[#1e3a8a]">Coordinador</span>
+                    </h1>
+                </div>                <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all hover:bg-orange-500 shadow-lg">
                     <Plus size={20} /> Registrar Coordinador
                 </button>
             </div>

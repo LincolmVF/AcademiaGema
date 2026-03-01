@@ -51,7 +51,7 @@ const AdminLevelsManager = () => {
                     <button
                         onClick={async () => {
                             toast.dismiss(t.id);
-                            
+
                             const deletePromise = async () => {
                                 const response = await apiFetch.delete(`/niveles/${id}`);
                                 const result = await response.json();
@@ -106,11 +106,14 @@ const AdminLevelsManager = () => {
         <div className="space-y-6 animate-fade-in-up p-1 pb-20">
             {/* Header */}
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-black text-slate-900 uppercase italic">
-                    Niveles <span className="text-[#1e3a8a]">Académicos</span>
-                </h1>
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
+                    <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                        Gestión de <span className="text-[#1e3a8a]">Niveles</span>
+                    </h1>
+                </div>
                 <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-orange-500 transition-all group">
-                    <Plus size={20} className="group-hover:rotate-90 transition-transform" /> 
+                    <Plus size={20} className="group-hover:rotate-90 transition-transform" />
                     Nuevo Nivel
                 </button>
             </div>
@@ -138,15 +141,15 @@ const AdminLevelsManager = () => {
                                     <Trophy size={24} />
                                 </div>
                                 <div className="flex gap-1">
-                                    <button 
-                                        onClick={() => handleEdit(nivel)} 
+                                    <button
+                                        onClick={() => handleEdit(nivel)}
                                         className="p-2 text-slate-300 hover:text-[#1e3a8a] transition-colors"
                                         title="Editar nombre"
                                     >
                                         <Edit3 size={18} />
                                     </button>
-                                    <button 
-                                        onClick={() => handleDelete(nivel.id)} 
+                                    <button
+                                        onClick={() => handleDelete(nivel.id)}
                                         className="p-2 text-slate-300 hover:text-red-500 transition-colors"
                                         title="Eliminar nivel"
                                     >

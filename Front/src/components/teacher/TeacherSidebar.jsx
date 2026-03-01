@@ -40,7 +40,7 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
             <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full"></div>
             <img
               src="/logo.png"
-              alt="Academia Gema"
+              alt="Club Gema"
               className="w-32 h-auto relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
             />
           </div>

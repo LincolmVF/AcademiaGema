@@ -4,7 +4,7 @@ import StudentRegistration from '../components/StudentRegistration';
 /**
  * Page: Register
  * Esta página sirve como contenedor para el proceso de inscripción
- * de nuevos alumnos de la Academia Gema.
+ * de nuevos alumnos de la Club Gema.
  */
 const Register = () => {
 
@@ -25,7 +25,7 @@ const Register = () => {
             */}
             <div className="pb-8 text-center">
                 <p className="text-blue-200/40 text-[10px] uppercase font-black tracking-[0.3em]">
-                    © 2026 Academia Gema • Sistema de Gestión Deportiva
+                    © 2026 Club Gema • Sistema de Gestión Deportiva
                 </p>
             </div>
         </main>

@@ -39,7 +39,7 @@ const MobileNavbar = () => {
               <NavLink to="/dashboard/student/recoveries" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2"><Ticket size={20}/> Mis Recuperaciones</NavLink>
               
               <div className="pt-4 border-t border-white/10">
-                <p className="text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-4">Academia</p>
+                <p className="text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-4">Club</p>
                 <NavLink to="/dashboard/student/enrollment" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2"><Ticket size={20}/> Nueva Inscripción</NavLink>
               </div>
             </div>

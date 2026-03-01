@@ -80,7 +80,7 @@ const Payments = () => {
               AVISO DE CONTINUIDAD CRÍTICO
             </h4>
             <p className="text-[13px] font-black uppercase leading-tight tracking-wide">
-              Si no liquidas el <span className="underline decoration-4 underline-offset-4 italic font-black">pago completo</span> de tus deudas, no podrás inscribirte a nuevas clases ni mantener tu continuidad en la academia.
+              Si no liquidas el <span className="underline decoration-4 underline-offset-4 italic font-black">pago completo</span> de tus deudas, no podrás inscribirte a nuevas clases ni mantener tu continuidad en el club.
             </p>
           </div>
         </div>

@@ -228,7 +228,7 @@ const Profile = () => {
 
         <div className="flex-1 relative z-10">
           <h2 className="text-3xl font-black text-[#1e3a8a] uppercase tracking-tighter italic">{fullName}</h2>
-          <p className="text-slate-400 font-black uppercase tracking-widest text-xs mt-1 italic">Academia Gema</p>
+          <p className="text-slate-400 font-black uppercase tracking-widest text-xs mt-1 italic">Club Gema</p>
 
           <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
             <span className="bg-orange-100 text-orange-600 text-[10px] font-black px-4 py-1.5 rounded-xl flex items-center gap-2 uppercase tracking-widest border border-orange-200 shadow-sm">

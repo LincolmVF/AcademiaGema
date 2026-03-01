@@ -49,7 +49,7 @@ const Blog = () => {
         <div className="relative z-10 max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-md">
             <Trophy size={14} className="text-orange-500" />
-            <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Blog Academia Gema</span>
+            <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Blog Club Gema</span>
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
@@ -130,28 +130,6 @@ const Blog = () => {
           ))}
         </div>
       </section>
-
-      {/* --- SECCIÓN SUSCRIPCIÓN --- */}
-      <section className="max-w-7xl mx-auto px-6 pb-24 text-center">
-        <div className="bg-[#f8fafc] border border-slate-100 rounded-[48px] p-12 md:p-20 relative overflow-hidden">
-          <div className="absolute -top-10 -left-10 opacity-5">
-            <Zap size={200} className="text-[#1e3a8a]" />
-          </div>
-          <h3 className="text-3xl md:text-5xl font-black text-[#1e3a8a] uppercase italic mb-6">Suscríbete al boletín</h3>
-          <p className="text-slate-500 mb-10 max-w-xl mx-auto font-medium text-lg">Recibe consejos de entrenamiento y noticias de la academia directamente en tu correo.</p>
-          <form className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
-            <input
-              type="email"
-              placeholder="tu@email.com"
-              className="flex-grow px-6 py-4 rounded-2xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold"
-            />
-            <button className="bg-orange-500 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-orange-500/20 hover:bg-orange-600 transition-all">
-              Unirme
-            </button>
-          </form>
-        </div>
-      </section>
-
     </div>
   );
 };

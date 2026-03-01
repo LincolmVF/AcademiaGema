@@ -80,7 +80,7 @@ const AdminCatalog = ({ onBack, editData }) => {
                             </h1>
                         </div>
                         <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-3 italic">
-                           Lógica interna de precios - Academia Gema
+                           Lógica interna de precios - Club Gema
                         </p>
                     </div>
                 </div>

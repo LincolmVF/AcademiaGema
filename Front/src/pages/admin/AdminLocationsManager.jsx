@@ -105,7 +105,7 @@ const AdminLocationsManager = () => {
                             Panel de <span className="text-[#1e3a8a]">Sedes</span>
                         </h1>
                     </div>
-                    <p className="text-slate-500 text-sm font-medium">Visualiza y gestiona las locaciones de la academia.</p>
+                    <p className="text-slate-500 text-sm font-medium">Visualiza y gestiona las locaciones del club.</p>
                 </div>
 
                 <button

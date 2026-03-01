@@ -36,7 +36,7 @@ const StudentAnnouncements = () => {
       id: 4,
       tipo: 'DISCIPLINA GEMA',
       titulo: 'Bonos por Rendimiento',
-      descripcion: 'Premiamos tu esfuerzo constante en la cancha con beneficios y merchandising exclusivo de la Academia.',
+      descripcion: 'Premiamos tu esfuerzo constante en la cancha con beneficios y merchandising exclusivo del Club.',
       icon: <Trophy size={32} />,
       gradient: 'from-yellow-600 to-yellow-400',
       badge: 'PREMIO'

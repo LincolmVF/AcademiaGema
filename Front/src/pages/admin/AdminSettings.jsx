@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Settings, Save, Loader2, Info, Edit3, X, Check, 
-    Database, ShieldCheck, Calendar, Bell, Wallet, Zap 
+import {
+    Settings, Save, Loader2, Info, Edit3, X, Check,
+    Database, ShieldCheck, Calendar, Bell, Wallet, Zap
 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
@@ -68,13 +68,13 @@ const AdminSettings = () => {
                         <Settings size={32} className="animate-spin-slow" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter">
-                            Configuración <span className="text-orange-500">Gema</span>
-                        </h1>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <ShieldCheck size={14} className="text-emerald-500" /> 
-                            Panel de Control Operativo Seguros
-                        </p>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
+                            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                                Configuración del <span className="text-[#1e3a8a]">Sistema</span>
+                            </h1>
+                        </div>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Panel de parámetros del sistema</p>
                     </div>
                 </div>
                 <div className="bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100">
@@ -94,9 +94,8 @@ const AdminSettings = () => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {settings.map((item) => (
-                        <div key={item.id} className={`group relative bg-white rounded-[2rem] border-2 transition-all duration-500 ${
-                            editingId === item.id ? 'border-orange-400 shadow-2xl scale-[1.02] z-10' : 'border-slate-100 hover:border-blue-200 hover:shadow-xl shadow-slate-200/50'
-                        }`}>
+                        <div key={item.id} className={`group relative bg-white rounded-[2rem] border-2 transition-all duration-500 ${editingId === item.id ? 'border-orange-400 shadow-2xl scale-[1.02] z-10' : 'border-slate-100 hover:border-blue-200 hover:shadow-xl shadow-slate-200/50'
+                            }`}>
                             <div className="p-6">
                                 {/* Badge de Clave Técnica */}
                                 <div className="flex justify-between items-start mb-4">
@@ -121,7 +120,7 @@ const AdminSettings = () => {
                                     <label className="text-[9px] font-black text-slate-400 uppercase block mb-2">Valor Actual</label>
                                     {editingId === item.id ? (
                                         <div className="flex flex-col gap-3">
-                                            <input 
+                                            <input
                                                 autoFocus
                                                 type="text"
                                                 value={editValue}
@@ -129,7 +128,7 @@ const AdminSettings = () => {
                                                 className="w-full bg-white border-2 border-orange-400 rounded-xl px-4 py-2.5 text-base font-black text-orange-600 outline-none shadow-inner"
                                             />
                                             <div className="flex gap-2">
-                                                <button 
+                                                <button
                                                     disabled={submitting}
                                                     onClick={() => handleSave(item.id)}
                                                     className="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-xl font-black text-[10px] uppercase flex items-center justify-center gap-2 transition-all"
@@ -137,7 +136,7 @@ const AdminSettings = () => {
                                                     {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                                                     Confirmar
                                                 </button>
-                                                <button 
+                                                <button
                                                     onClick={() => setEditingId(null)}
                                                     className="px-4 bg-slate-200 hover:bg-slate-300 text-slate-600 py-2 rounded-xl font-black text-[10px] uppercase transition-all"
                                                 >
@@ -150,7 +149,7 @@ const AdminSettings = () => {
                                             <span className="text-xl font-black text-[#1e3a8a] italic tracking-tight">
                                                 {item.valor}
                                             </span>
-                                            <button 
+                                            <button
                                                 onClick={() => { setEditingId(item.id); setEditValue(item.valor); }}
                                                 className="p-2 bg-white text-slate-400 hover:text-blue-600 rounded-xl border border-slate-200 hover:border-blue-200 transition-all shadow-sm"
                                             >

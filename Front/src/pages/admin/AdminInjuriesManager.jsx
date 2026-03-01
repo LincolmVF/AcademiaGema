@@ -36,11 +36,13 @@ const AdminInjuriesManager = () => {
         <div className="p-8">
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
-                    <h1 className="text-2xl font-black text-slate-900 uppercase italic tracking-tight">
-                        Control de <span className="text-[#1e3a8a]">Lesiones</span>
-                    </h1>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitoreo de lesiones - Academia Gema</p>
+                    <div className="flex items-center gap-2 mb-1">
+                        <div className="h-6 w-1 bg-orange-500 rounded-full"></div>
+                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                            Control de <span className="text-[#1e3a8a]">Lesiones</span>
+                        </h1>
+                    </div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitoreo de lesiones - Club Gema</p>
                 </div>
                 <button onClick={fetchPendientes} className="text-sm text-slate-400 hover:text-slate-600">Refrescar</button>
             </div>

@@ -15,7 +15,7 @@ const StudentSidebar = () => {
   const debeCompletarEmail = userData?.debeCompletarEmail === true;
 
   const [openMenus, setOpenMenus] = useState({
-    'Academia': true,
+    'Club': true,
     'Salud y Rendimiento': false,
     'Administración': false
   });
@@ -47,7 +47,7 @@ const StudentSidebar = () => {
       path: "/dashboard/student"
     },
     {
-      title: "Academia",
+      title: "Club",
       type: "dropdown",
       items: [
         { icon: Home, label: "Horarios Actuales", path: "/dashboard/student" },

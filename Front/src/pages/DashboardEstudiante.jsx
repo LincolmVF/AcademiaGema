@@ -168,7 +168,7 @@ const DashboardEstudiante = () => {
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
       <Loader2 className="animate-spin text-orange-500 mb-4" size={48} />
-      <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest text-center">Sincronizando Academia Gema...</p>
+      <p className="font-black text-[#1e3a8a] uppercase italic text-xs tracking-widest text-center">Sincronizando Club Gema...</p>
     </div>
   );
 
@@ -206,8 +206,8 @@ const DashboardEstudiante = () => {
         {/* 4. TIMELINE SEMANAL */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-4">
-             <div className="w-1.5 h-4 bg-[#1e3a8a] rounded-full"></div>
-             <h2 className="font-black text-[#1e3a8a] uppercase tracking-tighter italic text-xs text-slate-700">Tu Horario de la Semana</h2>
+             <div className="w-1.5 h-4 bg-white rounded-full"></div>
+             <h2 className="font-black uppercase tracking-tighter italic text-xs text-slate-700">Tu Horario de la Semana</h2>
           </div>
           <WeeklyTimeline agendaSeleccionada={agendaParaTimeline} />
         </div>

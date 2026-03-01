@@ -106,7 +106,7 @@ function Login() {
             <div className="mb-2">
               <img
                 src="/logo_diamante.jpeg"
-                alt="Logo Academia Gema"
+                alt="Logo Club Gema"
                 className="w-48 md:w-72 h-auto rounded-full filter drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
               />
             </div>

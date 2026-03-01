@@ -128,7 +128,7 @@ function Register() {
                         <img src="/logo_diamante.jpeg" alt="Logo" className="rounded-full w-24 h-24 md:w-40 md:h-40 mx-auto mb-4 md:mb-6 shadow-2xl border-4 border-white/10" />
                         <h2 className="text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-none">Club Gema</h2>
                         <div className="h-1 w-8 md:w-12 bg-orange-500 mx-auto my-3 md:my-4 rounded-full"></div>
-                        <p className="text-blue-100 text-[10px] md:text-sm font-medium opacity-80">Portal Oficial Academia Gema</p>
+                        <p className="text-blue-100 text-[10px] md:text-sm font-medium opacity-80">Portal Oficial Club Gema</p>
                     </div>
                 </div>
 
@@ -254,7 +254,7 @@ function Register() {
                     <div className="bg-white w-full max-w-xl rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-white/10">
                         <div className="relative p-6 md:p-10 bg-[#1e3a8a] text-white shrink-0">
                             <div className="relative z-10 text-left">
-                                <p className="text-orange-400 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-2">Academia Gema</p>
+                                <p className="text-orange-400 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 md:mb-2">Club Gema</p>
                                 <h4 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-tight md:leading-none">Compromiso de<br />Participación</h4>
                             </div>
                         </div>

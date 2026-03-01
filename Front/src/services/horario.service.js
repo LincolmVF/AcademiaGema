@@ -1,7 +1,7 @@
 import apiFetch from "../interceptors/api";
 
 const horarioService = {
-    // Obtener todos los horarios base de la academia
+    // Obtener todos los horarios base del club
     obtenerDisponibles: async () => {
         const response = await apiFetch.get('/horarios');
         const result = await response.json();

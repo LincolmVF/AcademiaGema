@@ -109,7 +109,7 @@ const About = () => {
           <div className="relative z-10">
             <h3 className="text-3xl md:text-5xl font-black text-white uppercase italic mb-8">¿Listo para escribir tu historia?</h3>
             <button className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl text-sm shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-1 active:scale-95">
-              Únete a la academia
+              Únete al Club Gema
             </button>
           </div>
         </div>

@@ -24,7 +24,7 @@ const Footer = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg md:text-xl font-black text-white tracking-tighter uppercase italic leading-none">
-                  Academia<span className="text-orange-500">Gema</span>
+                  Club<span className="text-orange-500">Gema</span>
                 </span>
                 <span className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.25em] mt-1">
                   Explota tu máximo nivel
