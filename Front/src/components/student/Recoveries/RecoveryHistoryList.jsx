@@ -5,7 +5,7 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
     const formatTime = (timeString) => {
         if (!timeString) return '';
         const date = new Date(timeString);
-        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' });
     };
 
     const canCancel = (fechaProgramada, horaInicio) => {

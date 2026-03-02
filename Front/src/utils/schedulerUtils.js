@@ -12,12 +12,16 @@ export const generarClasesDisponibles = (horariosPatron, semanasAVer = 2) => {
         const horariosDelDia = horariosPatron.filter(h => h.dia_semana === diaSemanaActual && h.activo);
 
         horariosDelDia.forEach(horario => {
+            // Creamos una fecha local limpia
+            const año = fechaActual.getFullYear();
+            const mes = String(fechaActual.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaActual.getDate()).padStart(2, '0');
+
+            // Formato YYYY-MM-DD (Esto es indestructible, no tiene zona horaria)
+            const fechaPlana = `${año}-${mes}-${dia}`;
             clasesGeneradas.push({
                 id: `slot-${horario.id}-${fechaActual.getTime()}`,
-                fecha: new Date(fechaActual.setHours(
-                    parseInt(horario.hora_inicio.split(':')[0]),
-                    parseInt(horario.hora_inicio.split(':')[1])
-                )).toISOString(),
+                fecha: `${fechaPlana}T${horario.hora_inicio}`,
                 horarioData: horario
             });
         });

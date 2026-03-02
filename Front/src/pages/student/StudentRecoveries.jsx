@@ -70,13 +70,15 @@ const StudentRecoveries = () => {
 
             // Filtramos para quitar las que ya tiene ocupadas
             const slotsLimpios = rawSlots.filter(slot => {
+                const fechaSlotTexto = slot.fecha.split('T')[0];
                 const slotDate = new Date(slot.fecha);
                 // Buscamos si el alumno ya tiene algo agendado ('PROGRAMADA') en este mismo día y a esta misma hora
                 const yaLoTieneOcupado = historial.some(ticket => {
                     if (ticket.estado !== 'PROGRAMADA') return false;
 
                     // Comparamos si las fechas y el horario coinciden
-                    const mismaFecha = ticket.fecha_programada && new Date(ticket.fecha_programada).toLocaleDateString('es-ES', { timeZone: 'UTC' }) === slotDate.toLocaleDateString('es-ES', { timeZone: 'UTC' });
+                    const fechaTicketTexto = ticket.fecha_programada.split('T')[0];
+                    const mismaFecha = fechaTicketTexto === fechaSlotTexto;
                     const mismoHorario = ticket.horario_destino_id === slot.horarioData.id;
 
                     return mismaFecha && mismoHorario;
@@ -114,6 +116,8 @@ const StudentRecoveries = () => {
     // 3. Manejar el canje
     const handleSlotClick = async (slot) => {
         if (!selectedTicket) return;
+
+        console.log(slot.fecha)
 
         if (!window.confirm(`¿Confirmas recuperar tu clase el ${new Date(slot.fecha).toLocaleDateString()} a las ${slot.horarioData.hora_inicio}?`)) {
             return;
