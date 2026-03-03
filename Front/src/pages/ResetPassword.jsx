@@ -93,7 +93,7 @@ export const ResetPassword = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4.5 rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] active:scale-[0.97] uppercase tracking-widest text-sm mt-4 ${
+                                className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] active:scale-[0.97] uppercase tracking-widest text-sm mt-4 ${
                                     isLoading ? 'opacity-70 cursor-not-allowed' : ''
                                 }`}
                             >

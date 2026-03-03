@@ -4,36 +4,67 @@ import Footer from '../components/Footer';
 import Filters from '../components/Home/Filters';
 import ClassCard from '../components/Home/ClassCard';
 import Hero from '../components/Home/Hero';
-import horarioService from '../services/horario.service'; //
+import horarioService from '../services/horario.service';
 
 function Home() {
-  const [activeDay, setActiveDay] = useState(0);
+  // Inicializamos en 1 (Lunes) o según el día actual ajustado a tu escala 1-7
+  const [activeDay, setActiveDay] = useState(new Date().getDay() === 0 ? 7 : new Date().getDay());
   const [activeCategory, setActiveCategory] = useState('Todas');
-  const [classes, setClasses] = useState([]); //
-  const [loading, setLoading] = useState(true); //
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mapeo para coincidir el índice del filtro con el nombre en la BD
-  const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  // Mapeo de nombres para mostrar en la UI si es necesario
+  const diasSemanaNombres = {
+    1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo"
+  };
+
+  const formatTime = (value) => {
+    if (!value) return "00:00";
+
+    try {
+      let date;
+
+      if (value instanceof Date) {
+        date = value;
+      } else {
+        date = new Date(value);
+      }
+
+      if (isNaN(date.getTime())) {
+        if (typeof value === 'string' && value.includes(':')) {
+          return value.substring(0, 5);
+        }
+        return "00:00";
+      }
+
+      const hours = date.getUTCHours().toString().padStart(2, '0');
+      const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+
+      return `${hours}:${minutes}`;
+    } catch (e) {
+      console.error("Error formateando hora:", e);
+      return "00:00";
+    }
+  };
 
   useEffect(() => {
     const fetchHorarios = async () => {
       try {
         setLoading(true);
-        const data = await horarioService.obtenerDisponibles(); //
+        const data = await horarioService.obtenerDisponibles();
 
-        // Mapeamos los campos de tu BD a las props que usa ClassCard
         const formattedClasses = data.map(h => ({
-          id: h.id_horario,
-          title: h.nivel?.nombre || "Entrenamiento Voleibol",
-          category: h.nivel?.nombre || "General",
-          time: h.hora_inicio,
-          location: h.sede?.nombre || "Sede Gema",
-          coordinator: h.profesor ? `${h.profesor.nombre} ${h.profesor.apellido}` : "Staff Gema",
-          spots: h.cupos_disponibles,
+          id: h.id,
+          // Accedemos según los nombres de tu relación en el schema
+          title: h.niveles_entrenamiento?.nombre || "Entrenamiento Voleibol",
+          category: h.niveles_entrenamiento?.nombre || "General",
+          time: `${formatTime(h.hora_inicio)} - ${formatTime(h.hora_fin)}`,
+          location: h.canchas?.nombre || "Sede Gema",
+          coordinator: h.coordinadores ? `${h.coordinadores.usuarios?.nombre || 'Coach'} ${h.coordinadores.usuarios?.apellido || ''}` : "Staff Gema",
+          spots: h.capacidad_max || 0,
           price: h.precio || 0,
-          // Imagen por defecto si la BD no trae una
           image: h.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
-          dia_nombre: h.dia_semana // Guardamos para el filtro
+          dia_id: h.dia_semana
         }));
 
         setClasses(formattedClasses);
@@ -47,9 +78,9 @@ function Home() {
     fetchHorarios();
   }, []);
 
-  // Filtrado dinámico
+  // Filtrado por el ID numérico del día (1 al 7)
   const filteredClasses = classes.filter(clase => {
-    const matchDay = clase.dia_nombre === diasSemana[activeDay];
+    const matchDay = clase.dia_id === activeDay;
     const matchCategory = activeCategory === 'Todas' || clase.category === activeCategory;
     return matchDay && matchCategory;
   });
@@ -59,7 +90,7 @@ function Home() {
       <Hero />
 
       <main className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-6 md:py-16 flex-grow">
-        <div className="mb-6 md:mb-12">
+        <div id="programacion" className="mb-6 md:mb-12 scroll-mt-24">
           <div className="flex items-center gap-2 md:gap-3 mb-2">
             <div className="h-5 w-1.5 md:h-8 bg-[#cd5a2c] rounded-full"></div>
             <h2 className="text-xl md:text-3xl font-black text-[#263e5e] uppercase italic tracking-tighter leading-tight">
@@ -70,7 +101,7 @@ function Home() {
             Reserva tu cupo en nuestras clases de alto rendimiento.
           </p>
 
-          <div className="mt-5 md:mt-8 bg-white p-1 md:p-2 rounded-xl md:rounded-3xl shadow-sm border border-slate-100 overflow-x-auto overflow-y-hidden scrollbar-hide touch-pan-x">
+          <div className="mt-5 md:mt-8 bg-white p-1 md:p-2 rounded-xl md:rounded-3xl shadow-sm border border-slate-100 overflow-x-auto overflow-y-hidden scrollbar-hide">
             <div className="inline-block min-w-full align-middle">
               <Filters
                 activeDay={activeDay}
@@ -83,7 +114,6 @@ function Home() {
         </div>
 
         {loading ? (
-          // Spinner de carga estético
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#cd5a2c]"></div>
             <p className="mt-4 text-slate-400 font-bold uppercase text-xs tracking-widest">Cargando horarios...</p>
@@ -109,9 +139,13 @@ function Home() {
             <h3 className="text-sm md:text-xl font-bold text-slate-400 uppercase tracking-widest px-4">
               Sin clases disponibles
             </h3>
-            <p className="text-xs text-slate-400 mt-2">No hay sesiones para {diasSemana[activeDay]}</p>
+            <p className="text-xs text-slate-400 mt-2">No hay sesiones para el {diasSemanaNombres[activeDay]}</p>
             <button
-              onClick={() => { setActiveDay(new Date().getDay()); setActiveCategory('Todas'); }}
+              onClick={() => {
+                const today = new Date().getDay() === 0 ? 7 : new Date().getDay();
+                setActiveDay(today);
+                setActiveCategory('Todas');
+              }}
               className="mt-6 text-[#1e3a8a] font-black uppercase text-[10px] tracking-widest py-2 px-4 bg-slate-50 rounded-lg active:bg-slate-100"
             >
               Restablecer Filtros
@@ -119,7 +153,6 @@ function Home() {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 }

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Target, Award, Shield, Zap, TrendingUp, Users } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const About = () => {
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900 overflow-x-hidden">
 
       {/* --- HERO SECTION: Impacto Visual --- */}
-      <section className="relative bg-[#0f172a] py-28 md:py-40 px-6 overflow-hidden">
+      <section className="relative min-h-[45vh] md:min-h-[50vh] flex items-center bg-[#0f172a] py-8 md:py-12 px-6 overflow-hidden">
         {/* Decoración de fondo */}
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
           <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full"></div>
@@ -19,7 +20,7 @@ const About = () => {
             <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Más que un entrenamiento</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
+          <h1 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
             Nuestra <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Esencia</span>
           </h1>
           <p className="mt-8 text-slate-400 max-w-2xl mx-auto text-lg font-medium leading-relaxed">
@@ -108,9 +109,12 @@ const About = () => {
           </div>
           <div className="relative z-10">
             <h3 className="text-3xl md:text-5xl font-black text-white uppercase italic mb-8">¿Listo para escribir tu historia?</h3>
-            <button className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl text-sm shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-1 active:scale-95">
+            <Link
+              to="/register"
+              className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl text-sm shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-1 active:scale-95 text-center"
+            >
               Únete al Club Gema
-            </button>
+            </Link>
           </div>
         </div>
       </section>

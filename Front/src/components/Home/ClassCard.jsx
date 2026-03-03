@@ -1,7 +1,7 @@
 import React from 'react';
-import { MapPin, User, Clock, ArrowRight } from 'lucide-react';
+import { MapPin, User, Clock } from 'lucide-react';
 
-const ClassCard = ({ category, title, time, location, coordinator, spots, price, image }) => {
+const ClassCard = ({ category, title, time, location, coordinator, spots, image }) => {
   const isSoldOut = spots === 0;
 
   return (
@@ -36,27 +36,12 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, price,
         <div className="space-y-2 mt-4 mb-6">
           <div className="flex items-center gap-2 text-slate-500 text-sm">
             <User size={16} className="text-slate-400" />
-            <span>Coordinator {coordinator}</span>
+            <span>Coordinador {coordinator}</span>
           </div>
           <div className="flex items-center gap-2 text-slate-500 text-sm">
             <MapPin size={16} className="text-slate-400" />
             <span>{location}</span>
           </div>
-        </div>
-
-        {/* Footer de la tarjeta (Precio y Botón) */}
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
-          <div>
-            <span className="text-xs text-slate-400 block">Precio sesión</span>
-            <span className="text-lg font-bold text-slate-900">S/. {price}</span>
-          </div>
-          <button
-            disabled={isSoldOut}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isSoldOut ? 'bg-slate-100 text-slate-300 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-blue-600'
-              }`}
-          >
-            <ArrowRight size={20} />
-          </button>
         </div>
       </div>
     </div>

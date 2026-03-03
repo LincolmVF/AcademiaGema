@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronRight, Trophy, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   return (
@@ -37,15 +38,18 @@ const Hero = () => {
 
           {/* Botones de Acción: Más estilizados */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <button className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-orange-500/20 hover:-translate-y-1 active:scale-95 group">
+            <Link to="/register" className="bg-orange-500 hover:bg-orange-600 text-white font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 shadow-xl shadow-orange-500/20 hover:-translate-y-1 active:scale-95 group">
               Inscribirme Ahora
               <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Link>
 
-            <button className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all backdrop-blur-md flex items-center justify-center gap-2 group">
+            <a
+              href="#programacion"
+              className="bg-white/5 hover:bg-white/10 text-white border border-white/10 font-black uppercase tracking-widest px-6 py-3.5 rounded-xl text-sm transition-all backdrop-blur-md flex items-center justify-center gap-2 group cursor-pointer"
+            >
               <Sparkles size={16} className="text-orange-500" />
               Ver Horarios
-            </button>
+            </a>
           </div>
 
           {/* Texto motivacional */}

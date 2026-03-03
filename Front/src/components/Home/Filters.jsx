@@ -2,26 +2,45 @@ import React from 'react';
 import { CalendarDays, Filter, ChevronRight } from 'lucide-react';
 
 const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory }) => {
-  // Generar los días de la semana actual dinámicamente
+
+  // Generar los días de la semana actual dinámicamente alineados a 1-7
   const getWeekDays = () => {
     const days = [];
     const today = new Date();
-    // Encontrar el lunes de la semana actual
-    const firstDay = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+
+    // Obtenemos el día de la semana actual de JS (0-6, donde 0 es Domingo)
+    const currentJsDay = today.getDay();
+
+    // Calculamos la diferencia para llegar al Lunes de esta semana
+    // Si hoy es Domingo (0), restamos 6 para ir al lunes pasado. 
+    // Si no, restamos (día actual - 1).
+    const diffToMonday = currentJsDay === 0 ? -6 : 1 - currentJsDay;
+
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + diffToMonday);
 
     const names = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     const months = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
 
     for (let i = 0; i < 7; i++) {
-      const date = new Date(firstDay);
-      date.setDate(firstDay.getDate() + i - 1); // Ajuste para empezar en Domingo (0) o Lunes (1)
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+
+      const jsDay = date.getDay(); // 0 (Dom) a 6 (Sáb)
+
+      // CONVERSIÓN A TU DB (1=Lun, 7=Dom)
+      // Si jsDay es 0 (Domingo), devolvemos 7. Si no, el mismo número.
+      const dbIndex = jsDay === 0 ? 7 : jsDay;
+
       days.push({
-        name: names[date.getDay()],
+        name: names[jsDay],
         date: `${date.getDate()} ${months[date.getMonth()]}`,
-        index: date.getDay() // Este índice (0-6) es el que enviamos al Home
+        index: dbIndex // Enviamos 1, 2, 3, 4, 5, 6 o 7
       });
     }
-    return days;
+
+    // Ordenar el array para que siempre se vea de Lunes a Domingo en la UI
+    return days.sort((a, b) => a.index - b.index);
   };
 
   const days = getWeekDays();
@@ -45,7 +64,6 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
           </div>
         </div>
 
-        {/* Contenedor de scroll con snap para mejor sensación en móvil */}
         <div className="flex gap-2 md:gap-3 overflow-x-auto pb-2 md:pb-4 scrollbar-hide select-none snap-x touch-pan-x">
           {days.map((day) => {
             const isActive = activeDay === day.index;
@@ -77,7 +95,6 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
       {/* --- SECTOR CATEGORÍAS --- */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide touch-pan-x">
-          {/* Icono de filtro fijo en móvil para ahorrar espacio */}
           <div className="sticky left-0 bg-white/80 backdrop-blur-sm z-10 pr-2 border-r border-slate-200 self-center py-1">
             <Filter size={14} className="text-[#1e3a8a]" />
           </div>
