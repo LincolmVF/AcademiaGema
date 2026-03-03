@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { 
-  Calendar, Filter, Loader2, Sparkles, 
-  ChevronRight, ChevronLeft, Trophy, RefreshCcw, 
-  Users, Gift, HeartPulse 
+import {
+  Calendar, Filter, Loader2, Sparkles,
+  ChevronRight, ChevronLeft, Trophy, RefreshCcw,
+  Users, Gift, HeartPulse
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../interceptors/api";
@@ -66,7 +66,7 @@ const StudentAnnouncements = () => {
 
       <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl shadow-blue-900/10 border-4 border-white h-44 md:h-40">
         <div className={`absolute inset-0 bg-gradient-to-r ${item.gradient} transition-all duration-700`}></div>
-        
+
         <div className="relative z-10 p-6 md:p-8 text-white flex items-center justify-between h-full">
           <div className="flex items-center gap-6">
             <div className="hidden md:flex w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl items-center justify-center border border-white/30 shadow-xl">
@@ -86,23 +86,23 @@ const StudentAnnouncements = () => {
           </div>
 
           <div className="flex gap-2">
-            <button 
-              onClick={() => setCurrentIndex(currentIndex === 0 ? beneficios.length -1 : currentIndex - 1)}
+            <button
+              onClick={() => setCurrentIndex(currentIndex === 0 ? beneficios.length - 1 : currentIndex - 1)}
               className="p-2 bg-black/10 hover:bg-black/20 rounded-full border border-white/10 transition-colors"
             >
               <ChevronLeft size={20} />
             </button>
-            <button 
-              onClick={() => setCurrentIndex(currentIndex === beneficios.length -1 ? 0 : currentIndex + 1)}
+            <button
+              onClick={() => setCurrentIndex(currentIndex === beneficios.length - 1 ? 0 : currentIndex + 1)}
               className="p-2 bg-black/10 hover:bg-black/20 rounded-full border border-white/10 transition-colors"
             >
               <ChevronRight size={20} />
             </button>
           </div>
         </div>
-        
+
         <div className="absolute bottom-0 left-0 h-1 bg-black/20 w-full">
-          <div 
+          <div
             className="h-full bg-white transition-all duration-[6000ms] ease-linear"
             style={{ width: `${((currentIndex + 1) / beneficios.length) * 100}%` }}
           />
@@ -131,7 +131,7 @@ const DashboardEstudiante = () => {
         setLoading(true);
         const [resAsist, resDebts, resPay] = await Promise.all([
           apiFetch.get(`/asistencias/alumno/${userId}`),
-          apiFetch.get("/cuentaPorCobrar"),
+          apiFetch.get("/cuentas-por-cobrar"),
           apiFetch.get("/pagos"),
         ]);
 
@@ -175,7 +175,7 @@ const DashboardEstudiante = () => {
   return (
     <div className="min-h-screen bg-[#f1f5f9] flex justify-center relative overflow-hidden">
       <div className="w-full md:max-w-6xl p-4 md:p-8 pb-28 relative z-10">
-        
+
         {/* 1. HEADER */}
         <header className="flex justify-between items-start mb-8 mt-2">
           <div>
@@ -206,15 +206,15 @@ const DashboardEstudiante = () => {
         {/* 4. TIMELINE SEMANAL */}
         <div className="mb-10">
           <div className="flex items-center gap-2 mb-4">
-             <div className="w-1.5 h-4 bg-white rounded-full"></div>
-             <h2 className="font-black uppercase tracking-tighter italic text-xs text-slate-700">Tu Horario de la Semana</h2>
+            <div className="w-1.5 h-4 bg-white rounded-full"></div>
+            <h2 className="font-black uppercase tracking-tighter italic text-xs text-slate-700">Tu Horario de la Semana</h2>
           </div>
           <WeeklyTimeline agendaSeleccionada={agendaParaTimeline} />
         </div>
 
         {/* 5. GRID PRINCIPAL */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+
           <div className="lg:col-span-2 space-y-6">
             {/* Filtros */}
             <div className="flex flex-wrap items-center gap-4 bg-white/50 p-4 rounded-[2rem] border border-slate-200">

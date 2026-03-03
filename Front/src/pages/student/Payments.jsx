@@ -11,10 +11,10 @@ import PaymentHistoryItem from "../../components/student/Payments/PaymentHistory
 import ReportPaymentModal from "../../components/student/Payments/ReportPaymentModal";
 
 const Payments = () => {
-  const { userId } = useAuth(); 
+  const { userId } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [debts, setDebts] = useState([]); 
-  const [payments, setPayments] = useState([]); 
+  const [debts, setDebts] = useState([]);
+  const [payments, setPayments] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState(null);
@@ -23,7 +23,7 @@ const Payments = () => {
     try {
       setLoading(true);
       const [resDebts, resPayments] = await Promise.all([
-        apiFetch.get(`/cuentaPorCobrar/historial/${userId}`),
+        apiFetch.get(`/cuentas-por-cobrar/historial/${userId}`),
         apiFetch.get(`/pagos/alumno/${userId}`),
       ]);
 
@@ -43,7 +43,7 @@ const Payments = () => {
     if (userId) fetchFinancialData();
   }, [userId, fetchFinancialData]);
 
-  const activeDebts = debts.filter((d) => 
+  const activeDebts = debts.filter((d) =>
     ["PENDIENTE", "PARCIAL", "POR_VALIDAR"].includes(d.estado)
   );
 
@@ -59,7 +59,7 @@ const Payments = () => {
       <Link to="/dashboard/student" className="inline-flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] mb-6 text-[10px] font-black uppercase tracking-widest italic transition-colors">
         <ArrowLeft size={14} /> REGRESAR AL PANEL
       </Link>
-      
+
       <div className="mb-10 text-center md:text-left">
         <h1 className="text-5xl font-black text-[#1e3a8a] uppercase tracking-tighter italic leading-none">
           CENTRO DE <span className="text-orange-500">PAGOS</span>
@@ -98,10 +98,10 @@ const Payments = () => {
               const pagado = (d.pagos || []).reduce((acc, p) => acc + parseFloat(p.monto_pagado), 0);
               const saldo = parseFloat(d.monto_final) - pagado;
               return (
-                <DebtItem 
-                  key={d.id} 
-                  debt={{ ...d, saldoRestante: saldo, montoPagadoYa: pagado, esParcial: pagado > 0 }} 
-                  onReport={(debt) => { setSelectedDebt(debt); setIsModalOpen(true); }} 
+                <DebtItem
+                  key={d.id}
+                  debt={{ ...d, saldoRestante: saldo, montoPagadoYa: pagado, esParcial: pagado > 0 }}
+                  onReport={(debt) => { setSelectedDebt(debt); setIsModalOpen(true); }}
                 />
               );
             })}
@@ -114,7 +114,7 @@ const Payments = () => {
             <div className="w-3 h-8 bg-blue-400 rounded-full"></div>
             HISTORIAL DE REPORTES
           </h2>
-          
+
           <div className="bg-white rounded-[2.5rem] border shadow-2xl overflow-hidden">
             {/* Altura máxima y scroll configurado con clases de Tailwind */}
             <div className="max-h-[500px] overflow-y-auto 
@@ -132,13 +132,13 @@ const Payments = () => {
               )}
             </div>
           </div>
-          
+
           {/* Indicador visual de scroll si hay muchos pagos */}
           {payments.length > 3 && (
             <div className="mt-4 flex justify-center">
-               <span className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest animate-bounce">
-                 ↓ Desliza para ver más reportes ↓
-               </span>
+              <span className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest animate-bounce">
+                ↓ Desliza para ver más reportes ↓
+              </span>
             </div>
           )}
         </section>

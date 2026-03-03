@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
-  AlertCircle, Clock, CheckCircle2, ChevronRight, 
-  Loader2, Receipt, CreditCard, MessageSquare, ExternalLink 
+import {
+  AlertCircle, Clock, CheckCircle2, ChevronRight,
+  Loader2, Receipt, CreditCard, MessageSquare, ExternalLink
 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api.js';
 import { useAuth } from "../../context/AuthContext";
@@ -20,7 +20,7 @@ const StudentPayments = () => {
     try {
       setLoading(true);
       const [resDebts, resPay] = await Promise.all([
-        apiFetch.get("/cuentaPorCobrar"),
+        apiFetch.get("/cuentas-por-cobrar"),
         apiFetch.get(`/pagos/alumno/${userId}`),
       ]);
 
@@ -57,12 +57,12 @@ const StudentPayments = () => {
 
   return (
     <div className="space-y-4">
-      
+
       {/* 1. DEUDAS POR PAGAR */}
       {pendientes.map(deuda => (
-        <div 
-          key={deuda.id} 
-          className="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:shadow-md transition-all group" 
+        <div
+          key={deuda.id}
+          className="bg-orange-50 border border-orange-100 rounded-2xl p-4 flex justify-between items-center cursor-pointer hover:shadow-md transition-all group"
           onClick={() => handleOpenModal(deuda)}
         >
           <div className="flex items-center gap-3">
@@ -99,7 +99,7 @@ const StudentPayments = () => {
             </div>
             <span className="font-black text-blue-700 text-sm italic">S/ {pago.monto_pagado}</span>
           </div>
-          
+
           <div className="flex items-center gap-4 pt-2 border-t border-blue-100/50">
             <div className="flex items-center gap-1.5 text-[8px] font-bold text-slate-500 uppercase">
               <CreditCard size={12} className="text-blue-400" /> {pago.metodos_pago?.nombre}
@@ -128,9 +128,9 @@ const StudentPayments = () => {
             </div>
             <div className="text-right">
               <span className="font-black text-[#1e3a8a] text-sm italic block leading-none">S/ {pago.monto_pagado}</span>
-              <a 
-                href={pago.url_comprobante} 
-                target="_blank" 
+              <a
+                href={pago.url_comprobante}
+                target="_blank"
                 rel="noreferrer"
                 className="text-[7px] text-orange-500 font-black uppercase flex items-center justify-end gap-0.5 mt-1 hover:underline"
               >
@@ -144,12 +144,12 @@ const StudentPayments = () => {
             <div className="bg-slate-50 rounded-xl p-2.5 flex gap-2 items-start border border-slate-100">
               <MessageSquare size={12} className="text-slate-400 mt-0.5" />
               <p className="text-[9px] text-slate-500 font-medium leading-tight">
-                <span className="font-bold text-slate-700 uppercase text-[8px]">Nota de Gema:</span><br/>
+                <span className="font-bold text-slate-700 uppercase text-[8px]">Nota de Gema:</span><br />
                 {pago.notas_validacion}
               </p>
             </div>
           )}
-          
+
           <div className="text-[7px] font-bold text-slate-300 uppercase tracking-widest pt-1">
             Op: {pago.codigo_operacion}
           </div>
@@ -161,17 +161,17 @@ const StudentPayments = () => {
         <div className="flex flex-col items-center justify-center py-10 opacity-40">
           <Receipt className="text-slate-300 mb-2" size={40} />
           <p className="text-[10px] text-slate-400 font-black uppercase text-center italic tracking-widest leading-relaxed">
-            No hay movimientos recientes<br/>¡Todo en orden! 💎
+            No hay movimientos recientes<br />¡Todo en orden! 💎
           </p>
         </div>
       )}
 
       {isModalOpen && selectedDebt && (
-        <ReportPaymentModal 
+        <ReportPaymentModal
           isOpen={isModalOpen}
           onClose={() => { setIsModalOpen(false); setSelectedDebt(null); }}
           debt={selectedDebt}
-          onSuccess={fetchPaymentData} 
+          onSuccess={fetchPaymentData}
         />
       )}
     </div>

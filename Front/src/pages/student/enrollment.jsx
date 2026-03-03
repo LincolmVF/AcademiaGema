@@ -24,7 +24,7 @@ const Enrollment = () => {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [resH, resC] = await Promise.all([apiFetch.get('/horarios'), apiFetch.get('/cuentaPorCobrar')]);
+      const [resH, resC] = await Promise.all([apiFetch.get('/horarios'), apiFetch.get('/cuentas-por-cobrar')]);
       const dataH = await resH.json();
       const dataC = await resC.json();
       if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
@@ -116,9 +116,9 @@ const Enrollment = () => {
 
         <div className="flex flex-col md:flex-row gap-4 mb-10 items-center justify-between">
           <div className="flex bg-white p-2 rounded-full shadow-md border border-slate-100 overflow-x-auto w-full md:w-auto scrollbar-hide">
-            {[1,2,3,4,5,6].map(d => (
+            {[1, 2, 3, 4, 5, 6].map(d => (
               <button key={d} onClick={() => setDiaFilter(d)} className={`px-8 py-3 rounded-full text-[10px] font-black transition-all uppercase italic flex-shrink-0 ${diaFilter === d ? 'bg-[#1e3a8a] text-white shadow-xl' : 'text-slate-400 hover:text-[#1e3a8a]'}`}>
-                {['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'][d-1]}
+                {['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'][d - 1]}
               </button>
             ))}
           </div>
@@ -139,9 +139,9 @@ const Enrollment = () => {
 
         {!pendingPayment && (
           <div className="fixed bottom-10 inset-x-0 flex justify-center z-[110] px-4 pointer-events-none">
-            <button 
-              onClick={handleEnrollment} 
-              disabled={selectedIds.length === 0 || submitting} 
+            <button
+              onClick={handleEnrollment}
+              disabled={selectedIds.length === 0 || submitting}
               className={`pointer-events-auto flex items-center gap-4 px-12 py-6 rounded-full font-black uppercase italic transition-all duration-500 shadow-2xl ${selectedIds.length > 0 ? 'bg-orange-500 text-white hover:scale-110 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
             >
               {submitting ? <Loader2 className="animate-spin" /> : <Send size={20} />}

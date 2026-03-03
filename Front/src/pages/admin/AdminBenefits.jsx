@@ -49,7 +49,7 @@ const AdminBenefits = () => {
         try {
             setLoadingDeuda(true);
             setDeudaPendiente(null);
-            const response = await apiFetch.get(`/cuentaPorCobrar/historial/${alumnoId}`);
+            const response = await apiFetch.get(`/cuentas-por-cobrar/historial/${alumnoId}`);
             if (response.ok) {
                 const result = await response.json();
                 // Buscamos la primera cuenta pendiente
@@ -186,8 +186,8 @@ const AdminBenefits = () => {
                                                 type="button"
                                                 onClick={() => handleSelectAlumno(alum)}
                                                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${selectedAlumnoId === alum.id
-                                                        ? 'border-[#1e3a8a] bg-blue-50 ring-1 ring-[#1e3a8a]'
-                                                        : 'border-slate-100 bg-white hover:border-slate-200 shadow-sm'
+                                                    ? 'border-[#1e3a8a] bg-blue-50 ring-1 ring-[#1e3a8a]'
+                                                    : 'border-slate-100 bg-white hover:border-slate-200 shadow-sm'
                                                     }`}
                                             >
                                                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black text-[10px] shrink-0 ${selectedAlumnoId === alum.id ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-400'
@@ -213,8 +213,8 @@ const AdminBenefits = () => {
                             {/* BANNER DINÁMICO DE INTELIGENCIA */}
                             {selectedAlumnoId && !loadingDeuda && (
                                 <div className={`p-4 rounded-2xl border-2 animate-fade-in-up flex gap-4 ${deudaPendiente
-                                        ? 'bg-orange-50 border-orange-200'
-                                        : 'bg-blue-50 border-blue-200'
+                                    ? 'bg-orange-50 border-orange-200'
+                                    : 'bg-blue-50 border-blue-200'
                                     }`}>
                                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${deudaPendiente ? 'bg-orange-500 text-white' : 'bg-[#1e3a8a] text-white'
                                         }`}>
