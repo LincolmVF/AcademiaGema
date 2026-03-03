@@ -23,15 +23,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
     // Si `user` en contexto aún no carga (aunque haya cookie) o le falta info, 
     const currentRole = user?.rol || user?.user?.rol || Cookies.get('user_role');
 
-    console.log("[ProtectedRoute] Evaluando acceso:");
-    console.log(" -> user ctx:", user);
-    console.log(" -> cookie user_role:", Cookies.get('user_role'));
-    console.log(" -> currentRole detectado:", currentRole);
-    console.log(" -> allowedRoles:", allowedRoles);
-
     // Comprobar rol permitido si está definido "allowedRoles"
     if (allowedRoles && (!currentRole || !allowedRoles.includes(currentRole))) {
-        console.warn("[ProtectedRoute] BLOQUEADO. ", currentRole, "no está en", allowedRoles);
         return <Navigate to="/forbidden" replace />;
     }
 
