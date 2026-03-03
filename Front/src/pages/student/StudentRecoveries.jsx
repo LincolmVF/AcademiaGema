@@ -113,7 +113,7 @@ const StudentRecoveries = () => {
         }
     }, [selectedTicket, horariosPatron, historial, stats]);
 
-    const confirmarRecuperacion = () => {
+    const confirmarRecuperacion = (slot) => {
         toast((t) => (
             <div className="flex flex-col gap-4 p-1">
                 <div className="flex flex-col">
@@ -154,14 +154,7 @@ const StudentRecoveries = () => {
         });
     };
 
-    // 3. Manejar el canje
-    const handleSlotClick = async (slot) => {
-        if (!selectedTicket) return;
-
-        console.log(slot.fecha)
-
-        confirmarRecuperacion();
-
+    const ejecutarReserva = async (slot) => {
         try {
             const promise = recuperacionService.agendar({
                 alumnoId: userId,
@@ -173,16 +166,22 @@ const StudentRecoveries = () => {
             await toast.promise(promise, {
                 loading: 'Procesando canje...',
                 success: '¡Clase agendada exitosamente! 🎉',
-                error: (err) => err.message
+                error: (err) => err.message || "Error al agendar"
             });
 
             // Resetear y recargar
             setSelectedTicket(null);
             loadData();
-
         } catch (error) {
             console.error(error);
         }
+    };
+
+    // 3. Manejar el canje
+    const handleSlotClick = async (slot) => {
+        if (!selectedTicket) return;
+
+        confirmarRecuperacion(slot);
     };
 
     // Manejar la cancelación
