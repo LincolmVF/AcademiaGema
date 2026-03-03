@@ -113,15 +113,54 @@ const StudentRecoveries = () => {
         }
     }, [selectedTicket, horariosPatron, historial, stats]);
 
+    const confirmarRecuperacion = () => {
+        toast((t) => (
+            <div className="flex flex-col gap-4 p-1">
+                <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirmación de Reserva</span>
+                    <p className="text-sm font-bold text-[#1e3a8a] leading-tight mt-1">
+                        ¿Confirmas recuperar tu clase el <span className="text-orange-500">{new Date(slot.fecha).toLocaleDateString()}</span> a las <span className="text-orange-500">{slot.horarioData.hora_inicio.substring(0, 5)}</span>?
+                    </p>
+                </div>
+
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t.id);
+                            ejecutarReserva(slot);
+                        }}
+                        className="flex-1 bg-orange-500 text-white text-[10px] font-black uppercase py-2.5 rounded-xl hover:bg-orange-600 transition-colors shadow-lg shadow-orange-200"
+                    >
+                        Confirmar
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="flex-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase py-2.5 rounded-xl hover:bg-slate-200 transition-colors"
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        ), {
+            duration: 6000,
+            position: 'bottom-center',
+            style: {
+                minWidth: '320px',
+                borderRadius: '24px',
+                border: '1px solid #f1f5f9',
+                padding: '16px',
+                boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
+            },
+        });
+    };
+
     // 3. Manejar el canje
     const handleSlotClick = async (slot) => {
         if (!selectedTicket) return;
 
         console.log(slot.fecha)
 
-        if (!window.confirm(`¿Confirmas recuperar tu clase el ${new Date(slot.fecha).toLocaleDateString()} a las ${slot.horarioData.hora_inicio}?`)) {
-            return;
-        }
+        confirmarRecuperacion();
 
         try {
             const promise = recuperacionService.agendar({
