@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Megaphone, Loader2, Calendar, 
+import {
+    Megaphone, Loader2, Calendar,
     Bell, Newspaper, Trophy, Star
 } from 'lucide-react';
 import apiFetch from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 const StudentNews = () => {
     const [publicaciones, setPublicaciones] = useState([]);
@@ -16,13 +17,13 @@ const StudentNews = () => {
             const response = await apiFetch.get('/publicaciones');
             const result = await response.json();
             if (response.ok) {
-                const ordenadas = (result.data || []).sort((a, b) => 
+                const ordenadas = (result.data || []).sort((a, b) =>
                     new Date(b.creado_en) - new Date(a.creado_en)
                 );
                 setPublicaciones(ordenadas);
 
                 if (ordenadas.length > 0) {
-                    localStorage.setItem('last_viewed_news', String(ordenadas[0].id));
+                    Cookies.set('last_viewed_news', String(ordenadas[0].id), { expires: 365, sameSite: 'strict' });
                     window.dispatchEvent(new Event('news_read'));
                 }
             }
@@ -76,14 +77,14 @@ const StudentNews = () => {
                 ) : (
                     publicaciones.map((pub) => (
                         <article key={pub.id} className="bg-white rounded-[3rem] border-2 border-slate-50 shadow-2xl shadow-slate-200/50 overflow-hidden flex flex-col md:flex-row group transition-all duration-500 hover:border-orange-200">
-                            
+
                             {/* IMAGEN IZQUIERDA (50%) */}
                             <div className="md:w-1/2 h-80 md:h-auto overflow-hidden relative bg-slate-100 border-r border-slate-50">
                                 {pub.imagen_url ? (
-                                    <img 
-                                        src={pub.imagen_url} 
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                                        alt={pub.titulo} 
+                                    <img
+                                        src={pub.imagen_url}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        alt={pub.titulo}
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center">
@@ -135,7 +136,7 @@ const StudentNews = () => {
                     ))
                 )}
             </div>
-            
+
             <p className="mt-20 text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.5em] italic opacity-50">
                 GEMA ACADEMY | COMUNIDAD
             </p>

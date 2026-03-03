@@ -7,6 +7,7 @@ import {
 import { useAuth } from "../../context/AuthContext";
 import { apiFetch } from "../../interceptors/api";
 import CompletarEmailModal from "../../pages/CompletarEmailModal";
+import Cookies from "js-cookie";
 
 const StudentSidebar = () => {
   const location = useLocation();
@@ -30,15 +31,15 @@ const StudentSidebar = () => {
         const result = await response.json();
         if (result.data && result.data.length > 0) {
           const newestId = String(result.data[0].id);
-          const viewedId = localStorage.getItem('last_viewed_news');
-          
+          const viewedId = Cookies.get('last_viewed_news');
+
           // Si el ID más reciente no coincide con el guardado, activamos alerta
           if (viewedId !== newestId) {
             setHasNewNews(true);
           }
         }
-      } catch (e) { 
-        console.error("Error al verificar notificaciones:", e); 
+      } catch (e) {
+        console.error("Error al verificar notificaciones:", e);
       }
     };
 
@@ -47,7 +48,7 @@ const StudentSidebar = () => {
     // Escuchamos el evento personalizado 'news_read' emitido por StudentNews.jsx
     const handleNewsRead = () => setHasNewNews(false);
     window.addEventListener('news_read', handleNewsRead);
-    
+
     return () => window.removeEventListener('news_read', handleNewsRead);
   }, []);
 
@@ -80,11 +81,11 @@ const StudentSidebar = () => {
       items: [
         { icon: Home, label: "Horarios Actuales", path: "/dashboard/student" },
         { icon: UserPlus, label: "Nueva Inscripción", path: "/dashboard/student/enrollment" },
-        { 
-          icon: Megaphone, 
-          label: "Muro de Noticias", 
-          path: "/dashboard/student/news", 
-          hasAlert: hasNewNews 
+        {
+          icon: Megaphone,
+          label: "Muro de Noticias",
+          path: "/dashboard/student/news",
+          hasAlert: hasNewNews
         },
       ]
     },
@@ -113,7 +114,7 @@ const StudentSidebar = () => {
       )}
 
       <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl overflow-hidden">
-        
+
         {/* HEADER LOGO */}
         <div className="flex-none py-8 px-4 flex flex-col items-center border-b border-white/10 bg-white/5">
           <div className="relative z-10 w-[180px] aspect-square bg-white rounded-full p-2 shadow-2xl flex items-center justify-center border-4 border-white/20 overflow-hidden">
@@ -137,19 +138,18 @@ const StudentSidebar = () => {
               {group.type === 'link' ? (
                 <Link
                   to={debeCompletarEmail ? "#" : group.path}
-                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${
-                    location.pathname === group.path 
-                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20' 
-                    : 'text-blue-100/60 hover:bg-white/5'
-                  } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === group.path
+                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                      : 'text-blue-100/60 hover:bg-white/5'
+                    } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
                 >
                   <group.icon size={18} />
                   <span className="text-sm font-bold">{group.title}</span>
                 </Link>
               ) : (
                 <div className="space-y-0.5">
-                  <button 
-                    onClick={() => toggleMenu(group.title)} 
+                  <button
+                    onClick={() => toggleMenu(group.title)}
                     disabled={debeCompletarEmail}
                     className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-blue-100/60 hover:bg-white/5 transition-all group"
                   >
@@ -168,23 +168,22 @@ const StudentSidebar = () => {
                           <Link
                             key={item.path}
                             to={debeCompletarEmail ? "#" : item.path}
-                            className={`flex items-center justify-between px-4 py-2 rounded-xl transition-all text-xs ${
-                              isActive 
-                              ? 'text-orange-400 font-bold bg-orange-400/10' 
-                              : 'text-blue-100/50 hover:text-white'
-                            } ${debeCompletarEmail ? "cursor-not-allowed" : ""}`}
+                            className={`flex items-center justify-between px-4 py-2 rounded-xl transition-all text-xs ${isActive
+                                ? 'text-orange-400 font-bold bg-orange-400/10'
+                                : 'text-blue-100/50 hover:text-white'
+                              } ${debeCompletarEmail ? "cursor-not-allowed" : ""}`}
                           >
                             <div className="flex items-center gap-3">
-                                <item.icon size={14} />
-                                <span>{item.label}</span>
+                              <item.icon size={14} />
+                              <span>{item.label}</span>
                             </div>
-                            
+
                             {/* ALERTA NARANJA CON EFECTO NEÓN */}
                             {item.hasAlert && (
-                                <div className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
-                                </div>
+                              <div className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]"></span>
+                              </div>
                             )}
                           </Link>
                         );

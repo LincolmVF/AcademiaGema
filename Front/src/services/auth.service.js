@@ -26,8 +26,7 @@ export const loginService = async (identifier, password) => {
     Cookies.set('user_name', result.data.nombres, cookieConfig);
     Cookies.set('user_id', result.data.id, cookieConfig);
     if (result.data.token) Cookies.set('auth_token', result.data.token, cookieConfig);
-
-    localStorage.setItem('auth_sync', Date.now().toString());
+    if (result.data.refreshToken) Cookies.set('refresh_token', result.data.refreshToken, cookieConfig);
   }
 
   return result.data;
@@ -46,9 +45,7 @@ export const logoutService = async () => {
     Cookies.remove('user_name');
     Cookies.remove('user_id');
     Cookies.remove('auth_token');
-
-    localStorage.removeItem('auth_sync');
-    localStorage.setItem('logout_sync', Date.now().toString());
+    Cookies.remove('refresh_token');
 
     window.location.href = "/login";
   }

@@ -1,4 +1,5 @@
 import toast from 'react-hot-toast';
+import Cookies from 'js-cookie';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,7 +25,12 @@ export const apiFetch = async (endpoint, options = {}) => {
     if (refreshRes.ok) {
       response = await fetch(`${API_URL}${endpoint}`, defaultOptions);
     } else {
-      localStorage.clear();
+      Cookies.remove('user_role');
+      Cookies.remove('user_name');
+      Cookies.remove('user_id');
+      Cookies.remove('auth_token');
+      Cookies.remove('refresh_token');
+      Cookies.remove('last_viewed_news');
       toast.error("Tu sesión ha expirado", { id: 'session-expired' });
       window.location.href = '/login';
     }

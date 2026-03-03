@@ -25,28 +25,10 @@ export const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(() => Cookies.get('user_id') || null);
     const [loading, setLoading] = useState(true);
 
-    // 2. EFECTO DE PROTECCIÓN MULTI-CUENTA
+    // 2. EFECTO INICIAL (se removió protección multicuentas por localStorage)
     useEffect(() => {
-        const syncTabs = (event) => {
-            // Si otra pestaña inicia sesión o cierra sesión
-            if (event.key === 'auth_sync' || event.key === 'logout_sync') {
-                const currentCookieId = Cookies.get('user_id');
-
-                // Si la cookie actual es diferente al ID que tenemos en memoria,
-                // significa que abrieron otra cuenta. Forzamos logout y login.
-                if (currentCookieId !== userId) {
-                    window.location.href = '/login';
-                } else {
-                    // Si es la misma cuenta pero hubo un cambio (ej. actualización de datos)
-                    window.location.reload();
-                }
-            }
-        };
-
-        window.addEventListener('storage', syncTabs);
         setLoading(false);
-        return () => window.removeEventListener('storage', syncTabs);
-    }, [userId]); // Dependemos de userId para comparar
+    }, []); // Dependencias vacías
 
     const login = (userData) => {
         if (!userData) return;
