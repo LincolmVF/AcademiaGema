@@ -5,14 +5,13 @@ import Cookies from 'js-cookie';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // 1. Inicialización de estado recuperando datos DIRECTAMENTE de Cookies
+    // 1. Inicialización de estado desde Cookies
     const [user, setUser] = useState(() => {
         const savedRole = Cookies.get('user_role');
         const savedName = Cookies.get('user_name');
         const savedId = Cookies.get('user_id');
 
         if (savedRole) {
-            // Reconstruimos el objeto de usuario que espera tu App
             return {
                 rol: savedRole,
                 nombres: savedName,
@@ -26,22 +25,31 @@ export const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(() => Cookies.get('user_id') || null);
     const [loading, setLoading] = useState(true);
 
-    // 2. Sincronización entre pestañas (Escucha el "timbre" de localStorage sin guardar datos)
+    // 2. EFECTO DE PROTECCIÓN MULTI-CUENTA
     useEffect(() => {
         const syncTabs = (event) => {
+            // Si otra pestaña inicia sesión o cierra sesión
             if (event.key === 'auth_sync' || event.key === 'logout_sync') {
-                window.location.reload();
+                const currentCookieId = Cookies.get('user_id');
+
+                // Si la cookie actual es diferente al ID que tenemos en memoria,
+                // significa que abrieron otra cuenta. Forzamos logout y login.
+                if (currentCookieId !== userId) {
+                    window.location.href = '/login';
+                } else {
+                    // Si es la misma cuenta pero hubo un cambio (ej. actualización de datos)
+                    window.location.reload();
+                }
             }
         };
 
         window.addEventListener('storage', syncTabs);
-        setLoading(false); 
+        setLoading(false);
         return () => window.removeEventListener('storage', syncTabs);
-    }, []);
+    }, [userId]); // Dependemos de userId para comparar
 
     const login = (userData) => {
         if (!userData) return;
-
         const normalizedData = userData.user ? userData : { user: userData };
         const finalUser = normalizedData.user || normalizedData;
 
@@ -49,19 +57,12 @@ export const AuthProvider = ({ children }) => {
         setUserId(finalUser.id);
     };
 
-    /**
-     * Actualiza la data del usuario y sincroniza las cookies
-     */
     const updateUserData = (newData) => {
         setUser(prev => {
             if (!prev) return null;
-
             const updatedUser = {
                 ...prev,
-                user: {
-                    ...(prev.user || prev),
-                    ...newData
-                }
+                user: { ...(prev.user || prev), ...newData }
             };
 
             if (newData.nombres) Cookies.set('user_name', newData.nombres, { expires: 1, sameSite: 'strict' });
@@ -79,7 +80,6 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setUser(null);
             setUserId(null);
-
             window.location.href = '/login';
         }
     };
@@ -93,8 +93,6 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth debe usarse dentro de un AuthProvider');
-    }
+    if (!context) throw new Error('useAuth debe usarse dentro de un AuthProvider');
     return context;
 };
