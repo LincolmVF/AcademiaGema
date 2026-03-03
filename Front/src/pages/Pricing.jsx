@@ -1,153 +1,163 @@
 import React from 'react';
-import { Check, Crown, Rocket, Star, ShieldCheck, Zap } from 'lucide-react';
+import { Check, Rocket, Star, Zap, MapPin, Trophy, ShieldCheck, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Pricing = () => {
   const opciones = [
     {
       nombre: "Básico",
-      precio: "165",
+      precio: "90",
       badge: "Iniciación",
-      icon: <Rocket className="text-slate-400" size={28} />,
-      features: ["2 sesiones semanales", "Kit de bienvenida Gema", "Acceso a canchas libres", "Seguro médico básico"],
-      color: "border-slate-100 bg-white",
+      icon: <Rocket className="text-blue-600" size={26} />,
+      features: ["1 Sesión semanal", "Kit de bienvenida", "Comunidad oficial"],
+      color: "border-slate-200 bg-white",
       textColor: "text-[#1e3a8a]",
-      btnStyle: "bg-slate-100 text-slate-900 hover:bg-slate-200"
+      btnStyle: "bg-slate-100 text-[#1e3a8a] hover:bg-blue-100"
     },
     {
-      nombre: "Pro",
-      precio: "275",
-      badge: "Más Popular",
+      nombre: "Multisede",
+      precio: "120",
+      badge: "Más Versátil",
+      icon: <MapPin className="text-blue-600" size={26} />,
+      features: ["Acceso a 2 Sedes", "Horarios flexibles", "Entrenamiento guiado", "Evaluación de nivel"],
+      color: "border-blue-200 shadow-[0_20px_50px_rgba(249,115,22,0.1)] scale-105 bg-white",
+      textColor: "text-[#1e3a8a]",
+      btnStyle: "bg-[#1e3a8a] text-white hover:bg-[#162a63] shadow-lg shadow-blue-900/20"
+    },
+    {
+      nombre: "Pro Gema",
+      precio: "180",
+      badge: "Elite",
       recommended: true,
-      icon: <Star className="text-orange-500" size={28} />,
-      features: ["4 sesiones semanales", "Kit Pro (Uniforme + Bolso)", "Torneos mensuales internos", "Evaluación técnica mensual", "Plan nutricional base"],
-      color: "border-orange-500 shadow-2xl shadow-orange-500/20 scale-105 bg-white z-10",
+      icon: <Star className="text-orange-500" size={26} />,
+      features: ["2 Sesiones semanales", "Acceso preferencial", "Torneos internos", "Seguimiento técnico"],
+      color: "border-orange-500 shadow-[0_20px_50px_rgba(249,115,22,0.1)] scale-105 bg-white z-10",
       textColor: "text-[#1e3a8a]",
-      btnStyle: "bg-orange-500 text-white hover:bg-orange-600 shadow-lg shadow-orange-500/30"
-    },
-    {
-      nombre: "Elite",
-      precio: "410",
-      badge: "Alto Rendimiento",
-      icon: <Crown className="text-yellow-500" size={28} />,
-      features: ["Entrenamiento diario", "Personal trainer asignado", "Psicología deportiva", "Análisis de video pro", "Participación en liga"],
-      color: "border-slate-800 bg-[#0f172a]",
-      textColor: "text-white",
-      btnStyle: "bg-white text-[#0f172a] hover:bg-slate-100"
+      btnStyle: "bg-[#f97316] text-white hover:bg-[#ea580c] shadow-xl shadow-orange-500/30"
     },
   ];
 
   return (
-    <div className="bg-white min-h-screen font-sans text-slate-900 overflow-x-hidden">
+    <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
       
-      {/* --- HERO SECTION: Precios --- */}
-      <section className="relative min-h-[45vh] md:min-h-[50vh] bg-[#0f172a] py-8 md:py-12 px-6 overflow-hidden z-0">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute -top-[10%] -right-[5%] w-[500px] h-[500px] bg-orange-500/10 blur-[120px] rounded-full"></div>
-          <div className="absolute -bottom-[10%] -left-[5%] w-[400px] h-[400px] bg-blue-500/10 blur-[120px] rounded-full"></div>
+      {/* --- HERO SECTION --- */}
+      <section className="relative pt-24 pb-48 bg-[#0f172a] px-6 overflow-hidden">
+        {/* Unificación de luces de fondo con la paleta */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
+          <div className="absolute top-1/2 -left-24 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-6 backdrop-blur-md">
-            <ShieldCheck size={14} className="text-orange-500" />
-            <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">Membresías Oficiales S/</span>
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
+            <Trophy size={14} className="text-orange-400" />
+            <span className="text-white text-[10px] font-black uppercase tracking-[0.3em]">Temporada 2026</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black text-white uppercase italic tracking-tighter leading-[0.9]">
-            Elige tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Nivel</span>
+          <h1 className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-6">
+            Elige tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Plan de Juego</span>
           </h1>
-          <p className="mt-8 text-slate-400 max-w-2xl mx-auto text-lg font-medium leading-relaxed">
-            Formación profesional con planes adaptados a tu ritmo de crecimiento. Sin contratos forzosos, solo resultados.
+          <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-medium leading-relaxed">
+            Formación de alto rendimiento con la misma pasión en cada nivel.
           </p>
         </div>
       </section>
 
-      {/* --- GRID DE PRECIOS: Impacto Visual --- */}
-      <section className="relative z-20 -mt-24 max-w-7xl mx-auto px-6 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+      {/* --- GRID DE PRECIOS --- */}
+      <section className="relative z-20 -mt-28 max-w-7xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-center">
           {opciones.map((opt, i) => (
             <div 
               key={i} 
-              className={`relative p-10 rounded-[48px] border-2 transition-all duration-500 group flex flex-col ${opt.color}`}
+              className={`relative p-8 lg:p-10 rounded-[3rem] border-2 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 ${opt.color}`}
             >
               {opt.recommended && (
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl z-30">
-                  Más Recomendado
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#f97316] text-white px-5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1">
+                  <Zap size={10} fill="currentColor" /> RECOMENDADO
                 </div>
               )}
 
-              {/* Header de la Card */}
-              <div className="flex justify-between items-start mb-8">
-                <div className="p-4 bg-slate-50 rounded-3xl group-hover:scale-110 transition-transform duration-300">
+              {/* Icon & Badge - Unificados */}
+              <div className="flex justify-between items-center mb-10">
+                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100">
                   {opt.icon}
                 </div>
-                <div className="text-right">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-orange-500 block">Nivel</span>
-                  <span className={`text-[11px] font-bold uppercase ${opt.nombre === 'Elite' ? 'text-slate-400' : 'text-slate-500'}`}>
-                    {opt.badge}
-                  </span>
-                </div>
+                <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-lg uppercase tracking-widest border border-slate-200/50">
+                  {opt.badge}
+                </span>
               </div>
 
-              {/* Precio */}
-              <div className="mb-10">
-                <h3 className={`text-4xl font-black uppercase italic tracking-tighter mb-4 ${opt.textColor}`}>
+              {/* Area de Precio - Consistente con el Azul */}
+              <div className="mb-8">
+                <h3 className={`text-xl font-black uppercase italic tracking-tighter mb-2 ${opt.textColor}`}>
                   {opt.nombre}
                 </h3>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-sm font-black mr-1 ${opt.nombre === 'Elite' ? 'text-orange-500' : 'text-slate-900'}`}>S/</span>
-                  <span className={`text-6xl font-black tracking-tighter ${opt.textColor}`}>{opt.precio}</span>
-                  <span className="text-slate-400 text-xs font-bold uppercase tracking-widest ml-2">/ Mes</span>
+                <div className="flex items-start gap-1">
+                  <span className="text-lg font-black text-slate-900 mt-1">S/</span>
+                  <span className={`text-7xl font-black tracking-tighter leading-none ${opt.textColor}`}>{opt.precio}</span>
+                  <span className="text-slate-400 text-[10px] font-bold uppercase tracking-widest self-end mb-2 ml-1">/ mes</span>
                 </div>
               </div>
 
-              {/* Lista de Beneficios */}
-              <ul className="space-y-4 mb-12 flex-grow">
+              {/* Features - Iconos verdes unificados */}
+              <div className="space-y-4 mb-10 flex-grow">
                 {opt.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <div className="mt-1 bg-orange-500/10 p-1 rounded-full text-orange-500">
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                       <Check size={12} strokeWidth={4} />
                     </div>
-                    <span className={`text-sm font-semibold ${opt.nombre === 'Elite' ? 'text-slate-300' : 'text-slate-600'}`}>
+                    <p className="text-sm font-bold text-slate-600 tracking-tight italic">
                       {feature}
-                    </span>
-                  </li>
+                    </p>
+                  </div>
                 ))}
-              </ul>
+              </div>
 
-              {/* Botón de Acción */}
-              <button className={`w-full py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:-translate-y-1 active:scale-95 ${opt.btnStyle}`}>
-                Inscribirme Ahora
-              </button>
+              {/* Botones con paleta unificada */}
+              <Link 
+                to="/register" 
+                className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] text-center transition-all active:scale-95 flex items-center justify-center gap-2 group/btn ${opt.btnStyle}`}
+              >
+                Inscribirme 
+                <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+              </Link>
             </div>
           ))}
         </div>
 
-        {/* Garantía y Ayuda */}
-        <div className="mt-16 flex flex-col items-center gap-6">
-          <div className="flex items-center gap-3 text-[#1e3a8a] bg-blue-50 px-8 py-4 rounded-full border border-blue-100 shadow-sm">
-            <Zap size={20} className="text-orange-500 animate-pulse" />
-            <span className="text-[10px] md:text-xs font-black uppercase tracking-widest text-center">
-              Matrícula bonificada al 100% durante esta semana
-            </span>
+        {/* Garantía - Paleta Azul/Naranja */}
+        <div className="mt-20 flex justify-center">
+          <div className="flex items-center gap-4 bg-white p-3 pr-10 rounded-full border border-blue-100 shadow-xl">
+             <div className="w-12 h-12 bg-[#1e3a8a] rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-900/30">
+                <ShieldCheck size={24} />
+             </div>
+             <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f97316]">Promoción Especial</p>
+                <p className="text-sm text-[#1e3a8a] font-bold tracking-tight">Matrícula 100% bonificada en tu primera inscripción</p>
+             </div>
           </div>
-          <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
-            ¿Consultas sobre pagos? <span className="text-orange-500 cursor-pointer hover:underline">Chat directo con soporte</span>
-          </p>
         </div>
       </section>
 
-      {/* --- SECCIÓN EXTRA: CTA --- */}
-      <section className="max-w-7xl mx-auto px-6 pb-24">
-        <div className="bg-[#0f172a] rounded-[48px] p-12 md:p-20 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-full h-full opacity-20 pointer-events-none">
-            <img src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000" className="w-full h-full object-cover" alt="fondo" />
+      {/* --- SECCIÓN INFERIOR --- */}
+      <section className="max-w-7xl mx-auto px-6 pb-32">
+        <div className="bg-[#0f172a] rounded-[4rem] p-12 md:p-24 text-center relative overflow-hidden shadow-2xl">
+          <div className="absolute inset-0 opacity-10 pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1526676037777-05a232554f77?q=80&w=2000" className="w-full h-full object-cover" alt="voleibol" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent"></div>
           </div>
-          <div className="relative z-10">
-            <h3 className="text-3xl md:text-5xl font-black text-white uppercase italic mb-8">¿Aún no te decides?</h3>
-            <p className="text-slate-400 mb-10 max-w-xl mx-auto font-medium">Agenda una clase de prueba gratuita y vive la experiencia Gema desde adentro.</p>
-            <button className="bg-white text-[#0f172a] hover:bg-orange-500 hover:text-white font-black uppercase tracking-[0.2em] px-10 py-5 rounded-2xl text-sm transition-all shadow-xl hover:-translate-y-1">
-              Agendar Clase de Prueba
-            </button>
+          
+          <div className="relative z-10 max-w-3xl mx-auto">
+            <h3 className="text-4xl md:text-6xl font-black text-white uppercase italic leading-tight mb-8 tracking-tighter">
+              ¿Quieres sentir la <span className="text-orange-500 text-glow">Energía</span>?
+            </h3>
+            <p className="text-slate-400 mb-12 text-lg md:text-xl font-medium leading-relaxed">
+              Agenda una clase de prueba y conoce por qué somos el club #1 en alto rendimiento. Sin compromiso, solo deporte.
+            </p>
+            <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-12 py-6 rounded-3xl text-sm transition-all shadow-2xl shadow-orange-500/20 hover:-translate-y-2 inline-flex items-center gap-3">
+              ¡Quiero mi clase gratis!
+              <Rocket size={18} />
+            </Link>
           </div>
         </div>
       </section>
