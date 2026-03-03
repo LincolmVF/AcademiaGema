@@ -1,50 +1,62 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { logoutService } from '../services/auth.service';
+import Cookies from 'js-cookie';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [userId, setUserId] = useState(null);
+    // 1. Inicialización de estado recuperando datos DIRECTAMENTE de Cookies
+    const [user, setUser] = useState(() => {
+        const savedRole = Cookies.get('user_role');
+        const savedName = Cookies.get('user_name');
+        const savedId = Cookies.get('user_id');
+
+        if (savedRole) {
+            // Reconstruimos el objeto de usuario que espera tu App
+            return {
+                rol: savedRole,
+                nombres: savedName,
+                id: savedId,
+                user: { id: savedId, rol: savedRole, nombres: savedName }
+            };
+        }
+        return null;
+    });
+
+    const [userId, setUserId] = useState(() => Cookies.get('user_id') || null);
     const [loading, setLoading] = useState(true);
 
+    // 2. Sincronización entre pestañas (Escucha el "timbre" de localStorage sin guardar datos)
     useEffect(() => {
-        const savedUser = sessionStorage.getItem('userData');
-        if (savedUser) {
-            try {
-                const parsedUser = JSON.parse(savedUser);
-                setUser(parsedUser);
-                // Aseguramos que el ID se extraiga correctamente de la estructura anidada
-                setUserId(parsedUser.user?.id || parsedUser.id);
-            } catch (error) {
-                console.error("Error al recuperar sesión:", error);
-                sessionStorage.clear();
+        const syncTabs = (event) => {
+            if (event.key === 'auth_sync' || event.key === 'logout_sync') {
+                window.location.reload();
             }
-        }
-        setLoading(false);
+        };
+
+        window.addEventListener('storage', syncTabs);
+        setLoading(false); 
+        return () => window.removeEventListener('storage', syncTabs);
     }, []);
 
     const login = (userData) => {
         if (!userData) return;
 
-        // Normalizamos la data para que siempre tenga la forma { user: { ... } }
         const normalizedData = userData.user ? userData : { user: userData };
+        const finalUser = normalizedData.user || normalizedData;
 
         setUser(normalizedData);
-        setUserId(normalizedData.user?.id || normalizedData.id);
-        sessionStorage.setItem('userData', JSON.stringify(normalizedData));
+        setUserId(finalUser.id);
     };
 
     /**
-     * Función para actualizar partes específicas del usuario
-     * Útil para completar email o completar registro de alumno
+     * Actualiza la data del usuario y sincroniza las cookies
      */
     const updateUserData = (newData) => {
         setUser(prev => {
             if (!prev) return null;
 
-            // Combinamos el estado anterior con la nueva data
-            const updatedState = {
+            const updatedUser = {
                 ...prev,
                 user: {
                     ...(prev.user || prev),
@@ -52,8 +64,10 @@ export const AuthProvider = ({ children }) => {
                 }
             };
 
-            sessionStorage.setItem('userData', JSON.stringify(updatedState));
-            return updatedState;
+            if (newData.nombres) Cookies.set('user_name', newData.nombres, { expires: 1, sameSite: 'strict' });
+            if (newData.rol) Cookies.set('user_role', newData.rol, { expires: 1, sameSite: 'strict' });
+
+            return updatedUser;
         });
     };
 
@@ -65,8 +79,7 @@ export const AuthProvider = ({ children }) => {
         } finally {
             setUser(null);
             setUserId(null);
-            sessionStorage.clear();
-            // Opcional: Redirigir manualmente si es necesario
+
             window.location.href = '/login';
         }
     };

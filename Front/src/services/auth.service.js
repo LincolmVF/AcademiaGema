@@ -1,10 +1,15 @@
+import Cookies from 'js-cookie';
+
 const API_URL = import.meta.env.VITE_API_URL;
 
+const cookieConfig = {
+  expires: 1,
+  secure: window.location.protocol === 'https:',
+  sameSite: 'strict'
+};
+
 export const loginService = async (identifier, password) => {
-  const payload = {
-    username: identifier,
-    password,
-  };
+  const payload = { username: identifier, password };
 
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -14,9 +19,15 @@ export const loginService = async (identifier, password) => {
   });
 
   const result = await response.json();
+  if (!response.ok) throw new Error(result.message || "Error en el servidor");
 
-  if (!response.ok) {
-    throw new Error(result.message || "Error en el servidor");
+  if (result.data) {
+    Cookies.set('user_role', result.data.rol, cookieConfig);
+    Cookies.set('user_name', result.data.nombres, cookieConfig);
+    Cookies.set('user_id', result.data.id, cookieConfig);
+    if (result.data.token) Cookies.set('auth_token', result.data.token, cookieConfig);
+
+    localStorage.setItem('auth_sync', Date.now().toString());
   }
 
   return result.data;
@@ -31,8 +42,13 @@ export const logoutService = async () => {
   } catch (error) {
     console.error("Error en la petición de logout:", error);
   } finally {
-    localStorage.clear();
-    sessionStorage.clear();
+    Cookies.remove('user_role');
+    Cookies.remove('user_name');
+    Cookies.remove('user_id');
+    Cookies.remove('auth_token');
+
+    localStorage.removeItem('auth_sync');
+    localStorage.setItem('logout_sync', Date.now().toString());
 
     window.location.href = "/login";
   }
@@ -51,7 +67,7 @@ export const registerService = async (userData) => {
     throw new Error(result.message || "Error al registrar el usuario");
   }
 
-  return result; 
+  return result;
 };
 
 export const completarEmailService = async (nuevoEmail) => {
