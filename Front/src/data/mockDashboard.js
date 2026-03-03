@@ -1,17 +1,18 @@
-import { Users, GraduationCap, DollarSign, BookOpen, Calendar, Award } from 'lucide-react';
+import { Users, GraduationCap, DollarSign, MapPin, AlertCircle, TrendingUp, BookOpen, Award, Calendar } from 'lucide-react';
 
 export const roleData = {
     admin: {
         stats: [
-            { id: "alumnos-activos", title: "Alumnos Activos", value: "0", icon: Users, color: "blue" }, 
-            { title: "Ingresos Mes", value: "$12,450", icon: DollarSign, color: "green" },
-            { title: "Entrenadores", value: "18", icon: GraduationCap, color: "orange" },
+            { id: "alumnos", title: "Alumnos Activos", value: "0", icon: Users, color: "blue" },
+            { id: "ingresos", title: "Ingresos (Pagos)", value: "$0.00", icon: TrendingUp, color: "green" },
+            { id: "coordinadores", title: "Cuerpo Técnico", value: "0", icon: GraduationCap, color: "orange" },
+            { id: "sedes", title: "Sedes Gema", value: "0", icon: MapPin, color: "purple" },
+            { id: "pendientes", title: "Deudas Pendientes", value: "$0.00", icon: AlertCircle, color: "gray" },
         ],
-        recentTitle: "Últimas Inscripciones",
+        recentTitle: "Movimientos del Club",
         activity: [
-            { id: 1, text: "Juan Pérez se inscribió en Vóley Sub-12", date: "Hace 2 min" },
-            { id: 2, text: "Pago recibido de María García", date: "Hace 15 min" },
-            { id: 3, text: "Nuevo entrenador registrado: Carlos Ruiz", date: "Hace 1 hora" },
+            { id: 1, text: "Nueva inscripción detectada", date: "Hoy" },
+            { id: 2, text: "Pago validado por Administración", date: "Ayer" },
         ]
     },
     teacher: {
