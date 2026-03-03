@@ -86,7 +86,7 @@ function App() {
         <Route path="/dashboard">
 
           {/* GRUPO 1: ESTUDIANTE (Layout Móvil + Sidebar PC) */}
-          <Route element={<ProtectedRoute allowedRoles={['student', 'alumno']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['Alumno', 'student', 'alumno']} />}>
             <Route element={<StudentLayout />}>
               <Route path="student" element={<DashboardEstudiante />} />
               <Route path="student/payments" element={<Payments />} />
@@ -100,14 +100,14 @@ function App() {
           </Route>
 
           {/* GRUPO 2: COORDINADOR (Layout Minimalista) */}
-          <Route element={<ProtectedRoute allowedRoles={['teacher', 'profesor']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['Coordinador', 'teacher', 'profesor']} />}>
             <Route element={<TeacherLayout />}>
               <Route path="teacher" element={<DashboardTeacher />} />
             </Route>
           </Route>
 
           {/* GRUPO 3: ADMINISTRADOR (Layout Completo de Gestión) */}
-          <Route element={<ProtectedRoute allowedRoles={['admin', 'administrador']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['Administrador', 'admin', 'administrador']} />}>
             <Route element={<DashboardLayout />}>
               <Route path="admin" element={<Dashboard role="admin" />} />
 
