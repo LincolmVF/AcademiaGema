@@ -22,11 +22,14 @@ export const loginService = async (identifier, password) => {
   if (!response.ok) throw new Error(result.message || "Error en el servidor");
 
   if (result.data) {
-    Cookies.set('user_role', result.data.rol, cookieConfig);
-    Cookies.set('user_name', result.data.nombres, cookieConfig);
-    Cookies.set('user_id', result.data.id, cookieConfig);
-    if (result.data.token) Cookies.set('auth_token', result.data.token, cookieConfig);
-    if (result.data.refreshToken) Cookies.set('refresh_token', result.data.refreshToken, cookieConfig);
+    const { user, accessToken, refreshToken } = result.data;
+    if (user) {
+      Cookies.set('user_role', user.rol, cookieConfig);
+      Cookies.set('user_name', user.nombres, cookieConfig);
+      Cookies.set('user_id', user.id, cookieConfig);
+    }
+    if (accessToken) Cookies.set('auth_token', accessToken, cookieConfig);
+    if (refreshToken) Cookies.set('refresh_token', refreshToken, cookieConfig);
   }
 
   return result.data;
@@ -46,6 +49,12 @@ export const logoutService = async () => {
     Cookies.remove('user_id');
     Cookies.remove('auth_token');
     Cookies.remove('refresh_token');
+
+    // Limpieza de datos antiguos cacheados para evitar confusiones
+    localStorage.removeItem('auth_sync');
+    localStorage.removeItem('logout_sync');
+    localStorage.removeItem('last_viewed_news');
+
 
     window.location.href = "/login";
   }

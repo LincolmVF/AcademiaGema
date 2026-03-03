@@ -15,6 +15,8 @@ import { ForgotPassword } from './pages/ForgotPassword';
 import { ResetPassword } from "./pages/ResetPassword";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Forbidden from "./pages/Forbidden";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // 2. Layouts (Contenedores)
 import DashboardLayout from "./layouts/DashboardLayout"; // Admin (Sidebar Completo)
@@ -40,8 +42,6 @@ import AdminBenefits from "./pages/admin/AdminBenefits";
 import AdminCreateBenefits from "./pages/admin/AdminCreateBenefits";
 import AdminPublications from "./pages/admin/AdminPublications";
 
-
-
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
 import Profile from "./pages/student/Profile";
@@ -50,7 +50,6 @@ import Blog from "./pages/Blog";
 import StudentInjuries from "./pages/student/StudentInjuries";
 import StudentRecoveries from "./pages/student/StudentRecoveries";
 import StudentNews from "./pages/student/StudentNews";
-
 
 function App() {
   return (
@@ -81,57 +80,53 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forbidden" element={<Forbidden />} />
 
         {/* --- RUTAS PROTEGIDAS (DASHBOARD) --- */}
         <Route path="/dashboard">
-          {/* GRUPO 1: ESTUDIANTE (Layout Móvil + Sidebar PC) */}
-          <Route element={<StudentLayout />}>
-            <Route path="student" element={<DashboardEstudiante />} />
-            <Route path="student/payments" element={<Payments />} />
-            <Route path="student/profile" element={<Profile />} />
-            <Route path="student/enrollment" element={<Enrollment />} />
-            <Route path="student/injuries" element={<StudentInjuries />} />
-            <Route path="student/recoveries" element={<StudentRecoveries />} />
-            <Route path="student/news" element={<StudentNews />} />
 
-            {/* Si entran a /dashboard sin nada, redirigir al estudiante (opcional) */}
-            <Route
-              index
-              element={<Navigate to="/dashboard/student" replace />}
-            />
+          {/* GRUPO 1: ESTUDIANTE (Layout Móvil + Sidebar PC) */}
+          <Route element={<ProtectedRoute allowedRoles={['student', 'alumno']} />}>
+            <Route element={<StudentLayout />}>
+              <Route path="student" element={<DashboardEstudiante />} />
+              <Route path="student/payments" element={<Payments />} />
+              <Route path="student/profile" element={<Profile />} />
+              <Route path="student/enrollment" element={<Enrollment />} />
+              <Route path="student/injuries" element={<StudentInjuries />} />
+              <Route path="student/recoveries" element={<StudentRecoveries />} />
+              <Route path="student/news" element={<StudentNews />} />
+              <Route index element={<Navigate to="/dashboard/student" replace />} />
+            </Route>
           </Route>
 
           {/* GRUPO 2: COORDINADOR (Layout Minimalista) */}
-          <Route element={<TeacherLayout />}>
-            <Route path="teacher" element={<DashboardTeacher />} />
+          <Route element={<ProtectedRoute allowedRoles={['teacher', 'profesor']} />}>
+            <Route element={<TeacherLayout />}>
+              <Route path="teacher" element={<DashboardTeacher />} />
+            </Route>
           </Route>
 
           {/* GRUPO 3: ADMINISTRADOR (Layout Completo de Gestión) */}
-          <Route element={<DashboardLayout />}>
-            {/* Resumen General */}
-            <Route path="admin" element={<Dashboard role="admin" />} />
+          <Route element={<ProtectedRoute allowedRoles={['admin', 'administrador']} />}>
+            <Route element={<DashboardLayout />}>
+              <Route path="admin" element={<Dashboard role="admin" />} />
 
-            {/* Gestión CRUD */}
-            <Route path="admin/students" element={<AdminStudentsManager />} />
-            <Route path="admin/teachers" element={<AdminTeachersManager />} />
-            <Route path="admin/benefits" element={<AdminBenefits />} />
-            <Route path="admin/CreateBenefits" element={<AdminCreateBenefits />} />
-            <Route path="admin/schedule" element={<AdminSchedulesManager />} />
-            <Route path="admin/levels" element={<AdminLevelsManager />} />
-            <Route path="admin/catalog" element={<AdminCatalogManager />} />
-            <Route path="admin/locations" element={<AdminLocationsManager />} />
-            <Route path="admin/injuries" element={<AdminInjuriesManager />} />
-            <Route path="admin/publications" element={<AdminPublications />} />
-            <Route
-              path="admin/payment-validation"
-              element={<AdminPaymentManager />}
-            />
+              {/* Gestión CRUD */}
+              <Route path="admin/students" element={<AdminStudentsManager />} />
+              <Route path="admin/teachers" element={<AdminTeachersManager />} />
+              <Route path="admin/benefits" element={<AdminBenefits />} />
+              <Route path="admin/CreateBenefits" element={<AdminCreateBenefits />} />
+              <Route path="admin/schedule" element={<AdminSchedulesManager />} />
+              <Route path="admin/levels" element={<AdminLevelsManager />} />
+              <Route path="admin/catalog" element={<AdminCatalogManager />} />
+              <Route path="admin/locations" element={<AdminLocationsManager />} />
+              <Route path="admin/injuries" element={<AdminInjuriesManager />} />
+              <Route path="admin/publications" element={<AdminPublications />} />
+              <Route path="admin/payment-validation" element={<AdminPaymentManager />} />
 
-            {/* Configuración (Placeholder) */}
-            <Route
-              path="admin/settings"
-              element={<AdminSettings />}
-            />
+              {/* Configuración */}
+              <Route path="admin/settings" element={<AdminSettings />} />
+            </Route>
           </Route>
         </Route>
 
