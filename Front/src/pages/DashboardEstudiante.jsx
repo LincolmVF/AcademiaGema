@@ -129,17 +129,22 @@ const DashboardEstudiante = () => {
     const loadDashboardData = async () => {
       try {
         setLoading(true);
-        const [resAsist, resDebts, resPay] = await Promise.all([
+        const [resAsist, resRecu, resDebts, resPay] = await Promise.all([
           apiFetch.get(`/asistencias/alumno/${userId}`),
+          apiFetch.get(`/recuperaciones/historial`),
           apiFetch.get("/cuentas-por-cobrar"),
           apiFetch.get("/pagos"),
         ]);
 
         const dataAsist = await resAsist.json();
+        const dataRecu = await resRecu.json();
         const dataDebts = await resDebts.json();
         const dataPay = await resPay.json();
 
-        setAttendance(dataAsist.data || []);
+        const asistenciasNormales = dataAsist.data || [];
+        const recuperacionesList = dataRecu.data ? dataRecu.data.map(r => ({ ...r, isRecuperacion: true })) : [];
+
+        setAttendance([...asistenciasNormales, ...recuperacionesList]);
         setDebts((dataDebts.data || []).filter((d) => d.alumno_id === userId));
         setPayments((dataPay.data || []).filter((p) => p.cuentas_por_cobrar?.alumno_id === userId));
       } catch (error) {

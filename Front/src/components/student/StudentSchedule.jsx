@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar } from 'lucide-react';
+import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar, RefreshCw } from 'lucide-react';
 
 const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   const diasSemana = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
@@ -33,12 +33,25 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   const sesionesFiltradas = useMemo(() => {
     return attendance
       .filter(s => {
+        if (s.comentario && s.comentario.includes('[RECUPERACION]')) {
+          return false;
+        }
+
+        const fechaBase = s.fecha || s.fecha_programada;
+        if (!fechaBase) return false;
+
         const fechaSesion = parseLocalDate(s.fecha);
         const matchMes = filtroMes === "TODOS" || fechaSesion.getMonth().toString() === filtroMes;
         const matchAnio = fechaSesion.getFullYear().toString() === filtroAnio;
-        return s?.inscripciones?.horarios_clases && matchMes && matchAnio;
+        const tieneHorario = s?.inscripciones?.horarios_clases || s?.horarios_clases;
+
+        return tieneHorario && matchMes && matchAnio;
       })
-      .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      .sort((a, b) => {
+        const fechaA = new Date(a.fecha || a.fecha_programada);
+        const fechaB = new Date(b.fecha || b.fecha_programada);
+        return fechaA - fechaB;
+      });
   }, [attendance, filtroMes, filtroAnio]);
 
   // 2. AGRUPACIÓN POR MES PARA LA VISTA
@@ -72,26 +85,36 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
             </div>
 
             {items.map((sesion) => {
-              const horario = sesion?.inscripciones?.horarios_clases;
+              const horario = sesion?.inscripciones?.horarios_clases || sesion?.horarios_clases;
 
-              /**
-               * ✅ RUTA DEL NOMBRE CORREGIDA (Basado en tu JSON):
-               * Accedemos a: horario -> coordinadores -> usuarios -> nombres / apellidos
-               */
+              // Detectamos si es un ticket de recuperación
+              const esRecuperacion = sesion.horario_destino_id || sesion.isRecuperacion;
+
+              // Normalizamos el estado
+              const estadoReal = sesion.estado === 'COMPLETADA_PRESENTE' ? 'PRESENTE' :
+                sesion.estado === 'COMPLETADA_FALTA' ? 'FALTA' :
+                  sesion.estado;
+
               const coordinatorData = horario?.coordinadores?.usuarios;
               const nombreLider = coordinatorData
                 ? `${coordinatorData.nombres.trim()} ${coordinatorData.apellidos.trim()}`
                 : 'COORDINATOR GEMA';
 
-              const fechaObj = parseLocalDate(sesion.fecha);
-              const esPresente = sesion.estado === 'PRESENTE';
-              const esFalta = sesion.estado === 'FALTA';
+              const fechaObj = parseLocalDate(sesion.fecha || sesion.fecha_programada);
+              const esPresente = estadoReal === 'PRESENTE';
+              const esFalta = estadoReal === 'FALTA';
 
               return (
-                <div key={sesion.id} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
+                <div key={esRecuperacion ? `recu-${sesion.id}` : `asist-${sesion.id}`} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
                   esFalta ? 'bg-red-50/50 border-red-200 shadow-sm' :
                     'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
                   }`}>
+                  {/* 🔥 BADGE VISUAL DE RECUPERACIÓN */}
+                  {esRecuperacion && (
+                    <div className="absolute top-0 right-0 bg-blue-500 text-white flex items-center gap-1 text-[8px] font-black px-4 py-1.5 rounded-bl-2xl italic tracking-tighter z-10">
+                      <RefreshCw size={10} /> RECUPERACIÓN
+                    </div>
+                  )}
                   <div className="p-5 flex flex-col md:flex-row items-center gap-6">
 
                     {/* INDICADOR DE FECHA DEPORTIVO */}
