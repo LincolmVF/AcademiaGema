@@ -50,6 +50,7 @@ import Blog from "./pages/Blog";
 import StudentInjuries from "./pages/student/StudentInjuries";
 import StudentRecoveries from "./pages/student/StudentRecoveries";
 import StudentNews from "./pages/student/StudentNews";
+import MyRegistrations from "./pages/student/MyRegistrations";
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['Alumno', 'student', 'alumno']} />}>
             <Route element={<StudentLayout />}>
               <Route path="student" element={<DashboardEstudiante />} />
+              <Route path="student/myRegistrations" element={<MyRegistrations />} />
               <Route path="student/payments" element={<Payments />} />
               <Route path="student/profile" element={<Profile />} />
               <Route path="student/enrollment" element={<Enrollment />} />

@@ -80,7 +80,7 @@ const StudentSidebar = () => {
       title: "Club",
       type: "dropdown",
       items: [
-        { icon: Home, label: "Horarios Actuales", path: "/dashboard/student" },
+        { icon: Home, label: "Horarios Actuales", path: "/dashboard/student/myRegistrations" },
         { icon: UserPlus, label: "Nueva Inscripción", path: "/dashboard/student/enrollment" },
         {
           icon: Megaphone,
