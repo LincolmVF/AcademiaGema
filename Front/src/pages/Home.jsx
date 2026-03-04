@@ -54,11 +54,17 @@ function Home() {
     const fetchHorarios = async () => {
       try {
         setLoading(true);
-        const data = await horarioService.obtenerDisponibles();
+        const [data, nivelesRes] = await Promise.all([
+          horarioService.obtenerDisponibles(),
+          apiFetch.get(API_ROUTES.NIVELES.BASE)
+        ]);
+
+        const nivelesData = await nivelesRes.json();
+        const allNiveles = ['Todas', ...(nivelesData.data || []).map(n => n.nombre)];
+        setCategories(allNiveles);
 
         const formattedClasses = data.map(h => ({
           id: h.id,
-          // Accedemos según los nombres exactos mandados por la API
           title: h.nivel?.nombre || "Entrenamiento Voleibol",
           category: h.nivel?.nombre || "General",
           time: `${formatTime(h.hora_inicio)} - ${formatTime(h.hora_fin)}`,
@@ -69,9 +75,6 @@ function Home() {
           image: h.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
           dia_id: h.dia_semana
         }));
-
-        const uniqueCategories = ['Todas', ...new Set(formattedClasses.map(c => c.category))];
-        setCategories(uniqueCategories);
 
         setClasses(formattedClasses);
       } catch (error) {
