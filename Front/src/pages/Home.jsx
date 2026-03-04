@@ -54,28 +54,24 @@ function Home() {
     const fetchHorarios = async () => {
       try {
         setLoading(true);
-        const [horariosData, nivelesRes] = await Promise.all([
-          horarioService.obtenerDisponibles(),
-          apiFetch.get(API_ROUTES.NIVELES.ACTIVOS)
-        ]);
+        const data = await horarioService.obtenerDisponibles();
 
-        const nivelesData = await nivelesRes.json();
-        const nivelesNombres = ['Todas', ...(nivelesData.data || []).map(n => n.nombre)];
-        setCategories(nivelesNombres);
-
-        const formattedClasses = horariosData.map(h => ({
+        const formattedClasses = data.map(h => ({
           id: h.id,
-          // Accedemos según los nombres de tu relación en el schema
-          title: h.niveles_entrenamiento?.nombre || "Entrenamiento Voleibol",
-          category: h.niveles_entrenamiento?.nombre || "General",
+          // Accedemos según los nombres exactos mandados por la API
+          title: h.nivel?.nombre || "Entrenamiento Voleibol",
+          category: h.nivel?.nombre || "General",
           time: `${formatTime(h.hora_inicio)} - ${formatTime(h.hora_fin)}`,
-          location: h.canchas?.nombre || "Sede Gema",
-          coordinator: h.coordinadores ? `${h.coordinadores.usuarios?.nombre || 'Coach'} ${h.coordinadores.usuarios?.apellido || ''}` : "Staff Gema",
+          location: h.cancha?.sede?.nombre || h.cancha?.nombre || "Sede Gema",
+          coordinator: h.coordinador?.nombre_completo || "Staff Gema",
           spots: h.capacidad_max || 0,
           price: h.precio || 0,
           image: h.imagen_url || "https://images.unsplash.com/photo-1592656094267-764a45160876?w=800&q=80",
           dia_id: h.dia_semana
         }));
+
+        const uniqueCategories = ['Todas', ...new Set(formattedClasses.map(c => c.category))];
+        setCategories(uniqueCategories);
 
         setClasses(formattedClasses);
       } catch (error) {
