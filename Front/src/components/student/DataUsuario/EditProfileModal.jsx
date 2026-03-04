@@ -6,12 +6,12 @@ import { API_ROUTES } from '../../../constants/apiRoutes.js';
 
 // Lista de distritos principales de Lima para el Combo Box
 const DISTRITOS_LIMA = [
-  "Ancón", "Ate", "Barranco", "Breña", "Carabayllo", "Chaclacayo", "Chorrillos", "Cieneguilla", 
-  "Comas", "El Agustino", "Independencia", "Jesús María", "La Molina", "La Victoria", "Lima (Cercado)", 
-  "Lince", "Los Olivos", "Lurigancho-Chosica", "Lurín", "Magdalena del Mar", "Miraflores", 
-  "Pachacámac", "Pucusana", "Pueblo Libre", "Puente Piedra", "Punta Hermosa", "Punta Negra", 
-  "Rímac", "San Bartolo", "San Borja", "San Isidro", "San Juan de Lurigancho", "San Juan de Miraflores", 
-  "San Luis", "San Martín de Porres", "San Miguel", "Santa Anita", "Santa María del Mar", 
+  "Ancón", "Ate", "Barranco", "Breña", "Carabayllo", "Chaclacayo", "Chorrillos", "Cieneguilla",
+  "Comas", "El Agustino", "Independencia", "Jesús María", "La Molina", "La Victoria", "Lima (Cercado)",
+  "Lince", "Los Olivos", "Lurigancho-Chosica", "Lurín", "Magdalena del Mar", "Miraflores",
+  "Pachacámac", "Pucusana", "Pueblo Libre", "Puente Piedra", "Punta Hermosa", "Punta Negra",
+  "Rímac", "San Bartolo", "San Borja", "San Isidro", "San Juan de Lurigancho", "San Juan de Miraflores",
+  "San Luis", "San Martín de Porres", "San Miguel", "Santa Anita", "Santa María del Mar",
   "Santa Rosa", "Santiago de Surco", "Surquillo", "Villa El Salvador", "Villa María del Triunfo"
 ];
 
@@ -20,6 +20,8 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     email: '',
     telefono_personal: '',
+    tipo_documento_id: '',
+    numero_documento: '',
     fecha_nacimiento: '',
     condiciones_medicas: '',
     seguro_medico: '',
@@ -48,6 +50,8 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
             setFormData({
               email: user.email || '',
               telefono_personal: user.telefono_personal || '',
+              tipo_documento_id: user.tipo_documento_id || '',
+              numero_documento: user.numero_documento || '',
               fecha_nacimiento: user.fecha_nacimiento ? user.fecha_nacimiento.split('T')[0] : '',
               condiciones_medicas: alumno.condiciones_medicas || '',
               seguro_medico: alumno.seguro_medico || '',
@@ -116,7 +120,7 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
-          
+
           {/* SECCIÓN CONTACTO Y PERSONALES */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2 border-b pb-2 flex items-center gap-2">
@@ -125,9 +129,14 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
             </div>
             <input type="text" placeholder="Teléfono" value={formData.telefono_personal} onChange={e => setFormData({ ...formData, telefono_personal: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
             <input type="email" placeholder="Email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+            <select value={formData.tipo_documento_id} onChange={e => setFormData({ ...formData, tipo_documento_id: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500">
+              <option value="">Tipo de Documento</option>
+              {['DNI', 'PAS', 'CE'].map(g => <option key={g} value={g}>{g}</option>)}
+            </select>
+            <input type="text" placeholder="Número de Documento" value={formData.numero_documento} onChange={e => setFormData({ ...formData, numero_documento: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
             <div className="md:col-span-2 relative">
-                <label className="text-[10px] font-black text-slate-400 uppercase absolute -top-2 left-4 bg-white px-2">Fecha de Nacimiento</label>
-                <input type="date" value={formData.fecha_nacimiento} onChange={e => setFormData({ ...formData, fecha_nacimiento: e.target.value })} className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+              <label className="text-[10px] font-black text-slate-400 uppercase absolute -top-2 left-4 bg-white px-2">Fecha de Nacimiento</label>
+              <input type="date" value={formData.fecha_nacimiento} onChange={e => setFormData({ ...formData, fecha_nacimiento: e.target.value })} className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
             </div>
           </div>
 
@@ -140,8 +149,8 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
             <input type="text" placeholder="Alergias o condiciones" value={formData.condiciones_medicas} onChange={e => setFormData({ ...formData, condiciones_medicas: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500 md:col-span-2" />
             <input type="text" placeholder="Seguro Médico (EPS/SIS)" value={formData.seguro_medico} onChange={e => setFormData({ ...formData, seguro_medico: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
             <select value={formData.grupo_sanguineo} onChange={e => setFormData({ ...formData, grupo_sanguineo: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500">
-                <option value="">Grupo Sanguíneo</option>
-                {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].map(g => <option key={g} value={g}>{g}</option>)}
+              <option value="">Grupo Sanguíneo</option>
+              {['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'].map(g => <option key={g} value={g}>{g}</option>)}
             </select>
           </div>
 
@@ -152,14 +161,14 @@ const EditProfileModal = ({ isOpen, onClose, onSuccess }) => {
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ubicación</span>
             </div>
             <input type="text" placeholder="Dirección completa" value={formData.direccion_completa} onChange={e => setFormData({ ...formData, direccion_completa: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500 md:col-span-2" />
-            
-            <select 
-              value={formData.distrito} 
-              onChange={e => setFormData({ ...formData, distrito: e.target.value })} 
+
+            <select
+              value={formData.distrito}
+              onChange={e => setFormData({ ...formData, distrito: e.target.value })}
               className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500"
             >
-                <option value="">Selecciona tu Distrito</option>
-                {DISTRITOS_LIMA.map(d => <option key={d} value={d}>{d}</option>)}
+              <option value="">Selecciona tu Distrito</option>
+              {DISTRITOS_LIMA.map(d => <option key={d} value={d}>{d}</option>)}
             </select>
 
             <input type="text" placeholder="Referencia" value={formData.referencia} onChange={e => setFormData({ ...formData, referencia: e.target.value })} className="bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
