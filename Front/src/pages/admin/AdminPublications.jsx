@@ -6,6 +6,7 @@ import {
 import apiFetch from '../../interceptors/api'; // Interceptor que maneja FormData
 import { useAuth } from '../../context/AuthContext'; // Contexto para el ID del Admin
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminPublications = () => {
     const { userId } = useAuth(); // ID del administrador logueado
@@ -24,7 +25,7 @@ const AdminPublications = () => {
     const fetchPublicaciones = async () => {
         setLoading(true);
         try {
-            const response = await apiFetch.get('/publicaciones');
+            const response = await apiFetch.get(API_ROUTES.PUBLICACIONES.BASE);
             const result = await response.json();
             if (response.ok) {
                 setPublicaciones(result.data || []);
@@ -72,7 +73,7 @@ const AdminPublications = () => {
             }
 
             // 🚀 LLAMADA LIMPIA: No pases {} como tercer argumento si no es necesario
-            const response = await apiFetch.post('/publicaciones', data);
+            const response = await apiFetch.post(API_ROUTES.PUBLICACIONES.BASE, data);
 
             if (response.ok) {
                 toast.success("¡Publicado!");
@@ -93,7 +94,7 @@ const AdminPublications = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
         try {
-            const response = await apiFetch.delete(`/publicaciones/${id}`);
+            const response = await apiFetch.delete(API_ROUTES.PUBLICACIONES.BY_ID(id));
             if (response.ok) {
                 toast.success("Publicación eliminada");
                 fetchPublicaciones();

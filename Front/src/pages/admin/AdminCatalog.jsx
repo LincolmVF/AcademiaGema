@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Tag, DollarSign, Hash, CalendarDays, ArrowLeft, Package, RefreshCcw } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminCatalog = ({ onBack, editData }) => {
     const [loading, setLoading] = useState(false);
@@ -48,10 +49,10 @@ const AdminCatalog = ({ onBack, editData }) => {
 
         try {
             const method = isEditing ? 'PUT' : 'POST';
-            const endpoint = isEditing ? `/catalogo/${editData.id}` : '/catalogo';
-            
+            const endpoint = isEditing ? API_ROUTES.CATALOGO.BY_ID(editData.id) : API_ROUTES.CATALOGO.BASE;
+
             const response = await apiFetch[method.toLowerCase()](endpoint, payload);
-            
+
             if (response.ok) {
                 toast.success(isEditing ? "¡Concepto actualizado!" : "¡Concepto creado!");
                 onBack();
@@ -80,7 +81,7 @@ const AdminCatalog = ({ onBack, editData }) => {
                             </h1>
                         </div>
                         <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest ml-3 italic">
-                           Lógica interna de precios - Club Gema
+                            Lógica interna de precios - Club Gema
                         </p>
                     </div>
                 </div>
@@ -90,7 +91,7 @@ const AdminCatalog = ({ onBack, editData }) => {
                     disabled={loading || !formData.nombre || !formData.precio_base}
                     className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 text-white px-8 py-3 rounded-xl font-black uppercase italic text-xs flex items-center gap-2 transition-all shadow-xl disabled:opacity-50"
                 >
-                    {loading ? <RefreshCcw size={18} className="animate-spin"/> : <Save size={18} />}
+                    {loading ? <RefreshCcw size={18} className="animate-spin" /> : <Save size={18} />}
                     {isEditing ? 'ACTUALIZAR CAMBIOS' : 'GUARDAR CONCEPTO'}
                 </button>
             </div>
@@ -145,11 +146,11 @@ const AdminCatalog = ({ onBack, editData }) => {
                     </div>
 
                     <div className="bg-[#0f172a] p-6 rounded-[2rem] text-white shadow-2xl relative overflow-hidden">
-                         <Package size={80} className="absolute -right-4 -bottom-4 opacity-10 rotate-12" />
-                         <p className="text-[10px] font-black uppercase text-orange-500 mb-2">Aviso Importante</p>
-                         <p className="text-[10px] font-bold leading-relaxed opacity-80 uppercase italic">
+                        <Package size={80} className="absolute -right-4 -bottom-4 opacity-10 rotate-12" />
+                        <p className="text-[10px] font-black uppercase text-orange-500 mb-2">Aviso Importante</p>
+                        <p className="text-[10px] font-bold leading-relaxed opacity-80 uppercase italic">
                             Cualquier cambio en el precio base afectará únicamente a las NUEVAS deudas generadas.
-                         </p>
+                        </p>
                     </div>
                 </div>
             </div>

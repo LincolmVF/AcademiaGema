@@ -3,6 +3,7 @@ import { Plus, Search, Clock, User, MapPin, Edit3, Trash2, Loader2, Filter, Chev
 import AdminSchedule from './AdminSchedule';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminSchedulesManager = () => {
     const [view, setView] = useState('list');
@@ -33,7 +34,7 @@ const AdminSchedulesManager = () => {
     const fetchHorarios = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/horarios');
+            const response = await apiFetch.get(API_ROUTES.HORARIOS.BASE);
             const result = await response.json();
             if (response.ok) setHorarios(result.data);
         } catch (error) {

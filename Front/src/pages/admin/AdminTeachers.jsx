@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Save, User, Mail, GraduationCap, Phone, ArrowLeft, Lock, ShieldCheck, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api'; // Importa tu interceptor
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminTeachers = ({ onBack }) => {
     const [loading, setLoading] = useState(false);
@@ -49,7 +50,7 @@ const AdminTeachers = ({ onBack }) => {
         };
 
         try {
-            const response = await apiFetch.post('/usuarios/register', payload);
+            const response = await apiFetch.post(API_ROUTES.USUARIOS.REGISTER, payload);
 
             if (response.ok) {
                 toast.success("¡Coordinador registrado exitosamente!");

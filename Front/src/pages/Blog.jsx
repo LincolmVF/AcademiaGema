@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '../interceptors/api';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
@@ -15,7 +16,7 @@ const Blog = () => {
   const fetchPublicaciones = async () => {
     setLoading(true);
     try {
-      const response = await apiFetch.get('/publicaciones');
+      const response = await apiFetch.get(API_ROUTES.PUBLICACIONES.BASE);
       const result = await response.json();
       if (response.ok) {
         const ordenadas = (result.data || []).sort((a, b) =>

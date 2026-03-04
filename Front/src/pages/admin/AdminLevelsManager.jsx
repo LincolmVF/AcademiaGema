@@ -3,6 +3,7 @@ import { Plus, Search, Trophy, Edit3, Trash2, ChevronRight, Loader2 } from 'luci
 import AdminLevels from './AdminLevels';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminLevelsManager = () => {
     const [view, setView] = useState('list');
@@ -14,7 +15,7 @@ const AdminLevelsManager = () => {
     const fetchNiveles = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/niveles');
+            const response = await apiFetch.get(API_ROUTES.NIVELES.BASE);
             const result = await response.json();
             if (response.ok) {
                 setNiveles(result.data || []);
@@ -53,7 +54,7 @@ const AdminLevelsManager = () => {
                             toast.dismiss(t.id);
 
                             const deletePromise = async () => {
-                                const response = await apiFetch.delete(`/niveles/${id}`);
+                                const response = await apiFetch.delete(API_ROUTES.NIVELES.BY_ID(id));
                                 const result = await response.json();
                                 if (!response.ok) throw new Error(result.message || "Error al eliminar");
                                 fetchNiveles();

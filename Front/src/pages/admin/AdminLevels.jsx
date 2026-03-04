@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Save, Trophy, ArrowLeft, Loader2 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminLevels = ({ onBack, initialData }) => {
     const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ const AdminLevels = ({ onBack, initialData }) => {
     const [formData, setFormData] = useState({
         nombre: initialData?.nombre || '',
         // Mantenemos el precio en el estado interno pero no lo mostramos en el UI
-        precio_referencial: initialData?.precio_referencial || 0 
+        precio_referencial: initialData?.precio_referencial || 0
     });
 
     const handleSubmit = async (e) => {
@@ -25,7 +26,7 @@ const AdminLevels = ({ onBack, initialData }) => {
         };
 
         try {
-            const url = isEdit ? `/niveles/${initialData.id}` : '/niveles';
+            const url = isEdit ? API_ROUTES.NIVELES.BY_ID(initialData.id) : API_ROUTES.NIVELES.BASE;
             const response = await apiFetch(url, {
                 method: isEdit ? 'PUT' : 'POST',
                 body: JSON.stringify(payload)

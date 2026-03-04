@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Search, TicketPercent, MessageSquare, Loader2, Save, Info, Clock, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../interceptors/api';
+import { useAuth } from '../../context/AuthContext';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminBenefits = () => {
+    const { userId } = useAuth();
     // 1. ESTADOS DE DATOS
     const [alumnos, setAlumnos] = useState([]);
     const [tiposBeneficio, setTiposBeneficio] = useState([]);
@@ -26,8 +29,8 @@ const AdminBenefits = () => {
             try {
                 setLoading(true);
                 const [resAlumnos, resTipos] = await Promise.all([
-                    apiFetch.get('/usuarios/role/alumno'),
-                    apiFetch.get('/tipos-beneficio')
+                    apiFetch.get(API_ROUTES.USUARIOS.ALUMNOS),
+                    apiFetch.get(API_ROUTES.TIPOS_BENEFICIO.BASE)
                 ]);
 
                 const dataAlumnos = await resAlumnos.json();
@@ -49,7 +52,7 @@ const AdminBenefits = () => {
         try {
             setLoadingDeuda(true);
             setDeudaPendiente(null);
-            const response = await apiFetch.get(`/cuentas-por-cobrar/historial/${alumnoId}`);
+            const response = await apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.HISTORIAL(alumnoId));
             if (response.ok) {
                 const result = await response.json();
                 // Buscamos la primera cuenta pendiente
@@ -87,18 +90,18 @@ const AdminBenefits = () => {
 
             // 🧠 SWITCH LÓGICO: ¿Es aplicación directa o reserva futura?
             const isDirectApply = !!deudaPendiente;
-            const endpoint = isDirectApply ? '/descuentos/aplicar' : '/beneficioPendiente';
+            const endpoint = isDirectApply ? API_ROUTES.DESCUENTOS.APLICAR : API_ROUTES.BENEFICIOS_PENDIENTES.BASE;
 
             // Construimos el payload según lo que espera cada ruta del backend
             const payload = isDirectApply ? {
                 cuenta_id: deudaPendiente.id,
                 tipo_beneficio_id: parseInt(selectedBeneficioId),
-                admin_id: 5, // ID del administrador logueado
+                admin_id: userId, // ID del administrador real obteniéndolo dinámicamente
                 motivo: motivo || "Aplicado desde panel de beneficios"
             } : {
                 alumno_id: parseInt(selectedAlumnoId),
                 tipo_beneficio_id: parseInt(selectedBeneficioId),
-                asignado_por: 5,
+                asignado_por: userId,
                 motivo: motivo
             };
 

@@ -6,6 +6,7 @@ import {
 import apiFetch from '../../interceptors/api';
 import toast from 'react-hot-toast';
 import Cookies from 'js-cookie';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const StudentNews = () => {
     const [publicaciones, setPublicaciones] = useState([]);
@@ -14,7 +15,7 @@ const StudentNews = () => {
     const fetchPublicaciones = async () => {
         setLoading(true);
         try {
-            const response = await apiFetch.get('/publicaciones');
+            const response = await apiFetch.get(API_ROUTES.PUBLICACIONES.BASE);
             const result = await response.json();
             if (response.ok) {
                 const ordenadas = (result.data || []).sort((a, b) =>

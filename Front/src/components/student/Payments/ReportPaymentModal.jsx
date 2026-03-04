@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, Send, Loader2, Hash, Banknote, Upload, Info, Coins } from "lucide-react";
 import apiFetch from "../../../interceptors/api.js";
 import toast from "react-hot-toast";
+import { API_ROUTES } from "../../../constants/apiRoutes.js";
 
 const ReportPaymentModal = ({ isOpen, onClose, debt, onSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSuccess }) => {
         paymentData.append('voucher', voucherFile);
       }
 
-      const response = await apiFetch.post('/pagos/reportar', paymentData);
+      const response = await apiFetch.post(API_ROUTES.PAGOS.REPORTAR, paymentData);
 
       if (!response.ok) {
         const result = await response.json();

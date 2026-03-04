@@ -6,6 +6,7 @@ import {
 import { apiFetch } from '../../interceptors/api.js';
 import { useAuth } from "../../context/AuthContext";
 import ReportPaymentModal from './Payments/ReportPaymentModal.jsx';
+import { API_ROUTES } from "../../constants/apiRoutes";
 
 const StudentPayments = () => {
   const { userId } = useAuth();
@@ -20,8 +21,8 @@ const StudentPayments = () => {
     try {
       setLoading(true);
       const [resDebts, resPay] = await Promise.all([
-        apiFetch.get("/cuentas-por-cobrar"),
-        apiFetch.get(`/pagos/alumno/${userId}`),
+        apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE),
+        apiFetch.get(API_ROUTES.PAGOS.ALUMNO_HISTORIAL(userId)),
       ]);
 
       const dataDebts = await resDebts.json();

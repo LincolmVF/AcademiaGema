@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Loader2, History, Wallet, ArrowLeft, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import { API_ROUTES } from "../../constants/apiRoutes";
 
 import PaymentMethodCard from "../../components/student/Payments/PaymentMethodCard";
 import DebtItem from "../../components/student/Payments/DebtItem";
@@ -23,8 +24,8 @@ const Payments = () => {
     try {
       setLoading(true);
       const [resDebts, resPayments] = await Promise.all([
-        apiFetch.get(`/cuentas-por-cobrar/historial/${userId}`),
-        apiFetch.get(`/pagos/alumno/${userId}`),
+        apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.HISTORIAL(userId)),
+        apiFetch.get(API_ROUTES.PAGOS.ALUMNO_HISTORIAL(userId)),
       ]);
 
       const dataDebts = await resDebts.json();

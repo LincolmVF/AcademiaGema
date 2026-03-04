@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,7 +12,7 @@ const cookieConfig = {
 export const loginService = async (identifier, password) => {
   const payload = { username: identifier, password };
 
-  const response = await fetch(`${API_URL}/auth/login`, {
+  const response = await fetch(`${API_URL}${API_ROUTES.AUTH.LOGIN}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -37,7 +38,7 @@ export const loginService = async (identifier, password) => {
 
 export const logoutService = async () => {
   try {
-    await fetch(`${API_URL}/auth/logout`, {
+    await fetch(`${API_URL}${API_ROUTES.AUTH.LOGOUT}`, {
       method: "POST",
       credentials: "include",
     });
@@ -61,7 +62,7 @@ export const logoutService = async () => {
 };
 
 export const registerService = async (userData) => {
-  const response = await fetch(`${API_URL}/usuarios/register`, {
+  const response = await fetch(`${API_URL}${API_ROUTES.USUARIOS.BASE}/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
@@ -77,7 +78,7 @@ export const registerService = async (userData) => {
 };
 
 export const completarEmailService = async (nuevoEmail) => {
-  const response = await fetch(`${API_URL}/auth/completar-email`, {
+  const response = await fetch(`${API_URL}${API_ROUTES.AUTH.COMPLETAR_EMAIL}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email: nuevoEmail }),

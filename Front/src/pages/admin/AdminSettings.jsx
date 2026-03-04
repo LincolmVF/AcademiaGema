@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminSettings = () => {
     const [settings, setSettings] = useState([]);
@@ -27,7 +28,7 @@ const AdminSettings = () => {
     const fetchSettings = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/parametros');
+            const response = await apiFetch.get(API_ROUTES.PARAMETROS.BASE);
             const result = await response.json();
             if (response.ok) setSettings(result.data || []);
         } catch (error) {
@@ -43,7 +44,7 @@ const AdminSettings = () => {
         if (!editValue.trim()) return toast.error("El valor es obligatorio");
         try {
             setSubmitting(true);
-            const response = await apiFetch(`/parametros/${id}`, {
+            const response = await apiFetch(API_ROUTES.PARAMETROS.BY_ID(id), {
                 method: 'PUT',
                 body: JSON.stringify({ valor: editValue })
             });

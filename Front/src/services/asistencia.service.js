@@ -1,11 +1,12 @@
 import apiFetch from '../interceptors/api';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 export const asistenciaService = {
     /**
      * Obtiene la agenda general para el coordinador logueado.
      */
     getAgenda: async () => {
-        const response = await apiFetch.get('/asistencias/agenda');
+        const response = await apiFetch.get(`${API_ROUTES.ASISTENCIAS.BASE}/agenda`);
 
         if (!response.ok) {
             throw new Error('Error al cargar la agenda de entrenamiento');
@@ -21,7 +22,7 @@ export const asistenciaService = {
      */
     marcarAsistenciaMasiva: async (asistencias) => {
         // Apuntamos al endpoint POST /masiva que creamos en el backend
-        const response = await apiFetch.post('/asistencias/masiva', {
+        const response = await apiFetch.post(`${API_ROUTES.ASISTENCIAS.BASE}/masiva`, {
             asistencias // El body debe coincidir con lo que espera tu controlador
         });
 
@@ -36,7 +37,7 @@ export const asistenciaService = {
      * Actualiza un alumno de forma individual (Patch)
      */
     marcarAsistencia: async (asistenciaId, estado, comentario = "") => {
-        const response = await apiFetch.patch(`/asistencias/${asistenciaId}`, {
+        const response = await apiFetch.patch(`${API_ROUTES.ASISTENCIAS.BASE}/${asistenciaId}`, {
             estado,
             comentario
         });

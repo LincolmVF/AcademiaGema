@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, Loader2, Phone, HeartPulse, MapPin } from 'lucide-react';
 import apiFetch from '../../../interceptors/api.js';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../../constants/apiRoutes.js';
 
 const EditProfileModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -46,7 +47,7 @@ const EditProfileModal = ({ isOpen, onClose, currentUser, onSuccess }) => {
     setLoading(true);
 
     try {
-      const response = await apiFetch.patch('/alumno/mi-perfil', formData);
+      const response = await apiFetch.patch(API_ROUTES.ALUMNOS.MI_PERFIL, formData);
       const result = await response.json();
 
       if (!response.ok) throw new Error(result.message || "Error al actualizar");

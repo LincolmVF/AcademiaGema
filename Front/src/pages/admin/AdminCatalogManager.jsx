@@ -3,6 +3,7 @@ import { Search, Loader2, Tag, Edit3, Filter } from 'lucide-react'; // Quitamos 
 import { apiFetch } from '../../interceptors/api';
 import AdminCatalog from './AdminCatalog';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminCatalogManager = () => {
     const [view, setView] = useState('list');
@@ -10,12 +11,12 @@ const AdminCatalogManager = () => {
     const [conceptos, setConceptos] = useState([]);
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [vigenciaFilter, setVigenciaFilter] = useState('VIGENTE'); 
+    const [vigenciaFilter, setVigenciaFilter] = useState('VIGENTE');
 
     const fetchCatalog = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/catalogo');
+            const response = await apiFetch.get(API_ROUTES.CATALOGO.BASE);
             const result = await response.json();
             if (response.ok) {
                 setConceptos(result.data || []);
@@ -32,11 +33,11 @@ const AdminCatalogManager = () => {
     const filteredData = useMemo(() => {
         return conceptos.filter(c => {
             const matchesSearch = c.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                 c.codigo_interno?.toLowerCase().includes(searchTerm.toLowerCase());
-            
-            const matchesVigencia = vigenciaFilter === 'ALL' ? true : 
-                                   vigenciaFilter === 'VIGENTE' ? c.es_vigente === true : 
-                                   c.es_vigente === false;
+                c.codigo_interno?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const matchesVigencia = vigenciaFilter === 'ALL' ? true :
+                vigenciaFilter === 'VIGENTE' ? c.es_vigente === true :
+                    c.es_vigente === false;
 
             return matchesSearch && matchesVigencia;
         });
@@ -50,13 +51,13 @@ const AdminCatalogManager = () => {
     // Mantenemos la lógica de edit, pero creamos una protección visual al no tener botón 'create'
     if (view === 'create' || view === 'edit') {
         return (
-            <AdminCatalog 
-                editData={selectedItem} 
-                onBack={() => { 
-                    setView('list'); 
-                    setSelectedItem(null); 
-                    fetchCatalog(); 
-                }} 
+            <AdminCatalog
+                editData={selectedItem}
+                onBack={() => {
+                    setView('list');
+                    setSelectedItem(null);
+                    fetchCatalog();
+                }}
             />
         );
     }
@@ -82,17 +83,17 @@ const AdminCatalogManager = () => {
             <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4">
                 <div className="flex-1 relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input 
-                        type="text" 
-                        placeholder="BUSCAR NOMBRE O CÓDIGO..." 
+                    <input
+                        type="text"
+                        placeholder="BUSCAR NOMBRE O CÓDIGO..."
                         className="w-full bg-slate-50 border-none rounded-xl pl-12 pr-4 py-2.5 text-[10px] font-black uppercase outline-none focus:ring-2 focus:ring-blue-500/20"
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                
+
                 <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
                     <Filter size={14} className="text-[#1e3a8a]" />
-                    <select 
+                    <select
                         className="bg-transparent border-none text-[10px] font-black uppercase outline-none cursor-pointer text-slate-600"
                         value={vigenciaFilter}
                         onChange={(e) => setVigenciaFilter(e.target.value)}
@@ -155,7 +156,7 @@ const AdminCatalogManager = () => {
                     ))}
                 </div>
             )}
-            
+
             {filteredData.length === 0 && !loading && (
                 <div className="py-20 text-center text-slate-400 font-bold italic uppercase text-xs">
                     No se encontraron conceptos con estos criterios.

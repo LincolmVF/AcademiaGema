@@ -4,6 +4,7 @@ import { apiFetch } from '../../interceptors/api';
 import { useAuth } from '../../context/AuthContext';
 import { Loader2, Send, ArrowLeft, MapPin, Clock, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 import StudentEnrollment from '../../components/student/StudentEnrollment';
 import OutstandingDebtAlert from '../../components/student/OutstandingDebtAlert';
@@ -24,7 +25,7 @@ const Enrollment = () => {
   const fetchInitialData = async () => {
     try {
       setLoading(true);
-      const [resH, resC] = await Promise.all([apiFetch.get('/horarios'), apiFetch.get('/cuentas-por-cobrar')]);
+      const [resH, resC] = await Promise.all([apiFetch.get(API_ROUTES.HORARIOS.BASE), apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE)]);
       const dataH = await resH.json();
       const dataC = await resC.json();
       if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
@@ -70,7 +71,7 @@ const Enrollment = () => {
     if (selectedIds.length === 0) return toast.error("Selecciona tus clases");
     setSubmitting(true);
     try {
-      const response = await apiFetch.post('/inscripciones', {
+      const response = await apiFetch.post(API_ROUTES.INSCRIPCIONES.BASE, {
         alumno_id: userId,
         horario_ids: selectedIds
       });

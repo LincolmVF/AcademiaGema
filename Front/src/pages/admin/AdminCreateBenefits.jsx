@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TicketPercent, Plus, Save, Edit2, Trash2, Loader2, Info, X, Check, Percent, Banknote, RotateCcw, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../interceptors/api';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminCreateBenefits = () => {
     const [beneficios, setBeneficios] = useState([]);
@@ -19,7 +20,7 @@ const AdminCreateBenefits = () => {
     const fetchBeneficios = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/tipos-beneficio');
+            const response = await apiFetch.get(API_ROUTES.TIPOS_BENEFICIO.BASE);
             const result = await response.json();
             // Asegúrate de que tu backend NO filtre por activo:true en el GET global
             if (response.ok) setBeneficios(result.data || result);
@@ -43,7 +44,7 @@ const AdminCreateBenefits = () => {
         try {
             setSubmitting(true);
             const method = editingId ? 'PUT' : 'POST';
-            const url = editingId ? `/tipos-beneficio/${editingId}` : '/tipos-beneficio';
+            const url = editingId ? API_ROUTES.TIPOS_BENEFICIO.BY_ID(editingId) : API_ROUTES.TIPOS_BENEFICIO.BASE;
 
             const response = await apiFetch[method.toLowerCase()](url, {
                 ...formData,
@@ -65,7 +66,7 @@ const AdminCreateBenefits = () => {
 
     const handleStatusChange = async (id, nuevoEstado) => {
         try {
-            const response = await apiFetch.put(`/tipos-beneficio/${id}`, { activo: nuevoEstado });
+            const response = await apiFetch.put(API_ROUTES.TIPOS_BENEFICIO.BY_ID(id), { activo: nuevoEstado });
             if (response.ok) {
                 toast.success(nuevoEstado ? "Beneficio reactivado" : "Beneficio enviado al archivo");
                 fetchBeneficios();
@@ -117,7 +118,7 @@ const AdminCreateBenefits = () => {
                                 {editingId ? 'Modificar Registro' : 'Nuevo Tipo de Beneficio'}
                             </h2>
                         </div>
-                        
+
                         <div className="p-6 space-y-5">
                             <div className="space-y-2">
                                 <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombre Comercial</label>
@@ -125,7 +126,7 @@ const AdminCreateBenefits = () => {
                                     type="text"
                                     placeholder="EJ. BECA EXCELENCIA..."
                                     value={formData.nombre}
-                                    onChange={(e) => setFormData({...formData, nombre: e.target.value.toUpperCase()})}
+                                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value.toUpperCase() })}
                                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-bold uppercase outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
                                 />
                             </div>
@@ -135,14 +136,14 @@ const AdminCreateBenefits = () => {
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => setFormData({...formData, es_porcentaje: true})}
+                                        onClick={() => setFormData({ ...formData, es_porcentaje: true })}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase transition-all border ${formData.es_porcentaje ? 'bg-[#1e3a8a] text-white border-[#1e3a8a]' : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'}`}
                                     >
                                         <Percent size={14} /> Porcentaje
                                     </button>
                                     <button
                                         type="button"
-                                        onClick={() => setFormData({...formData, es_porcentaje: false})}
+                                        onClick={() => setFormData({ ...formData, es_porcentaje: false })}
                                         className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-[10px] font-black uppercase transition-all border ${!formData.es_porcentaje ? 'bg-[#1e3a8a] text-white border-[#1e3a8a]' : 'bg-white text-slate-400 border-slate-200 hover:border-slate-300'}`}
                                     >
                                         <Banknote size={14} /> Monto Fijo
@@ -156,7 +157,7 @@ const AdminCreateBenefits = () => {
                                     type="number"
                                     placeholder="0.00"
                                     value={formData.valor_por_defecto}
-                                    onChange={(e) => setFormData({...formData, valor_por_defecto: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, valor_por_defecto: e.target.value })}
                                     className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500/10 transition-all"
                                 />
                             </div>
@@ -175,7 +176,7 @@ const AdminCreateBenefits = () => {
 
                 {/* Listados (Derecha) */}
                 <div className="lg:col-span-2 space-y-8">
-                    
+
                     {/* TABLA: BENEFICIOS VIGENTES */}
                     <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
                         <div className="px-6 py-4 bg-blue-50/50 border-b border-blue-100 flex items-center gap-2">
@@ -244,7 +245,7 @@ const AdminCreateBenefits = () => {
                                                 </span>
                                             </td>
                                             <td className="p-5 text-right">
-                                                <button 
+                                                <button
                                                     onClick={() => handleStatusChange(b.id, true)}
                                                     className="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-2 rounded-xl text-[9px] font-black uppercase text-slate-500 hover:bg-[#1e3a8a] hover:text-white hover:border-[#1e3a8a] transition-all shadow-sm"
                                                 >

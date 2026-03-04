@@ -6,6 +6,7 @@ import { apiFetch } from '../../interceptors/api';
 import AdminPaymentValidation from './AdminPaymentValidation';
 import AdminPaymentStats from './AdminPaymentStats'; // Importamos el componente nuevo
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminPaymentManager = () => {
     const [view, setView] = useState('list');
@@ -24,7 +25,7 @@ const AdminPaymentManager = () => {
     const fetchPayments = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/pagos');
+            const response = await apiFetch.get(API_ROUTES.PAGOS.BASE);
             const result = await response.json();
             if (response.ok) setPayments(result.data || []);
         } catch (error) {

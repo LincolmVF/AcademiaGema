@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { roleData } from '../data/mockDashboard';
 import apiFetch from '../interceptors/api';
+import { API_ROUTES } from '../constants/apiRoutes';
 import { TrendingUp, Activity, Zap, FileSpreadsheet, Users, GraduationCap, MapPin, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
@@ -46,7 +47,7 @@ const Dashboard = ({ role = 'student' }) => {
         if (role === 'admin') {
             const fetchDashboardStats = async () => {
                 try {
-                    const response = await apiFetch.get('/usuarios/count/usuarios-stats');
+                    const response = await apiFetch.get(API_ROUTES.USUARIOS.STATS);
                     const result = await response.json();
 
                     if (response.ok && result.data) {
@@ -77,7 +78,7 @@ const Dashboard = ({ role = 'student' }) => {
     const handleExportExcel = async () => {
         try {
             setIsExporting(true);
-            const response = await apiFetch.get('/usuarios/reporte/detallado');
+            const response = await apiFetch.get(API_ROUTES.USUARIOS.REPORTE);
 
             const contentType = response.headers.get("content-type");
             if (!contentType || !contentType.includes("application/json")) {

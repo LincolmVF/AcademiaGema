@@ -1,16 +1,17 @@
 import apiFetch from '../interceptors/api';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 export const sedeService = {
     // Obtener todas las sedes con filtros
     getAll: async (params = {}) => {
         const query = new URLSearchParams(params).toString();
-        const response = await apiFetch.get(`/sedes?${query}`);
+        const response = await apiFetch.get(`${API_ROUTES.SEDES.BASE}?${query}`);
         return await response.json();
     },
 
     // Crear una nueva sede
     create: async (sedeData) => {
-        const response = await apiFetch.post('/sedes', sedeData);
+        const response = await apiFetch.post(API_ROUTES.SEDES.BASE, sedeData);
 
         if (!response.ok) {
             const error = await response.json();
@@ -20,7 +21,7 @@ export const sedeService = {
     },
 
     delete: async (id) => {
-        const response = await apiFetch.delete(`/sedes/${id}`);
+        const response = await apiFetch.delete(`${API_ROUTES.SEDES.BASE}/${id}`);
 
         if (!response.ok) {
             const error = await response.json();
@@ -31,7 +32,7 @@ export const sedeService = {
     },
 
     update: async (id, sedeData) => {
-        const response = await apiFetch.put(`/sedes/${id}`, sedeData);
+        const response = await apiFetch.put(`${API_ROUTES.SEDES.BASE}/${id}`, sedeData);
 
         if (!response.ok) {
             const error = await response.json();

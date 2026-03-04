@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../interceptors/api";
+import { API_ROUTES } from "../constants/apiRoutes";
 
 import StudentStats from "../components/student/StudentStats";
 import StudentSchedule from "../components/student/StudentSchedule";
@@ -130,9 +131,9 @@ const DashboardEstudiante = () => {
       try {
         setLoading(true);
         const [resAsist, resDebts, resPay] = await Promise.all([
-          apiFetch.get(`/asistencias/alumno/${userId}`),
-          apiFetch.get("/cuentas-por-cobrar"),
-          apiFetch.get("/pagos"),
+          apiFetch.get(API_ROUTES.ASISTENCIAS.ALUMNO_HISTORIAL(userId)),
+          apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE),
+          apiFetch.get(API_ROUTES.PAGOS.BASE),
         ]);
 
         const dataAsist = await resAsist.json();

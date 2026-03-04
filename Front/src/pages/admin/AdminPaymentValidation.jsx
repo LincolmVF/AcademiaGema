@@ -155,8 +155,8 @@ const AdminPaymentValidation = ({ onBack, paymentData, onSuccess }) => {
 
                             <div className="space-y-1">
                                 <label className="text-[9px] font-black text-slate-400 uppercase">Monto Real Confirmado (S/)</label>
-                                <input 
-                                    type="number" 
+                                <input
+                                    type="number"
                                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-black text-[#1e3a8a] focus:ring-2 focus:ring-[#1e3a8a]/20 outline-none"
                                     value={montoConfirmado}
                                     onChange={(e) => setMontoConfirmado(e.target.value)}

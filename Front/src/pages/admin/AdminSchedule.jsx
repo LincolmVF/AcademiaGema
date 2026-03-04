@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Save, Loader2, Calendar, MapPin, User, Home, Clock, Plus, Trash2 } from 'lucide-react';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminSchedule = ({ onBack, initialData }) => {
     const isEdit = !!initialData;
@@ -37,9 +38,9 @@ const AdminSchedule = ({ onBack, initialData }) => {
             try {
                 setFetchingData(true);
                 const [resSedes, resCoordinadores, resNiveles] = await Promise.all([
-                    apiFetch.get('/sedes'),
-                    apiFetch.get('/usuarios/role/coordinador'),
-                    apiFetch.get('/niveles')
+                    apiFetch.get(API_ROUTES.SEDES.BASE),
+                    apiFetch.get(API_ROUTES.USUARIOS.COORDINADORES),
+                    apiFetch.get(API_ROUTES.NIVELES.BASE)
                 ]);
 
                 if (resSedes.ok) setSedes((await resSedes.json()).data || []);
@@ -48,7 +49,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
 
                 const sId = initialData?.cancha?.sede?.id || initialData?.sede_id;
                 if (isEdit && sId) {
-                    const resCanchas = await apiFetch.get(`/sedes/${sId}`);
+                    const resCanchas = await apiFetch.get(API_ROUTES.SEDES.BY_ID(sId));
                     if (resCanchas.ok) {
                         const json = await resCanchas.json();
                         setCanchas(json.data?.canchas || json.canchas || []);
@@ -66,7 +67,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     useEffect(() => {
         if (fetchingData || !commonData.sede_id) return;
         const loadCanchas = async () => {
-            const res = await apiFetch.get(`/sedes/${commonData.sede_id}`);
+            const res = await apiFetch.get(API_ROUTES.SEDES.BY_ID(commonData.sede_id));
             if (res.ok) {
                 const json = await res.json();
                 setCanchas(json.data?.canchas || json.canchas || []);
@@ -108,8 +109,8 @@ const AdminSchedule = ({ onBack, initialData }) => {
                     hora_fin: bloque.hora_fin
                 };
                 return isEdit
-                    ? apiFetch.put(`/horarios/${bloque.id}`, payload)
-                    : apiFetch.post('/horarios', payload);
+                    ? apiFetch.put(API_ROUTES.HORARIOS.BY_ID(bloque.id), payload)
+                    : apiFetch.post(API_ROUTES.HORARIOS.BASE, payload);
             });
             const resultados = await Promise.all(promesas);
             if (resultados.every(res => res.ok)) {

@@ -3,6 +3,7 @@ import { Plus, Search, Phone, Loader2, UserCog, ArrowLeft, Mail, Award, Calendar
 import AdminTeachers from './AdminTeachers';
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminTeachersManager = () => {
     const [view, setView] = useState('list');
@@ -14,7 +15,7 @@ const AdminTeachersManager = () => {
     const fetchCoordinadores = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/usuarios/role/coordinador');
+            const response = await apiFetch.get(API_ROUTES.USUARIOS.COORDINADORES);
             const result = await response.json();
 
             if (response.ok) {

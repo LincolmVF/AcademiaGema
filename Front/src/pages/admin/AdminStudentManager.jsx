@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Phone, ShieldAlert, ChevronRight, ArrowLeft, Heart, Mail, Calendar, User, Fingerprint, Activity, Info, FileText, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { apiFetch } from '../../interceptors/api';
+import { API_ROUTES } from '../../constants/apiRoutes';
 
 const AdminStudentsManager = () => {
     const [view, setView] = useState('list');
@@ -14,7 +15,7 @@ const AdminStudentsManager = () => {
     const fetchAlumnos = async () => {
         try {
             setLoading(true);
-            const response = await apiFetch.get('/usuarios/role/alumno');
+            const response = await apiFetch.get(API_ROUTES.USUARIOS.ALUMNOS);
             const result = await response.json();
 
             if (response.ok) {

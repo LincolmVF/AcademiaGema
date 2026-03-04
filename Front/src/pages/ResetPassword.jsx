@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import apiFetch from '../interceptors/api';
 import toast from 'react-hot-toast';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 export const ResetPassword = () => {
     const [searchParams] = useSearchParams();
@@ -14,10 +15,10 @@ export const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) return toast.error("Las contraseñas no coinciden");
-        
+
         setIsLoading(true);
         try {
-            const response = await apiFetch.post('/auth/reset-password', { token, newPassword: password });
+            const response = await apiFetch.post(API_ROUTES.AUTH.RESET_PASSWORD, { token, newPassword: password });
             if (response.ok) {
                 toast.success("¡Contraseña actualizada! Ya puedes iniciar sesión.");
                 navigate('/login');
@@ -36,14 +37,14 @@ export const ResetPassword = () => {
         /* Fondo Oscuro con degradado radial */
         <div className="min-h-screen flex items-center justify-center bg-[#0a192f] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#112240] via-[#0a192f] to-[#020c1b] px-4">
             <div className="max-w-md w-full">
-                
+
                 {/* Card Principal */}
                 <div className="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10">
-                    
+
                     {/* Encabezado Institucional GEMA ACADEMY */}
                     <div className="bg-gradient-to-br from-blue-900 to-blue-800 p-10 text-center relative overflow-hidden">
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full"></div>
-                        
+
                         <h1 className="text-3xl font-black text-white tracking-tight uppercase italic relative z-10">
                             GEMA<span className="text-orange-500 not-italic">ACADEMY</span>
                         </h1>
@@ -93,9 +94,8 @@ export const ResetPassword = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] active:scale-[0.97] uppercase tracking-widest text-sm mt-4 ${
-                                    isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                                }`}
+                                className={`w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl transition-all shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)] active:scale-[0.97] uppercase tracking-widest text-sm mt-4 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                                    }`}
                             >
                                 {isLoading ? (
                                     <span className="flex items-center justify-center gap-3">
@@ -112,8 +112,8 @@ export const ResetPassword = () => {
                         </form>
 
                         <div className="mt-8 pt-6 border-t border-slate-50 text-center">
-                            <Link 
-                                to="/login" 
+                            <Link
+                                to="/login"
                                 className="text-slate-400 hover:text-blue-900 font-bold text-xs transition-all uppercase tracking-widest flex items-center justify-center gap-2"
                             >
                                 Volver al Inicio

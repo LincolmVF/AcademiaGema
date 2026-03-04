@@ -2,6 +2,7 @@ import { useState } from 'react';
 import apiFetch from '../interceptors/api';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 export const ForgotPassword = () => {
     const [username, setUsername] = useState('');
@@ -12,7 +13,7 @@ export const ForgotPassword = () => {
         setIsLoading(true);
 
         try {
-            const response = await apiFetch.post('/auth/forgot-password', { username });
+            const response = await apiFetch.post(API_ROUTES.AUTH.FORGOT_PASSWORD, { username });
 
             if (response.ok) {
                 toast.success("Si el usuario existe y tiene un correo, se ha enviado un enlace.");

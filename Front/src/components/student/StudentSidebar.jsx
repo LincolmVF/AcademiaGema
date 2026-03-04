@@ -8,6 +8,7 @@ import { useAuth } from "../../context/AuthContext";
 import { apiFetch } from "../../interceptors/api";
 import CompletarEmailModal from "../../pages/CompletarEmailModal";
 import Cookies from "js-cookie";
+import { API_ROUTES } from "../../constants/apiRoutes";
 
 const StudentSidebar = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const StudentSidebar = () => {
   useEffect(() => {
     const checkNewsAlert = async () => {
       try {
-        const response = await apiFetch.get('/publicaciones');
+        const response = await apiFetch.get(API_ROUTES.PUBLICACIONES.BASE);
         const result = await response.json();
         if (result.data && result.data.length > 0) {
           const newestId = String(result.data[0].id);
@@ -139,8 +140,8 @@ const StudentSidebar = () => {
                 <Link
                   to={debeCompletarEmail ? "#" : group.path}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === group.path
-                      ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
-                      : 'text-blue-100/60 hover:bg-white/5'
+                    ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
+                    : 'text-blue-100/60 hover:bg-white/5'
                     } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
                 >
                   <group.icon size={18} />
@@ -169,8 +170,8 @@ const StudentSidebar = () => {
                             key={item.path}
                             to={debeCompletarEmail ? "#" : item.path}
                             className={`flex items-center justify-between px-4 py-2 rounded-xl transition-all text-xs ${isActive
-                                ? 'text-orange-400 font-bold bg-orange-400/10'
-                                : 'text-blue-100/50 hover:text-white'
+                              ? 'text-orange-400 font-bold bg-orange-400/10'
+                              : 'text-blue-100/50 hover:text-white'
                               } ${debeCompletarEmail ? "cursor-not-allowed" : ""}`}
                           >
                             <div className="flex items-center gap-3">
