@@ -5,12 +5,15 @@ import Filters from '../components/Home/Filters';
 import ClassCard from '../components/Home/ClassCard';
 import Hero from '../components/Home/Hero';
 import horarioService from '../services/horario.service';
+import { apiFetch } from '../interceptors/api';
+import { API_ROUTES } from '../constants/apiRoutes';
 
 function Home() {
   // Inicializamos en 1 (Lunes) o según el día actual ajustado a tu escala 1-7
   const [activeDay, setActiveDay] = useState(new Date().getDay() === 0 ? 7 : new Date().getDay());
   const [activeCategory, setActiveCategory] = useState('Todas');
   const [classes, setClasses] = useState([]);
+  const [categories, setCategories] = useState(['Todas']);
   const [loading, setLoading] = useState(true);
 
   // Mapeo de nombres para mostrar en la UI si es necesario
@@ -51,9 +54,16 @@ function Home() {
     const fetchHorarios = async () => {
       try {
         setLoading(true);
-        const data = await horarioService.obtenerDisponibles();
+        const [horariosData, nivelesRes] = await Promise.all([
+          horarioService.obtenerDisponibles(),
+          apiFetch.get(API_ROUTES.NIVELES.ACTIVOS)
+        ]);
 
-        const formattedClasses = data.map(h => ({
+        const nivelesData = await nivelesRes.json();
+        const nivelesNombres = ['Todas', ...(nivelesData.data || []).map(n => n.nombre)];
+        setCategories(nivelesNombres);
+
+        const formattedClasses = horariosData.map(h => ({
           id: h.id,
           // Accedemos según los nombres de tu relación en el schema
           title: h.niveles_entrenamiento?.nombre || "Entrenamiento Voleibol",
@@ -69,7 +79,7 @@ function Home() {
 
         setClasses(formattedClasses);
       } catch (error) {
-        console.error("Error al obtener horarios:", error);
+        console.error("Error al obtener datos principales de Home:", error);
       } finally {
         setLoading(false);
       }
@@ -108,6 +118,7 @@ function Home() {
                 setActiveDay={setActiveDay}
                 activeCategory={activeCategory}
                 setActiveCategory={setActiveCategory}
+                categories={categories}
               />
             </div>
           </div>

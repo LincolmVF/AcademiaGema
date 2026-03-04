@@ -1,7 +1,7 @@
 import React from 'react';
 import { CalendarDays, Filter, ChevronRight } from 'lucide-react';
 
-const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory }) => {
+const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory, categories = [] }) => {
 
   // Generar los días de la semana actual dinámicamente alineados a 1-7
   const getWeekDays = () => {
@@ -44,7 +44,6 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
   };
 
   const days = getWeekDays();
-  const categories = ['Todas', 'Principiantes', 'Intermedios', 'Avanzados', 'Vóley Playa'];
 
   return (
     <div className="space-y-6 md:space-y-8 p-1">
@@ -72,8 +71,8 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
                 key={day.index}
                 onClick={() => setActiveDay(day.index)}
                 className={`min-w-[80px] md:min-w-[110px] flex-1 flex flex-col items-center border-2 rounded-xl md:rounded-2xl p-3 md:p-4 transition-all duration-300 snap-center relative overflow-hidden group ${isActive
-                    ? 'border-orange-500 bg-white shadow-lg shadow-orange-100 scale-[0.98] md:scale-100'
-                    : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-blue-200'
+                  ? 'border-orange-500 bg-white shadow-lg shadow-orange-100 scale-[0.98] md:scale-100'
+                  : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-blue-200'
                   }`}
               >
                 {isActive && <div className="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>}
@@ -107,8 +106,8 @@ const Filters = ({ activeDay, setActiveDay, activeCategory, setActiveCategory })
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 md:px-5 py-1.5 md:py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all duration-300 border-2 ${isActive
-                      ? 'bg-[#1e3a8a] border-[#1e3a8a] text-white shadow-md shadow-blue-900/20'
-                      : 'bg-white border-slate-100 text-slate-500 hover:border-orange-200 hover:text-orange-500'
+                    ? 'bg-[#1e3a8a] border-[#1e3a8a] text-white shadow-md shadow-blue-900/20'
+                    : 'bg-white border-slate-100 text-slate-500 hover:border-orange-200 hover:text-orange-500'
                     }`}
                 >
                   {cat}
