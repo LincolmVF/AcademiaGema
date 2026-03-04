@@ -41,6 +41,7 @@ export const API_ROUTES = {
     },
     RECUPERACIONES: {
         BASE: '/recuperaciones',
+        HISTORIAL: '/recuperaciones/historial',
         ALUMNO_HISTORIAL: (id) => `/recuperaciones/alumno/${id}`,
     },
     CANCHAS: {

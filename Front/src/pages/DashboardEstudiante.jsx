@@ -131,10 +131,10 @@ const DashboardEstudiante = () => {
       try {
         setLoading(true);
         const [resAsist, resRecu, resDebts, resPay] = await Promise.all([
-          apiFetch.get(`/asistencias/alumno/${userId}`),
-          apiFetch.get(`/recuperaciones/historial`),
-          apiFetch.get("/cuentas-por-cobrar"),
-          apiFetch.get("/pagos"),
+          apiFetch.get(API_ROUTES.ASISTENCIAS.ALUMNO_HISTORIAL(userId)),
+          apiFetch.get(API_ROUTES.RECUPERACIONES.HISTORIAL),
+          apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE),
+          apiFetch.get(API_ROUTES.PAGOS.BASE),
         ]);
 
         const dataAsist = await resAsist.json();
