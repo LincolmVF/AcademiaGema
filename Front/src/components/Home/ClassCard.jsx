@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, User, Clock, Flame, ChevronRight } from 'lucide-react';
+import { MapPin, User, Clock, Flame, ChevronRight, Link } from 'lucide-react';
 
 const ClassCard = ({ category, title, time, location, coordinator, spots, image }) => {
   const isSoldOut = spots === 0;
@@ -8,7 +8,7 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
     <div className="group relative bg-white rounded-[2rem] border-2 border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/10 hover:border-orange-500 transition-all duration-300 flex flex-col h-full mt-2">
 
       {/* Etiqueta de Categoría Flotante */}
-      <div className="absolute -top-3 left-6 z-20">
+      <div className="absolute -top-8 left-6 z-20">
         <div className="bg-[#1e3a8a] text-white text-[10px] font-black italic uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg border-2 border-white flex items-center gap-1">
           <Flame size={12} className="text-orange-500" />
           {category}
@@ -51,8 +51,8 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
             {title}
           </h3>
           <div className={`flex-shrink-0 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl border-2 ${spots < 5 && !isSoldOut ? 'text-orange-600 bg-orange-50 border-orange-200 animate-pulse' :
-              isSoldOut ? 'text-slate-400 bg-slate-100 border-slate-200' :
-                'text-emerald-600 bg-emerald-50 border-emerald-200'
+            isSoldOut ? 'text-slate-400 bg-slate-100 border-slate-200' :
+              'text-emerald-600 bg-emerald-50 border-emerald-200'
             }`}>
             {isSoldOut ? 'Lleno' : `${spots} Cupos`}
           </div>
@@ -77,16 +77,17 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
         <div className="flex-grow"></div>
 
         {/* Botón de Acción */}
-        <button
+        <Link
+          to="/register"
           disabled={isSoldOut}
           className={`w-full mt-2 py-3 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all duration-300 border-b-4 active:border-b-0 active:translate-y-1 ${isSoldOut
-              ? 'bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed'
-              : 'bg-[#1e3a8a] text-white border-blue-900 hover:bg-orange-500 hover:border-orange-600 shadow-lg shadow-blue-900/20 hover:shadow-orange-500/20 group-hover:scale-[1.02]'
+            ? 'bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed'
+            : 'bg-[#1e3a8a] text-white border-blue-900 hover:bg-orange-500 hover:border-orange-600 shadow-lg shadow-blue-900/20 hover:shadow-orange-500/20 group-hover:scale-[1.02]'
             }`}
         >
           {isSoldOut ? 'No Disponible' : 'Reservar Cupo'}
           {!isSoldOut && <ChevronRight size={16} />}
-        </button>
+        </Link>
       </div>
     </div>
   );
