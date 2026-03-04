@@ -25,15 +25,8 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
 
         const diffMilisegundos = fechaClase.getTime() - ahora.getTime();
         const horasFaltantes = diffMilisegundos / (1000 * 60 * 60);
-        console.log({
-            ahora: ahora.toISOString(),
-            fechaClase: fechaClase.toISOString(),
-            diffMilisegundos,
-            horasFaltantes
-        });
         return horasFaltantes >= 1;
     };
-    console.log(canCancel(historial.fecha_programada, historial.horarios_clases?.hora_inicio))
 
     const getStatusBadge = (status) => {
         switch (status) {
