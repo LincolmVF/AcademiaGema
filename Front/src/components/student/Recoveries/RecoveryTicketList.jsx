@@ -29,11 +29,11 @@ const RecoveryTicketList = ({ tickets, selectedTicket, onSelect }) => {
                         key={ticket.id}
                         onClick={() => onSelect(isSelected ? null : ticket)}
                         className={`relative p-6 rounded-[2rem] border-2 text-left transition-all duration-300 transform ${isSelected
-                                ? 'bg-orange-500 border-orange-600 shadow-2xl shadow-orange-200 scale-[1.03] -translate-y-1'
-                                : 'bg-white border-slate-100 hover:border-orange-200 hover:shadow-xl shadow-sm'
+                            ? 'bg-orange-500 border-orange-600 shadow-2xl shadow-orange-200 scale-[1.03] -translate-y-1'
+                            : 'bg-white border-slate-100 hover:border-orange-200 hover:shadow-xl shadow-sm'
                             }`}
                     >
-                        {/* Indicador de Estado Superior */}
+                        {/* Indicador de Estado Superior  */}
                         <div className="flex justify-between items-start mb-4">
                             <div className={`p-3 rounded-2xl ${isSelected ? 'bg-white/20 text-white' : 'bg-orange-50 text-orange-600'
                                 }`}>

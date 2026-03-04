@@ -11,14 +11,29 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
     const canCancel = (fechaProgramada, horaInicio) => {
         if (!fechaProgramada || !horaInicio) return false;
         const ahora = new Date();
-        const fechaClase = new Date(fechaProgramada);
+        const fechaProg = new Date(fechaProgramada);
         const hora = new Date(horaInicio);
-        fechaClase.setHours(hora.getHours(), hora.getMinutes(), 0, 0);
+        const fechaClase = new Date(Date.UTC(
+            fechaProg.getUTCFullYear(),
+            fechaProg.getUTCMonth(),
+            fechaProg.getUTCDate(),
+            hora.getUTCHours() + 5,
+            hora.getUTCMinutes(),
+            0,
+            0
+        ));
 
         const diffMilisegundos = fechaClase.getTime() - ahora.getTime();
         const horasFaltantes = diffMilisegundos / (1000 * 60 * 60);
-        return horasFaltantes >= 12;
+        console.log({
+            ahora: ahora.toISOString(),
+            fechaClase: fechaClase.toISOString(),
+            diffMilisegundos,
+            horasFaltantes
+        });
+        return horasFaltantes >= 1;
     };
+    console.log(canCancel(historial.fecha_programada, historial.horarios_clases?.hora_inicio))
 
     const getStatusBadge = (status) => {
         switch (status) {
@@ -40,7 +55,7 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
                 <div className="text-sm">
                     <h4 className="font-extrabold text-blue-900 mb-2 uppercase tracking-wide text-xs">Información Importante</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-blue-700/80 font-medium">
-                        <li>Las clases <strong className="text-blue-900">Programadas</strong> pueden cancelarse con al menos <strong className="text-blue-900">12 horas de anticipación</strong>.</li>
+                        <li>Las clases <strong className="text-blue-900">Programadas</strong> pueden cancelarse con al menos <strong className="text-blue-900">1 hora de anticipación</strong>.</li>
                         <li>Si cancelas a tiempo, el ticket volverá automáticamente a tu lista de "Pendientes".</li>
                         <li>Si faltas a una clase de recuperación programada, el ticket se perderá definitivamente.</li>
                     </ul>
@@ -108,7 +123,7 @@ const RecoveryHistoryList = ({ historial, onCancel }) => {
                                         ) : (
                                             <div className="bg-gray-100 group-hover:bg-white/10 px-4 py-3 rounded-xl border border-gray-200 group-hover:border-white/20 transition-colors">
                                                 <p className="text-xs font-bold text-gray-500 group-hover:text-gray-300">Ya no puedes cancelar</p>
-                                                <p className="text-[10px] text-gray-400 group-hover:text-gray-400 mt-0.5">Faltan menos de 12 horas</p>
+                                                <p className="text-[10px] text-gray-400 group-hover:text-gray-400 mt-0.5">Falta menos de 1 hora</p>
                                             </div>
                                         )}
                                     </div>

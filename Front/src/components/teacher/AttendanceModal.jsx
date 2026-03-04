@@ -92,9 +92,11 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => handleLocalUpdate(alumno.asistenciaId, 'PRESENTE')}
+                                    disabled={alumno.esLesion}
                                     className={`p-3 rounded-2xl transition-all ${alumno.estado === 'PRESENTE'
-                                        ? 'bg-green-500 text-white shadow-lg shadow-green-200'
-                                        : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-green-500'
+                                        ? 'bg-green-500 text-white shadow-lg shadow-green-200' : alumno.esLesion
+                                            ? 'bg-slate-100 text-slate-300 cursor-not-allowed opacity-50'
+                                            : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-green-500'
                                         }`}
                                 >
                                     <Check size={20} strokeWidth={3} />
@@ -102,9 +104,11 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
 
                                 <button
                                     onClick={() => handleLocalUpdate(alumno.asistenciaId, 'FALTA')}
+                                    disabled={alumno.esLesion}
                                     className={`p-3 rounded-2xl transition-all ${alumno.estado === 'FALTA'
-                                        ? 'bg-red-500 text-white shadow-lg shadow-red-200'
-                                        : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-red-500'
+                                        ? 'bg-red-500 text-white shadow-lg shadow-red-200' : alumno.esLesion
+                                            ? 'bg-slate-100 text-slate-300 cursor-not-allowed opacity-50'
+                                            : 'bg-slate-50 text-slate-300 border border-slate-100 hover:text-red-500'
                                         }`}
                                 >
                                     <UserMinus size={20} strokeWidth={3} />
