@@ -101,4 +101,8 @@ export const API_ROUTES = {
         BASE: '/publicaciones',
         BY_ID: (id) => `/publicaciones/${id}`,
     },
+    NOTIFICACIONES: {
+        BASE: '/notificaciones',
+        MARCAR_LEIDA: (id) => `/notificaciones/${id}/leer`,
+    },
 };

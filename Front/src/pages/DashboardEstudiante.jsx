@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import {
   Calendar, Filter, Loader2, Sparkles,
   ChevronRight, ChevronLeft, Trophy, RefreshCcw,
-  Users, Gift, HeartPulse
+  Users, Gift, HeartPulse, BellOff
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { apiFetch } from "../interceptors/api";
@@ -12,6 +12,7 @@ import StudentStats from "../components/student/StudentStats";
 import StudentSchedule from "../components/student/StudentSchedule";
 import StudentPayments from "../components/student/StudentPayments";
 import WeeklyTimeline from "../components/student/WeeklyTimelineDashboard";
+import NotificationBell from "../components/student/Notifications/NotificationBell";
 
 // --- COMPONENTE CARRUSEL (BENEFICIOS GEMA) ---
 const StudentAnnouncements = () => {
@@ -116,16 +117,36 @@ const StudentAnnouncements = () => {
 // --- DASHBOARD PRINCIPAL ---
 const DashboardEstudiante = () => {
   const { user, userId } = useAuth();
+  
+  // Estados de datos
   const [attendance, setAttendance] = useState([]);
   const [debts, setDebts] = useState([]);
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Estados de Notificaciones
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifList, setShowNotifList] = useState(false);
 
   const [filtroMes, setFiltroMes] = useState("TODOS");
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear().toString());
 
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
+  // 1. CARGA DE NOTIFICACIONES (Logs de Crons como el Francotirador)
+  const fetchNotifications = async () => {
+    try {
+      const res = await apiFetch.get(API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones");
+      const result = await res.json();
+      if (result.success) {
+        setNotifications(result.data);
+      }
+    } catch (error) {
+      console.error("Error al cargar notificaciones:", error);
+    }
+  };
+
+  // 2. CARGA DE DATOS GENERALES
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
@@ -154,8 +175,31 @@ const DashboardEstudiante = () => {
         setLoading(false);
       }
     };
-    if (userId) loadDashboardData();
+
+    if (userId) {
+      loadDashboardData();
+      fetchNotifications();
+      // Polling suave cada 5 min para ver si el Francotirador disparó
+      const interval = setInterval(fetchNotifications, 300000);
+      return () => clearInterval(interval);
+    }
   }, [userId]);
+
+  // 3. LÓGICA DE INTERACCIÓN CON NOTIFICACIONES
+  const unreadCount = useMemo(() => 
+    notifications.filter(n => !n.leido).length, 
+  [notifications]);
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      const res = await apiFetch.patch(API_ROUTES.NOTIFICACIONES?.MARCAR_LEIDA(id) || `/notificaciones/${id}/leer`);
+      if (res.ok) {
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: true } : n));
+      }
+    } catch (error) {
+      console.error("Error al marcar como leída:", error);
+    }
+  };
 
   const agendaParaTimeline = useMemo(() => {
     return attendance
@@ -182,8 +226,8 @@ const DashboardEstudiante = () => {
     <div className="min-h-screen bg-[#f1f5f9] flex justify-center relative overflow-hidden">
       <div className="w-full md:max-w-6xl p-4 md:p-8 pb-28 relative z-10">
 
-        {/* 1. HEADER */}
-        <header className="flex justify-between items-start mb-8 mt-2">
+        {/* 1. HEADER INTEGRADO CON NOTIFICACIONES */}
+        <header className="flex justify-between items-start mb-8 mt-2 relative">
           <div>
             <h1 className="text-3xl md:text-4xl font-black text-[#1e3a8a] tracking-tighter uppercase italic leading-none">
               Hola, <span className="text-orange-500">{firstName}</span> 👋
@@ -193,7 +237,57 @@ const DashboardEstudiante = () => {
               <Sparkles size={14} className="text-orange-400" />Centro de Alto Rendimiento
             </p>
           </div>
-          <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-4 relative">
+            {/* CAMPANITA GEMA */}
+            <div className="relative">
+              <NotificationBell 
+                count={unreadCount} 
+                onClick={() => setShowNotifList(!showNotifList)} 
+              />
+              
+              {/* DROPDOWN DE ALERTAS */}
+              {showNotifList && (
+                <div className="absolute right-0 top-16 w-72 md:w-80 bg-white rounded-[2rem] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                  <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                    <h3 className="font-black text-[#1e3a8a] text-[10px] uppercase italic tracking-widest">Centro de Alertas</h3>
+                    {unreadCount > 0 && (
+                      <span className="text-[9px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">
+                        {unreadCount} NUEVAS
+                      </span>
+                    )}
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((n) => (
+                        <div 
+                          key={n.id} 
+                          className={`p-4 border-b border-slate-50 last:border-0 transition-colors cursor-pointer hover:bg-slate-50 ${!n.leido ? 'bg-blue-50/30' : 'opacity-60'}`}
+                          onClick={() => handleMarkAsRead(n.id)}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.leido ? 'bg-orange-500 animate-pulse' : 'bg-slate-300'}`} />
+                            <div>
+                              <h4 className="font-black text-[#1e3a8a] text-[11px] uppercase tracking-tight">{n.titulo}</h4>
+                              <p className="text-[10px] text-slate-500 font-medium leading-tight mt-1">{n.mensaje}</p>
+                              <span className="text-[8px] text-slate-400 font-bold uppercase mt-2 block italic">
+                                {new Date(n.creado_en).toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-10 text-center flex flex-col items-center gap-2">
+                        <BellOff size={24} className="text-slate-200" />
+                        <p className="text-[10px] font-black text-slate-300 uppercase italic">Sin alertas pendientes</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="hidden md:block text-right">
               <span className="block font-black text-[#1e3a8a] uppercase tracking-tight text-sm">{fullName}</span>
             </div>
@@ -220,9 +314,7 @@ const DashboardEstudiante = () => {
 
         {/* 5. GRID PRINCIPAL */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-
           <div className="lg:col-span-2 space-y-6">
-            {/* Filtros */}
             <div className="flex flex-wrap items-center gap-4 bg-white/50 p-4 rounded-[2rem] border border-slate-200">
               <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-slate-200">
                 <Filter size={16} className="text-orange-500" />
@@ -239,11 +331,9 @@ const DashboardEstudiante = () => {
                 <Calendar size={14} className="text-orange-500" /> Ciclo {filtroAnio}
               </div>
             </div>
-
             <StudentSchedule attendance={attendance} filtroMes={filtroMes} filtroAnio={filtroAnio} />
           </div>
 
-          {/* Columna Lateral - Administración de Pagos */}
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-50">
               <div className="flex items-center gap-2 mb-6">
