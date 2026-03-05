@@ -169,8 +169,8 @@ function Register() {
                             </div>
                         </div>
 
-                        {/* Grupo 2: Nombres */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        {/* Grupo 2: Nombres y Género */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
                             <div className="space-y-1.5 md:space-y-2 text-left">
                                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nombres *</label>
                                 <input type="text" name="nombres" required value={formData.nombres} onChange={handleChange} placeholder="Juan Alberto"
@@ -180,6 +180,15 @@ function Register() {
                                 <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Apellidos *</label>
                                 <input type="text" name="apellidos" required value={formData.apellidos} onChange={handleChange} placeholder="Pérez García"
                                     className="w-full px-4 py-3 md:py-3.5 bg-slate-50 border border-slate-100 rounded-xl focus:border-orange-500 outline-none transition-all text-sm font-semibold shadow-sm" />
+                            </div>
+                            <div className="space-y-1.5 md:space-y-2 text-left sm:col-span-2 md:col-span-1">
+                                <label className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Género *</label>
+                                <select name="genero" required value={formData.genero} onChange={handleChange} className="w-full px-4 py-3 md:py-3.5 bg-slate-50 border border-slate-100 rounded-xl outline-none font-bold text-sm">
+                                    <option value="">Elegir...</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                    <option value="O">Otro</option>
+                                </select>
                             </div>
                         </div>
 
