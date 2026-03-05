@@ -27,6 +27,7 @@ export const loginService = async (identifier, password) => {
     if (user) {
       Cookies.set('user_role', user.rol, cookieConfig);
       Cookies.set('user_name', user.nombres, cookieConfig);
+      Cookies.set('user_lastname', user.apellidos || '', cookieConfig);
       Cookies.set('user_id', user.id, cookieConfig);
     }
     if (accessToken) Cookies.set('auth_token', accessToken, cookieConfig);
@@ -47,6 +48,7 @@ export const logoutService = async () => {
   } finally {
     Cookies.remove('user_role');
     Cookies.remove('user_name');
+    Cookies.remove('user_lastname');
     Cookies.remove('user_id');
     Cookies.remove('auth_token');
     Cookies.remove('refresh_token');

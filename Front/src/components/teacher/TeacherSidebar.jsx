@@ -36,13 +36,10 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
 
         {/* SECCIÓN LOGO: Branding oficial unificado */}
         <div className="flex-none py-8 px-6 flex flex-col items-center border-b border-white/10">
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full"></div>
-            <img
-              src="/logo.png"
-              alt="Club Gema"
-              className="w-32 h-auto relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
-            />
+          <div className="relative z-10 w-[180px] aspect-square bg-white rounded-full p-2 shadow-2xl flex items-center justify-center border-4 border-white/20 overflow-hidden">
+            <Link to="/" className="relative z-10">
+              <img src="/Logo con borde blanco.png" alt="Logo Club Gema" className="w-full h-full object-cover" />
+            </Link>
           </div>
           <div className="text-center mt-4">
             <span className="block font-black text-xl tracking-tighter uppercase italic text-white leading-none">

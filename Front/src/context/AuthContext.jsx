@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
         const savedRole = Cookies.get('user_role');
         const savedName = Cookies.get('user_name');
+        const savedLastName = Cookies.get('user_lastname');
         const savedId = Cookies.get('user_id');
 
         if (savedRole) {
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
                 rol: savedRole,
                 nombres: savedName,
                 id: savedId,
-                user: { id: savedId, rol: savedRole, nombres: savedName }
+                user: { id: savedId, rol: savedRole, nombres: savedName, apellidos: savedLastName }
             };
         }
         return null;
@@ -48,6 +49,7 @@ export const AuthProvider = ({ children }) => {
             };
 
             if (newData.nombres) Cookies.set('user_name', newData.nombres, { expires: 1, sameSite: 'strict' });
+            if (newData.apellidos) Cookies.set('user_lastname', newData.apellidos, { expires: 1, sameSite: 'strict' });
             if (newData.rol) Cookies.set('user_role', newData.rol, { expires: 1, sameSite: 'strict' });
 
             return updatedUser;

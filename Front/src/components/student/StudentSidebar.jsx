@@ -119,7 +119,9 @@ const StudentSidebar = () => {
         {/* HEADER LOGO */}
         <div className="flex-none py-8 px-4 flex flex-col items-center border-b border-white/10 bg-white/5">
           <div className="relative z-10 w-[180px] aspect-square bg-white rounded-full p-2 shadow-2xl flex items-center justify-center border-4 border-white/20 overflow-hidden">
-            <img src="/Logo con borde blanco.png" alt="Logo Club Gema" className="w-full h-full object-cover" />
+            <Link to="/" className="relative z-10">
+              <img src="/Logo con borde blanco.png" alt="Logo Club Gema" className="w-full h-full object-cover" />
+            </Link>
           </div>
           <div className="text-center mt-5">
             <span className="block font-black text-xl tracking-tighter uppercase italic text-white leading-none">
