@@ -41,7 +41,7 @@ import AdminInjuriesManager from "./pages/admin/AdminInjuriesManager";
 import AdminBenefits from "./pages/admin/AdminBenefits";
 import AdminCreateBenefits from "./pages/admin/AdminCreateBenefits";
 import AdminPublications from "./pages/admin/AdminPublications";
-
+import AdminGuestPasses from "./pages/admin/AdminGuestPasses";
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
 import Profile from "./pages/student/Profile";
@@ -51,6 +51,7 @@ import StudentInjuries from "./pages/student/StudentInjuries";
 import StudentRecoveries from "./pages/student/StudentRecoveries";
 import StudentNews from "./pages/student/StudentNews";
 import MyRegistrations from "./pages/student/MyRegistrations";
+
 
 function App() {
   return (
@@ -125,6 +126,7 @@ function App() {
               <Route path="admin/injuries" element={<AdminInjuriesManager />} />
               <Route path="admin/publications" element={<AdminPublications />} />
               <Route path="admin/payment-validation" element={<AdminPaymentManager />} />
+              <Route path="admin/guest-passes" element={<AdminGuestPasses />} />
 
               {/* Configuración */}
               <Route path="admin/settings" element={<AdminSettings />} />

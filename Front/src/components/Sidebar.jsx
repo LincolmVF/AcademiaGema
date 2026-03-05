@@ -5,7 +5,7 @@ import {
     Settings, LogOut, MapPin, BarChart3, DollarSign,
     ChevronDown,
     CheckCircle,
-    Activity, TicketPercent, Megaphone,
+    Activity, TicketPercent, Megaphone,Ticket,
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -72,6 +72,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 { icon: DollarSign, label: 'Catálogo de Precios', path: '/dashboard/admin/catalog' },
                 { icon: CheckCircle, label: 'Validación de Pagos', path: '/dashboard/admin/payment-validation' },
                 { icon: Activity, label: "Control de Lesiones", path: "/dashboard/admin/injuries" },
+                { icon: Ticket, label: 'Pases de Invitado', path: '/dashboard/admin/guest-passes' },
                 { icon: Settings, label: 'Configuración', path: '/dashboard/admin/settings' },
             ]
         }
