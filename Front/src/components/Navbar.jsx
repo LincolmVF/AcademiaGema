@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Bell, Menu, X, UserCircle, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
 
   const navLinks = [
     { label: 'Inicio', path: '/' },
@@ -12,6 +14,26 @@ const Navbar = () => {
     { label: 'Planes', path: '/pricing' },
     { label: 'Blog', path: '/blog' },
   ];
+
+  const currentUser = user?.user || user;
+  const firstName = currentUser?.nombres ? currentUser.nombres.split(' ')[0] : null;
+  const initial = firstName ? firstName.charAt(0).toUpperCase() : '';
+
+  const getDashboardPath = () => {
+    if (!currentUser) return '/login';
+    switch (currentUser.rol) {
+      case 'Alumno':
+        return '/dashboard/student';
+      case 'Coordinador':
+        return '/dashboard//teacher';
+      case 'Administrador':
+        return '/dashboard//admin';
+      default:
+        return '/login';
+    }
+  };
+
+  const targetPath = getDashboardPath();
 
   return (
     <nav className="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
@@ -62,12 +84,12 @@ const Navbar = () => {
             <div className="h-8 w-px bg-slate-200 mx-1"></div>
 
             <Link
-              to="/login"
+              to={targetPath}
               className="flex items-center gap-2.5 pl-2 group"
             >
               <div className="text-right hidden lg:block">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Mi Portal</p>
-                <p className="text-xs font-black text-[#1e3a8a] group-hover:text-orange-500 transition-colors mt-0.5">Ingresar</p>
+                <p className="text-xs font-black text-[#1e3a8a] group-hover:text-orange-500 transition-colors mt-0.5">{currentUser ? firstName : 'Ingresar'}</p>
               </div>
               <div className="w-9 h-9 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#1e3a8a] group-hover:text-white transition-all border border-slate-100 shadow-sm">
                 <UserCircle size={22} />
@@ -107,12 +129,15 @@ const Navbar = () => {
 
             <div className="pt-4 mt-4 border-t border-slate-100">
               <Link
-                to="/login"
+                to={targetPath}
                 onClick={() => setIsOpen(false)}
-                className="w-full flex items-center justify-center gap-3 bg-[#1e3a8a] text-white py-3.5 rounded-xl font-black uppercase tracking-widest text-sm shadow-lg shadow-blue-900/20"
+                className={`w-full flex items-center justify-center gap-3 py-3.5 rounded-xl font-black uppercase tracking-widest text-sm shadow-lg transition-all
+                  ${currentUser
+                    ? 'bg-gradient-to-br from-[#1e40af] to-[#0f172a] text-white shadow-blue-900/20'
+                    : 'bg-[#1e3a8a] text-white shadow-blue-900/20'}`}
               >
                 <UserCircle size={20} />
-                Iniciar Sesión
+                {currentUser ? 'Ir a mi Portal' : 'Iniciar Sesión'}
               </Link>
             </div>
           </div>
