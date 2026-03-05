@@ -77,7 +77,7 @@ const MyRegistrations = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await apiFetch.patch(`${BASE_URL}/inscripciones/${id}/finalizar`);
+        const res = await apiFetch.patch(`/inscripciones/${id}/finalizar`);
         if (res.ok) {
           toast.success("Horario finalizado correctamente");
           fetchRegistrations();

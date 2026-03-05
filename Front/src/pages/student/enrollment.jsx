@@ -22,17 +22,33 @@ const Enrollment = () => {
 
   useEffect(() => { if (userId) fetchInitialData(); }, [userId]);
 
-  const fetchInitialData = async () => {
-    try {
-      setLoading(true);
-      const [resH, resC] = await Promise.all([apiFetch.get(API_ROUTES.HORARIOS.BASE), apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE)]);
-      const dataH = await resH.json();
-      const dataC = await resC.json();
-      if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
-      if (resC.ok) setPendingPayment(dataC.data?.find(c => c.alumno_id === userId && c.estado === 'PENDIENTE'));
-    } catch (e) { toast.error("Error de sincronización Gema"); }
-    finally { setLoading(false); }
-  };
+ const fetchInitialData = async () => {
+  try {
+    setLoading(true);
+    const [resH, resC] = await Promise.all([
+      apiFetch.get(API_ROUTES.HORARIOS.BASE), 
+      apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE)
+    ]);
+    
+    const dataH = await resH.json();
+    const dataC = await resC.json();
+    
+    if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
+    
+    if (resC.ok) {
+      // 🔥 USAMOS == PARA EVITAR PROBLEMAS DE STRING VS NUMBER
+      const deudaActiva = dataC.data?.find(c => 
+        c.alumno_id == userId && 
+        (c.estado === 'PENDIENTE' || c.estado === 'PARCIAL') // El Liquidador Parcial también debe bloquear
+      );
+      setPendingPayment(deudaActiva);
+    }
+  } catch (e) { 
+    toast.error("Error de sincronización Gema"); 
+  } finally { 
+    setLoading(false); 
+  }
+};
 
   const agendaSeleccionada = useMemo(() => horarios.filter(h => selectedIds.includes(h.id)), [horarios, selectedIds]);
 
@@ -70,6 +86,7 @@ const Enrollment = () => {
   const handleEnrollment = async () => {
     if (selectedIds.length === 0) return toast.error("Selecciona tus clases");
     setSubmitting(true);
+    
     try {
       const response = await apiFetch.post(API_ROUTES.INSCRIPCIONES.BASE, {
         alumno_id: userId,
@@ -79,18 +96,35 @@ const Enrollment = () => {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success("¡Inscripción Gema Completada!");
+        toast.success("¡Inscripción Gema Completada!", {
+          icon: '🏆',
+          style: { borderRadius: '20px', background: '#1e3a8a', color: '#fff' }
+        });
         await fetchInitialData();
         setSelectedIds([]);
       } else {
-        // Mostramos el mensaje exacto del backend (ej. "Límite de horarios simultáneos superado")
-        toast.error(result.message || "Error al procesar la inscripción", {
+        // 🚨 DISEÑO PREMIUM PARA ERRORES GEMA
+        toast.error(result.message || "Error al procesar", {
           duration: 5000,
-          style: { background: '#ef4444', color: '#fff', fontWeight: 'bold', borderRadius: '15px' }
+          icon: null, // Quitamos el icono predeterminado para usar el nuestro personalizado
+          style: { 
+            background: '#ffffff', // Fondo blanco para que el texto sea legible
+            color: '#1e3a8a',      // Texto en Azul Gema
+            fontWeight: '900',     // Peso extra para el estilo "Black"
+            borderRadius: '1.5rem',
+            padding: '16px 24px',
+            borderLeft: '8px solid #f97316', // Solo una barra lateral naranja de advertencia
+            boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+            fontSize: '11px',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            maxWidth: '400px',
+            italic: 'italic'
+          }
         });
       }
     } catch (error) {
-      toast.error("Error crítico de conexión");
+      toast.error("Error crítico: Verifica tu conexión con la Academia");
     } finally {
       setSubmitting(false);
     }

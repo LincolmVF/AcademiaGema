@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "../../interceptors/api";
 import { useAuth } from "../../context/AuthContext";
-import { Loader2, History, Wallet, ArrowLeft, ShieldAlert } from "lucide-react";
+import { Loader2, ArrowLeft, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { API_ROUTES } from "../../constants/apiRoutes";
@@ -70,19 +70,48 @@ const Payments = () => {
 
       <PaymentMethodCard />
 
-      {/* AVISO DE CONTINUIDAD HORIZONTAL */}
+      {/* 🔥 AVISO DE CONTINUIDAD GEMA PREMIUM - VERSIÓN FINAL ALINEADA 🔥 */}
       {activeDebts.length > 0 && (
-        <div className="w-full my-12 bg-[#ff4d4d] text-white p-6 md:p-8 rounded-[3rem] shadow-2xl shadow-red-200/50 border-4 border-white flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
-          <div className="bg-white text-[#ff4d4d] p-4 rounded-3xl shrink-0 shadow-lg">
-            <ShieldAlert size={44} strokeWidth={3} />
-          </div>
-          <div className="max-w-4xl">
-            <h4 className="font-black uppercase italic tracking-tighter text-3xl leading-none mb-2">
-              AVISO DE CONTINUIDAD CRÍTICO
-            </h4>
-            <p className="text-[13px] font-black uppercase leading-tight tracking-wide">
-              Si no liquidas el <span className="underline decoration-4 underline-offset-4 italic font-black">pago completo</span> de tus deudas, no podrás inscribirte a nuevas clases ni mantener tu continuidad en el club.
-            </p>
+        <div className="w-full my-12 relative overflow-hidden shadow-2xl rounded-[3rem] group">
+          {/* Fondo con Gradiente Sólido */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#ff4d4d] via-[#f87171] to-[#ff4d4d] opacity-95"></div>
+
+          <div className="relative z-10 w-full p-8 md:p-12 border-4 border-white/40 rounded-[3rem] flex flex-col md:flex-row items-center gap-8 md:gap-12">
+
+            {/* Icono con Pulso de Alerta */}
+            <div className="bg-white shadow-xl p-5 rounded-[2.2rem] shrink-0">
+              <ShieldAlert size={48} strokeWidth={2.5} className="text-[#ff4d4d] animate-pulse" />
+            </div>
+
+            <div className="flex-1 text-center md:text-left">
+              {/* Cabecera con Badge de Estado */}
+              <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
+                <h4 className="font-black uppercase italic tracking-tighter text-3xl md:text-4xl text-white leading-none">
+                  Aviso de Continuidad <span className="text-red-100">Crítico</span>
+                </h4>
+                <span className="bg-white/20 backdrop-blur-sm text-white text-[9px] font-black px-4 py-1.5 rounded-full border border-white/40 uppercase tracking-[0.2em]">
+                  Estado Administrativo
+                </span>
+              </div>
+
+              {/* Mensaje con Cápsulas Rectas (Sin inclinaciones chuecas) */}
+              <div className="text-[13px] md:text-[15px] font-bold text-white/95 leading-relaxed uppercase tracking-tight">
+                Estimado alumno: Le informamos que el acceso a nuevas inscripciones y el derecho al beneficio de
+                <span className="inline-block mx-2 bg-white text-[#ff4d4d] px-4 py-1.5 rounded-xl font-black italic shadow-md">
+                  Recuperación de Clases
+                </span>
+                se encuentran suspendidos temporalmente hasta la liquidación del
+                <span className="inline-block mx-2 bg-[#1e3a8a] text-white px-4 py-1.5 rounded-xl font-black italic shadow-md">
+                  Pago Completo
+                </span>
+                de sus deudas pendientes.
+              </div>
+            </div>
+
+            {/* Decoración de Fondo Limpia */}
+            <div className="absolute -right-6 -bottom-6 opacity-10 pointer-events-none">
+              <ShieldAlert size={180} color="white" />
+            </div>
           </div>
         </div>
       )}
@@ -109,7 +138,7 @@ const Payments = () => {
           </div>
         </section>
 
-        {/* HISTORIAL DE REPORTES CON SCROLL EN TAILWIND */}
+        {/* HISTORIAL DE REPORTES */}
         <section className="sticky top-8">
           <h2 className="font-black text-[#1e3a8a] uppercase italic mb-8 flex items-center gap-3 text-2xl">
             <div className="w-3 h-8 bg-blue-400 rounded-full"></div>
@@ -117,9 +146,7 @@ const Payments = () => {
           </h2>
 
           <div className="bg-white rounded-[2.5rem] border shadow-2xl overflow-hidden">
-            {/* Altura máxima y scroll configurado con clases de Tailwind */}
-            <div className="max-h-[500px] overflow-y-auto 
-                            scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+            <div className="max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
               {payments.length > 0 ? (
                 <div className="divide-y divide-slate-50">
                   {payments.map((p) => (
@@ -134,7 +161,6 @@ const Payments = () => {
             </div>
           </div>
 
-          {/* Indicador visual de scroll si hay muchos pagos */}
           {payments.length > 3 && (
             <div className="mt-4 flex justify-center">
               <span className="text-[10px] font-black text-slate-300 uppercase italic tracking-widest animate-bounce">
