@@ -17,6 +17,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     const [commonData, setCommonData] = useState({
         sede_id: initialData?.cancha?.sede?.id?.toString() || '',
         cancha_id: initialData?.cancha?.id?.toString() || '',
+        // IMPORTANTE: Si no hay coordinador, se inicializa como cadena vacía para el select
         coordinador_id: initialData?.coordinador?.id?.toString() || '', 
         nivel_id: initialData?.nivel?.id?.toString() || '',
         capacidad_max: initialData?.capacidad_max || 20
@@ -43,9 +44,19 @@ const AdminSchedule = ({ onBack, initialData }) => {
                     apiFetch.get(API_ROUTES.NIVELES.BASE)
                 ]);
 
-                if (resSedes.ok) setSedes((await resSedes.json()).data || []);
-                if (resCoordinadores.ok) setCoordinadores((await resCoordinadores.json()).data || []);
-                if (resNiveles.ok) setNiveles((await resNiveles.json()).data || []);
+                // CORRECCIÓN: Aseguramos que los datos se extraigan correctamente según la estructura de tu API
+                if (resSedes.ok) {
+                    const json = await resSedes.json();
+                    setSedes(json.data || []);
+                }
+                if (resCoordinadores.ok) {
+                    const json = await resCoordinadores.json();
+                    setCoordinadores(json.data || []);
+                }
+                if (resNiveles.ok) {
+                    const json = await resNiveles.json();
+                    setNiveles(json.data || []);
+                }
 
                 const sId = initialData?.cancha?.sede?.id || initialData?.sede_id;
                 if (isEdit && sId) {
@@ -93,24 +104,19 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        // CORRECCIÓN: coordinador_id ya no bloquea el envío si es "" (Sin asignar)
         if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
-
-        // Validar que todos los bloques tengan día y horas
-        const bloquesIncompletos = bloques.some(b => !b.dia_semana || !b.hora_inicio || !b.hora_fin);
-        if (bloquesIncompletos) {
-            return toast.error("Por favor completa todos los horarios");
-        }
-
         setLoading(true);
         try {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    // CORRECCIÓN: Si es "" enviamos null para cumplir con el esquema opcional del modelo horarios_clases
-                    coordinador_id: commonData.coordinador_id === "" ? null : Number(commonData.coordinador_id),
+                    // CORRECCIÓN: Si el valor es una cadena vacía o nulo, enviamos null explícito.
+                    // Esto evita enviar NaN o 0, cumpliendo con el esquema opcional (coordinador_id Int?).
+                    coordinador_id: (commonData.coordinador_id === '' || commonData.coordinador_id === null) 
+                        ? null 
+                        : Number(commonData.coordinador_id),
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
                     dia_semana: Number(bloque.dia_semana),
@@ -129,7 +135,11 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 const err = await resultados[0].json();
                 toast.error(err.message || "Error en la operación");
             }
-        } catch (e) { toast.error("Error de conexión"); } finally { setLoading(false); }
+        } catch (e) { 
+            toast.error("Error de conexión"); 
+        } finally { 
+            setLoading(false); 
+        }
     };
 
     if (fetchingData) return (
@@ -195,7 +205,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         </div>
                     </div>
 
-                    {/* Personal y Nivel */}
+                    {/* Personal y Nivel - DISEÑO RESTAURADO */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
                             <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><User size={20} /></div>
@@ -213,7 +223,9 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                     >
                                         <option value="">-- Sin asignar / Quitar coordinador --</option>
                                         {coordinadores.map(c => (
-                                            <option key={c.id} value={c.id.toString()}>{c.nombre_completo}</option>
+                                            <option key={c.usuario_id || c.id} value={(c.usuario_id || c.id).toString()}>
+                                                {c.nombre_completo || `${c.usuarios?.nombres} ${c.usuarios?.apellidos}`}
+                                            </option>
                                         ))}
                                     </select>
                                 </div>
@@ -234,7 +246,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 </div>
 
                 <div className="space-y-6">
-                    {/* Lista de Horarios */}
+                    {/* Horarios */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -288,7 +300,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         </div>
                     </div>
 
-                    {/* Resumen Final */}
+                    {/* Resumen */}
                     <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden group">
                         <div className="relative z-10">
                             <h4 className="font-black uppercase italic tracking-tighter text-xl mb-2 text-orange-500">Resumen</h4>
