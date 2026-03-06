@@ -93,21 +93,25 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        if (!commonData.cancha_id || !commonData.coordinador_id || !commonData.nivel_id) {
+        // Quitamos coordinador_id de la validación obligatoria si ahora puede ser nulo
+        if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
+
         setLoading(true);
         try {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    coordinador_id: Number(commonData.coordinador_id),
+                    // Si es nulo, enviamos null, si tiene valor, lo convertimos a Número
+                    coordinador_id: commonData.coordinador_id ? Number(commonData.coordinador_id) : null,
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
                     dia_semana: Number(bloque.dia_semana),
                     hora_inicio: bloque.hora_inicio,
                     hora_fin: bloque.hora_fin
                 };
+
                 return isEdit
                     ? apiFetch.put(API_ROUTES.HORARIOS.BY_ID(bloque.id), payload)
                     : apiFetch.post(API_ROUTES.HORARIOS.BASE, payload);
@@ -194,8 +198,14 @@ const AdminSchedule = ({ onBack, initialData }) => {
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
                                 <select
-                                    value={commonData.coordinador_id}
-                                    onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
+                                    value={commonData.coordinador_id || ''} // Aseguramos que si es null, muestre la opción vacía
+                                    onChange={(e) => {
+                                        const val = e.target.value;
+                                        setCommonData({
+                                            ...commonData,
+                                            coordinador_id: val === "" ? null : val
+                                        });
+                                    }}
                                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all"
                                 >
                                     <option value="">Seleccione Coordinador</option>
