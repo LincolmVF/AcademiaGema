@@ -17,7 +17,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
     const [commonData, setCommonData] = useState({
         sede_id: initialData?.cancha?.sede?.id?.toString() || '',
         cancha_id: initialData?.cancha?.id?.toString() || '',
-        // Si no hay coordinador asignado en initialData, queda vacío
         coordinador_id: initialData?.coordinador?.id?.toString() || '', 
         nivel_id: initialData?.nivel?.id?.toString() || '',
         capacidad_max: initialData?.capacidad_max || 20
@@ -45,14 +44,10 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 ]);
 
                 if (resSedes.ok) setSedes((await resSedes.json()).data || []);
-                
-                // CARGA DE COORDINADORES SEGÚN TU JSON
                 if (resCoordinadores.ok) {
-                    const result = await resCoordinadores.json();
-                    // result.data contiene el array de objetos con "nombres" y "apellidos"
-                    setCoordinadores(result.data || []);
+                    const resJson = await resCoordinadores.json();
+                    setCoordinadores(resJson.data || []);
                 }
-                
                 if (resNiveles.ok) setNiveles((await resNiveles.json()).data || []);
 
                 const sId = initialData?.cancha?.sede?.id || initialData?.sede_id;
@@ -64,7 +59,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                     }
                 }
             } catch (error) {
-                toast.error("Error al cargar datos");
+                toast.error("Error al cargar catálogos");
             } finally {
                 setFetchingData(false);
             }
@@ -91,8 +86,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
     const removeBloque = (id) => {
         if (bloques.length > 1) {
             setBloques(bloques.filter(b => b.id !== id));
-        } else {
-            toast.error("Debes mantener al menos un horario");
         }
     };
 
@@ -101,50 +94,51 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        console.log("Datos a enviar:", { commonData, bloques });
         if (!commonData.cancha_id || !commonData.nivel_id) {
-            return toast.error("Por favor completa los campos obligatorios");
+            return toast.error("Faltan campos obligatorios");
         }
 
         setLoading(true);
         try {
             const promesas = bloques.map(bloque => {
+                // AQUÍ ESTÁ EL FIX: Convertimos "" en null para que el backend no de error 500
                 const payload = {
-                    cancha_id: Number(commonData.cancha_id),
-                    // Si el string es vacío, enviamos null para que el backend no falle
-                    coordinador_id: commonData.coordinador_id === "" ? null : Number(commonData.coordinador_id),
-                    nivel_id: Number(commonData.nivel_id),
-                    capacidad_max: Number(commonData.capacidad_max),
-                    dia_semana: Number(bloque.dia_semana),
+                    cancha_id: parseInt(commonData.cancha_id),
+                    coordinador_id: commonData.coordinador_id === "" ? null : parseInt(commonData.coordinador_id),
+                    nivel_id: parseInt(commonData.nivel_id),
+                    capacidad_max: parseInt(commonData.capacidad_max),
+                    dia_semana: parseInt(bloque.dia_semana),
                     hora_inicio: bloque.hora_inicio,
                     hora_fin: bloque.hora_fin
                 };
+
                 return isEdit
                     ? apiFetch.put(API_ROUTES.HORARIOS.BY_ID(bloque.id), payload)
                     : apiFetch.post(API_ROUTES.HORARIOS.BASE, payload);
             });
+
             const resultados = await Promise.all(promesas);
             if (resultados.every(res => res.ok)) {
-                toast.success(isEdit ? "Horario actualizado" : "Horarios registrados");
+                toast.success("Operación exitosa");
                 onBack();
             } else {
-                const err = await resultados[0].json();
-                toast.error(err.message || "Error en la operación");
+                const errorData = await resultados[0].json();
+                toast.error(errorData.message || "Error al procesar");
             }
-        } catch (e) { toast.error("Error de conexión"); } finally { setLoading(false); }
+        } catch (e) {
+            toast.error("Error de conexión");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (fetchingData) return (
-        <div className="flex justify-center p-20"><Loader2 className="animate-spin text-blue-600" size={40} /></div>
-    );
-
     return (
-        <div className="space-y-6 animate-fade-in-up p-1 text-slate-800">
+        <div className="space-y-6 p-1 text-slate-800 animate-fade-in-up">
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center gap-4">
-                    <button onClick={onBack} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm transition-all text-slate-600">
-                        <ArrowLeft size={20} />
+                    <button onClick={onBack} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all shadow-sm">
+                        <ArrowLeft size={20} className="text-slate-600" />
                     </button>
                     <h1 className="text-2xl font-black italic uppercase tracking-tight">
                         {isEdit ? 'Editar' : 'Programar'} <span className="text-[#1e3a8a]">Clases</span>
@@ -152,148 +146,121 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 </div>
                 <button
                     onClick={handleSubmit}
-                    disabled={loading || !commonData.cancha_id}
-                    className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all duration-300 shadow-lg shadow-blue-900/20"
+                    disabled={loading}
+                    className="bg-gradient-to-r from-[#1e3a8a] to-[#0f172a] hover:from-orange-500 hover:to-orange-600 disabled:opacity-50 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all"
                 >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />}
                     {isEdit ? 'Guardar Cambios' : 'Finalizar Programación'}
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Sección: Espacio */}
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
-                            <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Home size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Ubicación</h3>
+                    {/* Ubicación */}
+                    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-blue-50 text-[#1e3a8a] rounded-lg"><Home size={20} /></div>
+                            <h3 className="font-black text-[#1e3a8a] uppercase text-sm tracking-widest">Ubicación y Sede</h3>
                         </div>
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Sede</label>
-                                <select
-                                    value={commonData.sede_id}
-                                    onChange={(e) => setCommonData({ ...commonData, sede_id: e.target.value, cancha_id: '' })}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-[#1e3a8a] transition-all"
-                                >
-                                    <option value="">Seleccionar Sede</option>
-                                    {sedes.map(s => <option key={s.id} value={s.id.toString()}>{s.nombre}</option>)}
-                                </select>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Cancha</label>
-                                <div className="relative">
-                                    <MapPin size={14} className="absolute left-4 top-3.5 text-slate-400" />
-                                    <select
-                                        value={commonData.cancha_id}
-                                        onChange={(e) => setCommonData({ ...commonData, cancha_id: e.target.value })}
-                                        disabled={!commonData.sede_id}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-[#1e3a8a] disabled:opacity-50"
-                                    >
-                                        <option value="">Seleccionar Cancha</option>
-                                        {canchas.map(c => <option key={c.id} value={c.id.toString()}>{c.nombre}</option>)}
-                                    </select>
-                                </div>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <select
+                                value={commonData.sede_id}
+                                onChange={(e) => setCommonData({ ...commonData, sede_id: e.target.value, cancha_id: '' })}
+                                className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-sm font-bold focus:ring-2 focus:ring-blue-500 transition-all"
+                            >
+                                <option value="">Seleccionar Sede</option>
+                                {sedes.map(s => <option key={s.id} value={s.id.toString()}>{s.nombre}</option>)}
+                            </select>
+                            <select
+                                value={commonData.cancha_id}
+                                onChange={(e) => setCommonData({ ...commonData, cancha_id: e.target.value })}
+                                disabled={!commonData.sede_id}
+                                className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-sm font-bold focus:ring-2 focus:ring-blue-500 disabled:opacity-40 transition-all"
+                            >
+                                <option value="">Seleccionar Cancha</option>
+                                {canchas.map(c => <option key={c.id} value={c.id.toString()}>{c.nombre}</option>)}
+                            </select>
                         </div>
                     </div>
 
-                    {/* Sección: Coordinador y Nivel */}
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
-                            <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><User size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Personal y Nivel</h3>
+                    {/* Personal */}
+                    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2 bg-orange-50 text-orange-600 rounded-lg"><User size={20} /></div>
+                            <h3 className="font-black text-[#1e3a8a] uppercase text-sm tracking-widest">Responsable y Nivel</h3>
                         </div>
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Coordinador</label>
-                                <div className="relative">
-                                    <User size={14} className="absolute left-4 top-3.5 text-slate-400" />
-                                    <select
-                                        value={commonData.coordinador_id}
-                                        onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
-                                        className={`w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold outline-none transition-all ${commonData.coordinador_id === "" ? "text-orange-500 italic" : "text-slate-700"}`}
-                                    >
-                                        <option value="" className="not-italic text-slate-400 font-bold">-- SIN ASIGNAR --</option>
-                                        {coordinadores.map(c => (
-                                            <option key={c.id} value={c.id.toString()} className="not-italic text-slate-800">
-                                                {c.nombres} {c.apellidos}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Nivel</label>
-                                <select
-                                    value={commonData.nivel_id}
-                                    onChange={(e) => setCommonData({ ...commonData, nivel_id: e.target.value })}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-[#1e3a8a]"
-                                >
-                                    <option value="">Seleccionar Nivel</option>
-                                    {niveles.map(n => <option key={n.id} value={n.id.toString()}>{n.nombre}</option>)}
-                                </select>
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <select
+                                value={commonData.coordinador_id}
+                                onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
+                                className={`w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-sm font-bold focus:ring-2 focus:ring-orange-500 transition-all ${commonData.coordinador_id === "" ? "text-orange-500 italic" : "text-slate-700"}`}
+                            >
+                                <option value="" className="not-italic text-slate-400">-- SIN ASIGNAR --</option>
+                                {coordinadores.map(c => (
+                                    <option key={c.id} value={c.id.toString()} className="not-italic">
+                                        {c.nombres} {c.apellidos}
+                                    </option>
+                                ))}
+                            </select>
+                            <select
+                                value={commonData.nivel_id}
+                                onChange={(e) => setCommonData({ ...commonData, nivel_id: e.target.value })}
+                                className="w-full bg-slate-50 border-none rounded-2xl px-5 py-3.5 text-sm font-bold focus:ring-2 focus:ring-blue-500 transition-all"
+                            >
+                                <option value="">Seleccionar Nivel</option>
+                                {niveles.map(n => <option key={n.id} value={n.id.toString()}>{n.nombre}</option>)}
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 {/* Columna Horarios */}
                 <div className="space-y-6">
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[550px]">
-                        <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Clock size={20} /></div>
-                                <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Horarios</h3>
+                    <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
+                        <div className="p-6 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <Clock size={18} className="text-[#1e3a8a]" />
+                                <span className="font-black text-[10px] uppercase tracking-widest">Bloques</span>
                             </div>
-                            <button onClick={addBloque} className="p-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-md shadow-orange-200 group">
-                                <Plus size={18} className="group-hover:rotate-90 transition-transform" />
-                            </button>
+                            {!isEdit && (
+                                <button onClick={addBloque} className="p-1.5 bg-[#1e3a8a] text-white rounded-lg hover:bg-orange-500 transition-all">
+                                    <Plus size={16} />
+                                </button>
+                            )}
                         </div>
-                        <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
+                        <div className="p-6 space-y-4 max-h-[400px] overflow-y-auto">
                             {bloques.map((bloque) => (
-                                <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative hover:bg-white hover:border-[#1e3a8a]/30 transition-all">
-                                    {bloques.length > 1 && (
-                                        <button onClick={() => removeBloque(bloque.id)} className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    )}
-                                    <div className="space-y-1">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Día de la semana</label>
-                                        <select
-                                            value={bloque.dia_semana}
-                                            onChange={(e) => updateBloque(bloque.id, 'dia_semana', e.target.value)}
-                                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-[#1e3a8a] outline-none"
-                                        >
-                                            <option value="">Seleccionar...</option>
-                                            <option value="1">Lunes</option><option value="2">Martes</option>
-                                            <option value="3">Miércoles</option><option value="4">Jueves</option>
-                                            <option value="5">Viernes</option><option value="6">Sábado</option>
-                                            <option value="7">Domingo</option>
-                                        </select>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <input type="time" value={bloque.hora_inicio} onChange={(e) => updateBloque(bloque.id, 'hora_inicio', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700" />
-                                        <input type="time" value={bloque.hora_fin} onChange={(e) => updateBloque(bloque.id, 'hora_fin', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700" />
+                                <div key={bloque.id} className="bg-slate-50 rounded-2xl p-5 relative border border-transparent hover:border-blue-200 transition-all">
+                                    <select
+                                        value={bloque.dia_semana}
+                                        onChange={(e) => updateBloque(bloque.id, 'dia_semana', e.target.value)}
+                                        className="w-full bg-white border-none rounded-xl mb-3 text-xs font-black text-[#1e3a8a] uppercase"
+                                    >
+                                        <option value="">Día...</option>
+                                        <option value="1">Lunes</option><option value="2">Martes</option>
+                                        <option value="3">Miércoles</option><option value="4">Jueves</option>
+                                        <option value="5">Viernes</option><option value="6">Sábado</option>
+                                        <option value="7">Domingo</option>
+                                    </select>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <input type="time" value={bloque.hora_inicio} onChange={(e) => updateBloque(bloque.id, 'hora_inicio', e.target.value)} className="w-full bg-white border-none rounded-xl px-3 py-2 text-xs font-bold" />
+                                        <input type="time" value={bloque.hora_fin} onChange={(e) => updateBloque(bloque.id, 'hora_fin', e.target.value)} className="w-full bg-white border-none rounded-xl px-3 py-2 text-xs font-bold" />
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Resumen */}
-                    <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+                    {/* Resumen Final */}
+                    <div className="bg-[#1e3a8a] rounded-[2rem] p-8 text-white relative overflow-hidden group">
                         <div className="relative z-10">
-                            <h4 className="font-black uppercase italic tracking-tighter text-xl mb-3 text-orange-500">Resumen</h4>
-                            <div className="space-y-2 opacity-90 text-[10px] font-bold uppercase tracking-widest">
-                                <p className="flex justify-between border-b border-white/10 pb-1.5">Sede: <span className="text-white font-black">{sedes.find(s => s.id.toString() === commonData.sede_id)?.nombre || '---'}</span></p>
-                                <p className="flex justify-between border-b border-white/10 pb-1.5">Coach: <span className={commonData.coordinador_id === "" ? "text-orange-400 font-black" : "text-white font-black"}>{coordinadores.find(c => c.id.toString() === commonData.coordinador_id) ? `${coordinadores.find(c => c.id.toString() === commonData.coordinador_id).nombres} ${coordinadores.find(c => c.id.toString() === commonData.coordinador_id).apellidos}` : 'SIN ASIGNAR'}</span></p>
-                                <p className="flex justify-between">Sesiones: <span className="text-white font-black">{bloques.length}</span></p>
+                            <h4 className="font-black uppercase italic text-xl mb-4 text-orange-500">Resumen</h4>
+                            <div className="space-y-3 opacity-90 text-[10px] font-bold uppercase tracking-[0.1em]">
+                                <p className="flex justify-between border-b border-white/10 pb-2">Coach: <span>{coordinadores.find(c => c.id.toString() === commonData.coordinador_id) ? `${coordinadores.find(c => c.id.toString() === commonData.coordinador_id).nombres}` : 'Sin asignar'}</span></p>
+                                <p className="flex justify-between">Bloques: <span>{bloques.length}</span></p>
                             </div>
                         </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-500">
-                            <Calendar size={120} />
-                        </div>
+                        <Calendar size={120} className="absolute -right-8 -bottom-8 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-700" />
                     </div>
                 </div>
             </div>
