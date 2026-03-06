@@ -94,6 +94,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
+        console.log("Submitting with data:", { commonData, bloques });
         if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Faltan campos obligatorios");
         }
