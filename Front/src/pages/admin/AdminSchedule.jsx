@@ -93,7 +93,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        // Quitamos coordinador_id de la validación obligatoria si ahora puede ser nulo
+        console.log(commonData)
         if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
