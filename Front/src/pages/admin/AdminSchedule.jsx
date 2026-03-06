@@ -103,7 +103,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    // Si es nulo, enviamos null, si tiene valor, lo convertimos a Número
                     coordinador_id: commonData.coordinador_id ? Number(commonData.coordinador_id) : null,
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
