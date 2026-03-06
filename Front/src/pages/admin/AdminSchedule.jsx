@@ -195,9 +195,9 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
                                 <select
                                     name="coordinador_id"
-                                    value={formData.coordinador_id || ""}
-                                    onChange={(e) => setFormData({
-                                        ...formData,
+                                    value={commonData.coordinador_id || ""}
+                                    onChange={(e) => setCommonData({
+                                        ...commonData,
                                         coordinador_id: e.target.value === "" ? null : parseInt(e.target.value)
                                     })}
                                     className="tu-clase-de-estilo"
