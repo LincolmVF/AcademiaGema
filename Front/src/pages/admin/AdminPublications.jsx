@@ -186,7 +186,7 @@ const AdminPublications = () => {
                     <h1 className="text-2xl font-black italic uppercase tracking-tight text-slate-900">
                         Muro de <span className="text-[#1e3a8a]">Publicaciones</span>
                     </h1>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Anuncios y noticias de la academia</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Anuncios y noticias del club</p>
                 </div>
                 <button
                     onClick={() => setView('create')}

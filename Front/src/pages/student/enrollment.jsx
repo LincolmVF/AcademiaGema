@@ -124,7 +124,7 @@ const Enrollment = () => {
         });
       }
     } catch (error) {
-      toast.error("Error crítico: Verifica tu conexión con la Academia");
+      toast.error("Error crítico: Verifica tu conexión con el Club");
     } finally {
       setSubmitting(false);
     }

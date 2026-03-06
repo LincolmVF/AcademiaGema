@@ -119,7 +119,7 @@ const Dashboard = ({ role = 'student' }) => {
     if (!data) return (
         <div className="flex flex-col items-center justify-center h-96 space-y-4">
             <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-slate-400 font-black uppercase text-xs tracking-widest animate-pulse">Sincronizando Academia...</p>
+            <p className="text-slate-400 font-black uppercase text-xs tracking-widest animate-pulse">Sincronizando Club...</p>
         </div>
     );
 
