@@ -22,33 +22,33 @@ const Enrollment = () => {
 
   useEffect(() => { if (userId) fetchInitialData(); }, [userId]);
 
- const fetchInitialData = async () => {
-  try {
-    setLoading(true);
-    const [resH, resC] = await Promise.all([
-      apiFetch.get(API_ROUTES.HORARIOS.BASE), 
-      apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE)
-    ]);
-    
-    const dataH = await resH.json();
-    const dataC = await resC.json();
-    
-    if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
-    
-    if (resC.ok) {
-      // 🔥 USAMOS == PARA EVITAR PROBLEMAS DE STRING VS NUMBER
-      const deudaActiva = dataC.data?.find(c => 
-        c.alumno_id == userId && 
-        (c.estado === 'PENDIENTE' || c.estado === 'PARCIAL') // El Liquidador Parcial también debe bloquear
-      );
-      setPendingPayment(deudaActiva);
+  const fetchInitialData = async () => {
+    try {
+      setLoading(true);
+      const [resH, resC] = await Promise.all([
+        apiFetch.get(API_ROUTES.HORARIOS.BASE),
+        apiFetch.get(API_ROUTES.CUENTAS_POR_COBRAR.BASE)
+      ]);
+
+      const dataH = await resH.json();
+      const dataC = await resC.json();
+
+      if (resH.ok) setHorarios(dataH.data?.filter(h => h.activo) || []);
+
+      if (resC.ok) {
+        // 🔥 USAMOS == PARA EVITAR PROBLEMAS DE STRING VS NUMBER
+        const deudaActiva = dataC.data?.find(c =>
+          c.alumno_id == userId &&
+          (c.estado === 'PENDIENTE' || c.estado === 'PARCIAL') // El Liquidador Parcial también debe bloquear
+        );
+        setPendingPayment(deudaActiva);
+      }
+    } catch (e) {
+      toast.error("Error de sincronización Gema");
+    } finally {
+      setLoading(false);
     }
-  } catch (e) { 
-    toast.error("Error de sincronización Gema"); 
-  } finally { 
-    setLoading(false); 
-  }
-};
+  };
 
   const agendaSeleccionada = useMemo(() => horarios.filter(h => selectedIds.includes(h.id)), [horarios, selectedIds]);
 
@@ -86,7 +86,7 @@ const Enrollment = () => {
   const handleEnrollment = async () => {
     if (selectedIds.length === 0) return toast.error("Selecciona tus clases");
     setSubmitting(true);
-    
+
     try {
       const response = await apiFetch.post(API_ROUTES.INSCRIPCIONES.BASE, {
         alumno_id: userId,
@@ -107,7 +107,7 @@ const Enrollment = () => {
         toast.error(result.message || "Error al procesar", {
           duration: 5000,
           icon: null, // Quitamos el icono predeterminado para usar el nuestro personalizado
-          style: { 
+          style: {
             background: '#ffffff', // Fondo blanco para que el texto sea legible
             color: '#1e3a8a',      // Texto en Azul Gema
             fontWeight: '900',     // Peso extra para el estilo "Black"
@@ -151,9 +151,9 @@ const Enrollment = () => {
 
         <div className="flex flex-col md:flex-row gap-4 mb-10 items-center justify-between">
           <div className="flex bg-white p-2 rounded-full shadow-md border border-slate-100 overflow-x-auto w-full md:w-auto scrollbar-hide">
-            {[1, 2, 3, 4, 5, 6].map(d => (
+            {[1, 2, 3, 4, 5, 6, 7].map(d => (
               <button key={d} onClick={() => setDiaFilter(d)} className={`px-8 py-3 rounded-full text-[10px] font-black transition-all uppercase italic flex-shrink-0 ${diaFilter === d ? 'bg-[#1e3a8a] text-white shadow-xl' : 'text-slate-400 hover:text-[#1e3a8a]'}`}>
-                {['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'][d - 1]}
+                {['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'][d - 1]}
               </button>
             ))}
           </div>
