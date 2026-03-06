@@ -1,8 +1,11 @@
 import React from 'react';
-import { MapPin, User, Clock, Flame, ChevronRight, Link } from 'lucide-react';
+import { MapPin, User, Clock, Flame, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ClassCard = ({ category, title, time, location, coordinator, spots, image }) => {
-  const isSoldOut = spots === 0;
+  // Solo se considera "Agotado" si spots es exactamente 0. 
+  // Si es null, se asume que no hay restricción visible de cupos.
+  const isSoldOut = spots !== null && spots === 0;
 
   return (
     <div className="group relative bg-white rounded-[2rem] border-2 border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-blue-900/10 hover:border-orange-500 transition-all duration-300 flex flex-col h-full mt-2">
@@ -50,12 +53,17 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
           <h3 className="text-xl md:text-2xl font-black text-[#1e3a8a] uppercase italic tracking-tighter leading-none group-hover:text-orange-500 transition-colors">
             {title}
           </h3>
-          <div className={`flex-shrink-0 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl border-2 ${spots < 5 && !isSoldOut ? 'text-orange-600 bg-orange-50 border-orange-200 animate-pulse' :
-            isSoldOut ? 'text-slate-400 bg-slate-100 border-slate-200' :
+          
+          {/* CORRECCIÓN: Solo se muestra el badge si spots NO es null */}
+          {spots !== null && (
+            <div className={`flex-shrink-0 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-xl border-2 ${
+              spots < 5 && !isSoldOut ? 'text-orange-600 bg-orange-50 border-orange-200 animate-pulse' :
+              isSoldOut ? 'text-slate-400 bg-slate-100 border-slate-200' :
               'text-emerald-600 bg-emerald-50 border-emerald-200'
             }`}>
-            {isSoldOut ? 'Lleno' : `${spots} Cupos`}
-          </div>
+              {isSoldOut ? 'Lleno' : `${spots} Cupos`}
+            </div>
+          )}
         </div>
 
         {/* Detalles */}
@@ -64,7 +72,7 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
             <div className="bg-slate-100 p-1.5 rounded-lg text-slate-400 group-hover:bg-blue-50 group-hover:text-[#1e3a8a] transition-colors">
               <User size={14} />
             </div>
-            <span className="text-xs font-bold uppercase tracking-wide">Coach: <span className="text-slate-700">{coordinator}</span></span>
+            <span className="text-xs font-bold uppercase tracking-wide">Coach: <span className="text-slate-700">{coordinator || 'Sin asignar'}</span></span>
           </div>
           <div className="flex items-center gap-3 text-slate-500">
             <div className="bg-slate-100 p-1.5 rounded-lg text-slate-400 group-hover:bg-blue-50 group-hover:text-[#1e3a8a] transition-colors">
@@ -79,11 +87,12 @@ const ClassCard = ({ category, title, time, location, coordinator, spots, image 
         {/* Botón de Acción */}
         <Link
           to="/register"
-          disabled={isSoldOut}
-          className={`w-full mt-2 py-3 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all duration-300 border-b-4 active:border-b-0 active:translate-y-1 ${isSoldOut
-            ? 'bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed'
-            : 'bg-[#1e3a8a] text-white border-blue-900 hover:bg-orange-500 hover:border-orange-600 shadow-lg shadow-blue-900/20 hover:shadow-orange-500/20 group-hover:scale-[1.02]'
-            }`}
+          // El botón solo se deshabilita si isSoldOut es true (spots === 0)
+          className={`w-full mt-2 py-3 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all duration-300 border-b-4 active:border-b-0 active:translate-y-1 ${
+            isSoldOut
+              ? 'bg-slate-200 text-slate-400 border-slate-300 cursor-not-allowed pointer-events-none'
+              : 'bg-[#1e3a8a] text-white border-blue-900 hover:bg-orange-500 hover:border-orange-600 shadow-lg shadow-blue-900/20 hover:shadow-orange-500/20 group-hover:scale-[1.02]'
+          }`}
         >
           {isSoldOut ? 'No Disponible' : 'Reservar Cupo'}
           {!isSoldOut && <ChevronRight size={16} />}
