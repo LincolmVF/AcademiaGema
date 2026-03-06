@@ -44,7 +44,13 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 ]);
 
                 if (resSedes.ok) setSedes((await resSedes.json()).data || []);
-                if (resCoordinadores.ok) setCoordinadores((await resCoordinadores.json()).data || []);
+                
+                // CORRECCIÓN: Manejo de la data de coordinadores
+                if (resCoordinadores.ok) {
+                    const result = await resCoordinadores.json();
+                    setCoordinadores(result.data || []);
+                }
+                
                 if (resNiveles.ok) setNiveles((await resNiveles.json()).data || []);
 
                 const sId = initialData?.cancha?.sede?.id || initialData?.sede_id;
@@ -93,14 +99,17 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
+        // Validamos solo lo estrictamente obligatorio (coordinador es opcional en esquema)
         if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
+
         setLoading(true);
         try {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
+                    // CORRECCIÓN FINAL: Si es vacío, enviamos null explícito para que Zod/Prisma no fallen
                     coordinador_id: commonData.coordinador_id === "" ? null : Number(commonData.coordinador_id),
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
@@ -129,7 +138,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
 
     return (
         <div className="space-y-6 animate-fade-in-up p-1">
-            {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex items-center gap-4">
                     <button onClick={onBack} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm transition-all text-slate-600">
@@ -151,76 +159,84 @@ const AdminSchedule = ({ onBack, initialData }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    {/* Sección 1: Espacio */}
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-blue-200">
+                    {/* Sección 1: Cancha */}
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
                             <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Home size={20} /></div>
-                            <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Asignación de Espacio</h3>
+                            <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Espacio</h3>
                         </div>
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Sede Principal</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sede</label>
                                 <select
                                     value={commonData.sede_id}
                                     onChange={(e) => setCommonData({ ...commonData, sede_id: e.target.value, cancha_id: '' })}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] outline-none transition-all cursor-pointer"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none focus:border-[#1e3a8a]"
                                 >
-                                    <option value="" className="text-slate-400">Seleccionar Sede</option>
-                                    {sedes.map(s => <option key={s.id} value={s.id.toString()} className="text-slate-800">{s.nombre}</option>)}
+                                    <option value="">Seleccionar Sede</option>
+                                    {sedes.map(s => <option key={s.id} value={s.id.toString()}>{s.nombre}</option>)}
                                 </select>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Cancha Asignada</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cancha</label>
                                 <div className="relative">
                                     <MapPin size={14} className="absolute left-4 top-3.5 text-slate-400" />
                                     <select
                                         value={commonData.cancha_id}
                                         onChange={(e) => setCommonData({ ...commonData, cancha_id: e.target.value })}
                                         disabled={!commonData.sede_id}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-[#1e3a8a]/20 focus:border-[#1e3a8a] outline-none disabled:opacity-50 cursor-pointer"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold text-slate-700 outline-none"
                                     >
-                                        <option value="" className="text-slate-400">Seleccionar Cancha</option>
-                                        {canchas.map(c => <option key={c.id} value={c.id.toString()} className="text-slate-800">{c.nombre}</option>)}
+                                        <option value="">Seleccionar Cancha</option>
+                                        {canchas.map(c => <option key={c.id} value={c.id.toString()}>{c.nombre}</option>)}
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Sección 2: Personal */}
-                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:border-orange-200">
+                    {/* Sección 2: Personal - AQUÍ ESTÁ LA CORRECCIÓN DE NOMBRES */}
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
                             <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><User size={20} /></div>
                             <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Personal y Nivel</h3>
                         </div>
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Coordinador / Coach</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Coordinador</label>
                                 <div className="relative">
                                     <User size={14} className="absolute left-4 top-3.5 text-slate-400" />
                                     <select
                                         value={commonData.coordinador_id}
                                         onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
-                                        className={`w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold outline-none transition-all cursor-pointer ${commonData.coordinador_id === "" ? "text-orange-500 italic" : "text-slate-700"}`}
+                                        className={`w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold outline-none ${commonData.coordinador_id === "" ? "text-orange-500 italic" : "text-slate-700"}`}
                                     >
-                                        <option value="" className="text-slate-400 font-bold not-italic">-- SIN ASIGNAR / QUITAR --</option>
-                                        {coordinadores.map(c => (
-                                            <option key={c.id} value={c.id.toString()} className="text-slate-800 not-italic">
-                                                {c.nombre_completo}
-                                            </option>
-                                        ))}
+                                        <option value="" className="not-italic text-slate-400">-- SIN ASIGNAR --</option>
+                                        {coordinadores.map(c => {
+                                            // Lógica para extraer nombre según esquema anidado (c.usuarios.nombres) o plano (c.nombre_completo)
+                                            const nombre = c.usuarios 
+                                                ? `${c.usuarios.nombres} ${c.usuarios.apellidos}` 
+                                                : (c.nombre_completo || 'Sin nombre');
+                                            const id = c.usuario_id || c.id;
+                                            
+                                            return (
+                                                <option key={id} value={id.toString()} className="not-italic text-slate-800">
+                                                    {nombre}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                 </div>
                             </div>
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1 tracking-widest">Nivel de Entrenamiento</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nivel</label>
                                 <select
                                     value={commonData.nivel_id}
                                     onChange={(e) => setCommonData({ ...commonData, nivel_id: e.target.value })}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all cursor-pointer"
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-700 outline-none"
                                 >
-                                    <option value="" className="text-slate-400">Seleccionar Nivel</option>
-                                    {niveles.map(n => <option key={n.id} value={n.id.toString()} className="text-slate-800">{n.nombre}</option>)}
+                                    <option value="">Seleccionar Nivel</option>
+                                    {niveles.map(n => <option key={n.id} value={n.id.toString()}>{n.nombre}</option>)}
                                 </select>
                             </div>
                         </div>
@@ -235,30 +251,24 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                 <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Clock size={20} /></div>
                                 <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Horarios</h3>
                             </div>
-                            <button
-                                onClick={addBloque}
-                                className="p-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-md shadow-orange-200 group"
-                            >
-                                <Plus size={18} className="group-hover:rotate-90 transition-transform" />
+                            <button onClick={addBloque} className="p-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                                <Plus size={18} />
                             </button>
                         </div>
                         <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
                             {bloques.map((bloque) => (
-                                <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative hover:bg-white hover:border-[#1e3a8a]/30 hover:shadow-md transition-all">
+                                <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative group">
                                     {bloques.length > 1 && (
-                                        <button
-                                            onClick={() => removeBloque(bloque.id)}
-                                            className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors"
-                                        >
+                                        <button onClick={() => removeBloque(bloque.id)} className="absolute top-2 right-2 text-slate-300 hover:text-red-500">
                                             <Trash2 size={16} />
                                         </button>
                                     )}
                                     <div className="space-y-1">
-                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Día de la semana</label>
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Día</label>
                                         <select
                                             value={bloque.dia_semana}
                                             onChange={(e) => updateBloque(bloque.id, 'dia_semana', e.target.value)}
-                                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-[#1e3a8a] outline-none focus:border-[#1e3a8a]"
+                                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-[#1e3a8a] outline-none"
                                         >
                                             <option value="">Seleccionar...</option>
                                             <option value="1">Lunes</option><option value="2">Martes</option>
@@ -268,14 +278,8 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                         </select>
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div className="space-y-1">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Inicio</label>
-                                            <input type="time" value={bloque.hora_inicio} onChange={(e) => updateBloque(bloque.id, 'hora_inicio', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-700 outline-none focus:border-[#1e3a8a]" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Fin</label>
-                                            <input type="time" value={bloque.hora_fin} onChange={(e) => updateBloque(bloque.id, 'hora_fin', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-700 outline-none focus:border-[#1e3a8a]" />
-                                        </div>
+                                        <input type="time" value={bloque.hora_inicio} onChange={(e) => updateBloque(bloque.id, 'hora_inicio', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-700" />
+                                        <input type="time" value={bloque.hora_fin} onChange={(e) => updateBloque(bloque.id, 'hora_fin', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-700" />
                                     </div>
                                 </div>
                             ))}
@@ -283,16 +287,15 @@ const AdminSchedule = ({ onBack, initialData }) => {
                     </div>
 
                     {/* Resumen */}
-                    <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+                    <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
                         <div className="relative z-10">
-                            <h4 className="font-black uppercase italic tracking-tighter text-xl mb-3 text-orange-500">Estado Final</h4>
+                            <h4 className="font-black uppercase italic tracking-tighter text-xl mb-3 text-orange-500">Resumen</h4>
                             <div className="space-y-2 opacity-90 text-[10px] font-bold uppercase tracking-widest">
                                 <p className="flex justify-between border-b border-white/10 pb-1.5">Sede: <span className="text-white">{sedes.find(s => s.id.toString() === commonData.sede_id)?.nombre || '---'}</span></p>
-                                <p className="flex justify-between border-b border-white/10 pb-1.5">Coach: <span className={commonData.coordinador_id === "" ? "text-orange-400" : "text-white"}>{coordinadores.find(c => c.id.toString() === commonData.coordinador_id)?.nombre_completo || 'SIN ASIGNAR'}</span></p>
                                 <p className="flex justify-between">Bloques: <span className="text-white">{bloques.length} sesión(es)</span></p>
                             </div>
                         </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12 group-hover:scale-110 transition-transform duration-500">
+                        <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12">
                             <Calendar size={120} />
                         </div>
                     </div>
