@@ -6,7 +6,6 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { apiFetch } from "../../interceptors/api";
-import CompletarEmailModal from "../../pages/CompletarEmailModal";
 import Cookies from "js-cookie";
 import { API_ROUTES } from "../../constants/apiRoutes";
 
@@ -110,10 +109,6 @@ const StudentSidebar = () => {
 
   return (
     <>
-      {debeCompletarEmail && (
-        <CompletarEmailModal isOpen={true} onClose={() => { }} onActionSuccess={handleUpdateSuccess} />
-      )}
-
       <aside className="hidden md:flex flex-col w-64 bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white h-screen fixed left-0 top-0 z-40 border-r border-white/10 shadow-2xl overflow-hidden">
 
         {/* HEADER LOGO */}
