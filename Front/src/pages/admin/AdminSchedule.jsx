@@ -194,15 +194,17 @@ const AdminSchedule = ({ onBack, initialData }) => {
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
                                 <select
-                                    value={commonData.coordinador_id}
-                                    onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
-                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none transition-all"
+                                    name="coordinador_id"
+                                    value={formData.coordinador_id || ""}
+                                    onChange={(e) => setFormData({
+                                        ...formData,
+                                        coordinador_id: e.target.value === "" ? null : parseInt(e.target.value)
+                                    })}
+                                    className="tu-clase-de-estilo"
                                 >
-                                    <option value="">Seleccione Coordinador</option>
-                                    {coordinadores.map(p => (
-                                        <option key={p.id} value={p.id.toString()}>
-                                            {p.nombre_completo || `${p.nombres} ${p.apellidos}`}
-                                        </option>
+                                    <option value="">-- Sin asignar / Quitar coordinador --</option>
+                                    {coordinadores.map(c => (
+                                        <option key={c.id} value={c.id}>{c.nombre_completo}</option>
                                     ))}
                                 </select>
                             </div>

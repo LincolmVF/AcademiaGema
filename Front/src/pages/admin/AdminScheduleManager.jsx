@@ -53,9 +53,10 @@ const AdminSchedulesManager = () => {
         return horarios.filter(h => {
             const matchesDia = filterDia === '' || h.dia_semana.toString() === filterDia;
             const matchesSede = filterSede === '' || h.cancha.sede.nombre === filterSede;
-            const matchesProf = filterCoordinador === '' || h.coordinador.nombre_completo === filterCoordinador;
+            const nombreCoordinador = h.coordinador?.nombre_completo || 'Sin asignar';
+            const matchesProf = filterCoordinador === '' || nombreCoordinador === filterCoordinador;
             const matchesSearch = searchTerm === '' ||
-                h.coordinador.nombre_completo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                nombreCoordinador.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 h.cancha.nombre.toLowerCase().includes(searchTerm.toLowerCase());
 
             return matchesDia && matchesSede && matchesProf && matchesSearch;
