@@ -17,7 +17,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     const [commonData, setCommonData] = useState({
         sede_id: initialData?.cancha?.sede?.id?.toString() || '',
         cancha_id: initialData?.cancha?.id?.toString() || '',
-        coordinador_id: initialData?.coordinador?.id?.toString() || '',
+        coordinador_id: initialData?.coordinador?.id?.toString() || '', // Se mantiene como String para el select
         nivel_id: initialData?.nivel?.id?.toString() || '',
         capacidad_max: initialData?.capacidad_max || 20
     });
@@ -93,7 +93,8 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        if (!commonData.cancha_id || !commonData.coordinador_id || !commonData.nivel_id) {
+        // coordinador_id ya no es obligatorio para el submit
+        if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
         setLoading(true);
@@ -101,7 +102,8 @@ const AdminSchedule = ({ onBack, initialData }) => {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    coordinador_id: Number(commonData.coordinador_id),
+                    // Si es vacío, enviamos null al backend
+                    coordinador_id: commonData.coordinador_id ? Number(commonData.coordinador_id) : null,
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
                     dia_semana: Number(bloque.dia_semana),
@@ -193,20 +195,19 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
-                                <select
-                                    name="coordinador_id"
-                                    value={commonData.coordinador_id || ""}
-                                    onChange={(e) => setCommonData({
-                                        ...commonData,
-                                        coordinador_id: e.target.value === "" ? null : parseInt(e.target.value)
-                                    })}
-                                    className="tu-clase-de-estilo"
-                                >
-                                    <option value="">-- Sin asignar / Quitar coordinador --</option>
-                                    {coordinadores.map(c => (
-                                        <option key={c.id} value={c.id}>{c.nombre_completo}</option>
-                                    ))}
-                                </select>
+                                <div className="relative">
+                                    <User size={14} className="absolute left-4 top-3.5 text-slate-400" />
+                                    <select
+                                        value={commonData.coordinador_id}
+                                        onChange={(e) => setCommonData({ ...commonData, coordinador_id: e.target.value })}
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm font-bold focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    >
+                                        <option value="">-- Sin asignar / Quitar coordinador --</option>
+                                        {coordinadores.map(c => (
+                                            <option key={c.id} value={c.id.toString()}>{c.nombre_completo}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Nivel</label>
@@ -230,7 +231,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                 <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Clock size={20} /></div>
                                 <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Horarios</h3>
                             </div>
-                            {/* BOTÓN PLUS VISIBLE SIEMPRE */}
                             <button
                                 onClick={addBloque}
                                 className="p-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
@@ -239,7 +239,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                             </button>
                         </div>
                         <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
-                            {bloques.map((bloque, index) => (
+                            {bloques.map((bloque) => (
                                 <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative group hover:bg-white hover:border-blue-100 transition-all">
                                     {bloques.length > 1 && (
                                         <button
