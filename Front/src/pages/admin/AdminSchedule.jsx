@@ -17,7 +17,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
     const [commonData, setCommonData] = useState({
         sede_id: initialData?.cancha?.sede?.id?.toString() || '',
         cancha_id: initialData?.cancha?.id?.toString() || '',
-        coordinador_id: initialData?.coordinador?.id?.toString() || '', // Se mantiene como String para el select
+        coordinador_id: initialData?.coordinador?.id?.toString() || '', 
         nivel_id: initialData?.nivel?.id?.toString() || '',
         capacidad_max: initialData?.capacidad_max || 20
     });
@@ -93,17 +93,24 @@ const AdminSchedule = ({ onBack, initialData }) => {
     };
 
     const handleSubmit = async () => {
-        // coordinador_id ya no es obligatorio para el submit
+        // CORRECCIÓN: coordinador_id ya no bloquea el envío si es "" (Sin asignar)
         if (!commonData.cancha_id || !commonData.nivel_id) {
             return toast.error("Por favor completa los campos obligatorios");
         }
+
+        // Validar que todos los bloques tengan día y horas
+        const bloquesIncompletos = bloques.some(b => !b.dia_semana || !b.hora_inicio || !b.hora_fin);
+        if (bloquesIncompletos) {
+            return toast.error("Por favor completa todos los horarios");
+        }
+
         setLoading(true);
         try {
             const promesas = bloques.map(bloque => {
                 const payload = {
                     cancha_id: Number(commonData.cancha_id),
-                    // Si es vacío, enviamos null al backend
-                    coordinador_id: commonData.coordinador_id ? Number(commonData.coordinador_id) : null,
+                    // CORRECCIÓN: Si es "" enviamos null para cumplir con el esquema opcional del modelo horarios_clases
+                    coordinador_id: commonData.coordinador_id === "" ? null : Number(commonData.coordinador_id),
                     nivel_id: Number(commonData.nivel_id),
                     capacidad_max: Number(commonData.capacidad_max),
                     dia_semana: Number(bloque.dia_semana),
@@ -152,6 +159,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Espacio / Cancha */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
                             <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Home size={20} /></div>
@@ -187,6 +195,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         </div>
                     </div>
 
+                    {/* Personal y Nivel */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center gap-3">
                             <div className="p-2 bg-orange-100 text-orange-600 rounded-lg"><User size={20} /></div>
@@ -225,6 +234,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                 </div>
 
                 <div className="space-y-6">
+                    {/* Lista de Horarios */}
                     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col max-h-[500px]">
                         <div className="p-6 border-b border-slate-100 bg-[#f8fafc] flex items-center justify-between">
                             <div className="flex items-center gap-3">
@@ -278,6 +288,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         </div>
                     </div>
 
+                    {/* Resumen Final */}
                     <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] p-6 rounded-3xl text-white shadow-xl relative overflow-hidden group">
                         <div className="relative z-10">
                             <h4 className="font-black uppercase italic tracking-tighter text-xl mb-2 text-orange-500">Resumen</h4>
