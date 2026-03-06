@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, MapPin } from 'lucide-react';
+import { Clock, CalendarDays, MapPin } from 'lucide-react';
 
 const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
   const diasSemana = [
@@ -8,7 +8,8 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
     { id: 3, label: 'Miércoles', short: 'MIE' },
     { id: 4, label: 'Jueves', short: 'JUE' },
     { id: 5, label: 'Viernes', short: 'VIE' },
-    { id: 6, label: 'Sábado', short: 'SAB' }
+    { id: 6, label: 'Sábado', short: 'SAB' },
+    { id: 7, label: 'Domingo', short: 'DOM' }
   ];
 
   const startDay = 7;
@@ -25,7 +26,7 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
 
   return (
     <>
-      {/* Estilos inyectados para los scrolls personalizado */}
+      {/* Estilos para Scrolls en Blanco/Naranja/Azul */}
       <style dangerouslySetInnerHTML={{
         __html: `
         .custom-scrollbar::-webkit-scrollbar {
@@ -33,45 +34,52 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
           height: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
+          background: #f1f5f9;
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(249, 115, 22, 0.2);
+          background: #cbd5e1;
           border-radius: 10px;
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.3s;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(249, 115, 22, 0.5);
+          background: #f97316;
         }
       `}} />
 
-      <section className="mb-8 bg-[#020617] rounded-3xl p-1 shadow-2xl border border-white/5 relative overflow-hidden font-sans mx-auto max-w-7xl animate-fade-in">
+      <section className="mb-8 bg-white rounded-[2rem] p-1 shadow-xl border border-slate-200 relative overflow-hidden font-sans mx-auto max-w-7xl animate-fade-in">
+        {/* Decoración de fondo suave */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 opacity-50 blur-[80px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-50 opacity-50 blur-[80px] rounded-full pointer-events-none" />
+
         <div className="p-3 md:p-6 relative z-10">
 
-          {/* Header */}
+          {/* Header en Blanco/Azul/Naranja */}
           <div className="flex items-center justify-between mb-6 gap-4 px-2">
             <div className="space-y-0.5">
-              <h2 className="text-xl md:text-3xl font-black italic text-white uppercase tracking-tighter leading-none">
-                GEMA <span className="text-orange-500 text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">PLANNER</span>
+              <h2 className="text-xl md:text-3xl font-black italic text-[#1e3a8a] uppercase tracking-tighter leading-none">
+                GEMA <span className="text-orange-500">PLANNER</span>
               </h2>
-              <p className="text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Elite Training</p>
+              <div className="flex items-center gap-2">
+                <CalendarDays size={12} className="text-slate-400" />
+                <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Horarios de Academia</p>
+              </div>
             </div>
-            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 backdrop-blur-md">
-              <Clock className="text-orange-500" size={14} />
-              <span className="text-[10px] md:text-xs font-black text-white italic tracking-tighter">07:00 — 00:00</span>
+            <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 shadow-sm">
+              <Clock className="text-[#1e3a8a]" size={14} />
+              <span className="text-[10px] md:text-xs font-black text-[#1e3a8a] italic tracking-tighter">07:00 — 00:00</span>
             </div>
           </div>
 
-          {/* Timeline Container con Scroll personalizado */}
-          <div className="relative flex overflow-x-auto overflow-y-hidden pb-4 custom-scrollbar border border-white/5 rounded-2xl bg-black/20 transition-all">
+          {/* Timeline Container */}
+          <div className="relative flex overflow-x-auto pb-4 custom-scrollbar border border-slate-100 rounded-2xl bg-slate-50/50">
 
             {/* Gutter de Horas (Sticky) */}
-            <div className="flex-none w-10 md:w-14 pt-12 border-r border-white/5 sticky left-0 bg-[#020617]/95 backdrop-blur-md z-30 shadow-xl">
+            <div className="flex-none w-10 md:w-14 pt-12 border-r border-slate-200 sticky left-0 bg-white/80 backdrop-blur-md z-30">
               {Array.from({ length: totalHours + 1 }).map((_, i) => (
                 <div
                   key={i}
-                  className="text-[8px] md:text-[9px] font-black text-slate-500 pr-2 flex justify-end italic transition-colors hover:text-orange-400"
+                  className="text-[8px] md:text-[9px] font-black text-slate-400 pr-2 flex justify-end italic"
                   style={{ height: `${100 / totalHours}%`, transform: 'translateY(-50%)' }}
                 >
                   {startDay + i}:00
@@ -80,22 +88,22 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
             </div>
 
             {/* Grid de Días */}
-            <div className="flex-grow grid grid-cols-6 min-w-[750px] md:min-w-full">
+            <div className="flex-grow grid grid-cols-6 min-w-[700px] md:min-w-full">
               {diasSemana.map((dia) => {
                 const clasesDelDia = agendaSeleccionada.filter(h => Number(h.dia_semana) === dia.id);
 
                 return (
-                  <div key={dia.id} className="relative border-r border-white/5 last:border-r-0 min-h-[500px] group/day transition-colors hover:bg-white/[0.01]">
-                    <div className="h-12 flex items-center justify-center border-b border-white/5 bg-white/[0.01]">
-                      <span className="text-[10px] md:text-[12px] font-black text-white italic uppercase group-hover/day:text-orange-500 transition-colors tracking-widest">
+                  <div key={dia.id} className="relative border-r border-slate-100 last:border-r-0 min-h-[500px] group/day hover:bg-white/50 transition-colors">
+                    <div className="h-12 flex items-center justify-center border-b border-slate-100 bg-white/30">
+                      <span className="text-[10px] md:text-[12px] font-black text-[#1e3a8a] italic uppercase tracking-widest group-hover/day:text-orange-500 transition-colors">
                         {dia.short}
                       </span>
                     </div>
 
                     <div className="relative h-full px-1">
-                      {/* Líneas Horizontales */}
+                      {/* Líneas Horizontales Sutiles */}
                       {Array.from({ length: totalHours }).map((_, i) => (
-                        <div key={i} className="absolute w-full border-t border-white/[0.03]" style={{ top: `${(i / totalHours) * 100}%` }} />
+                        <div key={i} className="absolute w-full border-t border-slate-200/50" style={{ top: `${(i / totalHours) * 100}%` }} />
                       ))}
 
                       {clasesDelDia.map((clase) => {
@@ -106,7 +114,7 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
                         return (
                           <div
                             key={clase.id}
-                            className="absolute left-1 right-1 rounded-lg overflow-hidden group/item transition-all duration-300 hover:z-40 hover:scale-[1.04] shadow-lg border border-white/10"
+                            className="absolute left-1 right-1 rounded-xl overflow-hidden group/item transition-all duration-300 hover:z-40 hover:scale-[1.04] shadow-md border border-slate-200 hover:border-orange-200"
                             style={{
                               top: `${top}%`,
                               height: `${height}%`,
@@ -114,24 +122,30 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
                               marginBottom: '1.5px'
                             }}
                           >
-                            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 group-hover/item:from-orange-600 group-hover/item:to-orange-700 transition-all duration-500" />
+                            {/* Fondo Azul Marino que cambia a Naranja */}
+                            <div className="absolute inset-0 bg-white group-hover/item:bg-orange-50 transition-colors duration-500" />
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#1e3a8a] group-hover/item:bg-orange-500 transition-colors" />
 
-                            <div className="relative p-1.5 h-full flex flex-col justify-between overflow-hidden">
+                            <div className="relative p-2 h-full flex flex-col justify-between">
                               <div className="flex flex-col">
-                                <span className="text-[8px] md:text-[9px] font-black text-white italic uppercase truncate leading-none mb-1 group-hover/item:tracking-wider transition-all">
-                                  {clase.nivel?.nombre || 'CLASS'}
+                                <span className="text-[8px] md:text-[10px] font-black text-[#1e3a8a] italic uppercase truncate leading-none mb-1 group-hover/item:text-orange-600">
+                                  {clase.nivel?.nombre || 'CLASE'}
                                 </span>
 
-                                <div className="flex flex-col text-[7px] md:text-[8px] font-bold text-orange-400 group-hover/item:text-orange-50/90 transition-colors">
-                                  <div className="flex items-center gap-0.5">
-                                    <span className="opacity-40 text-[6px]">IN</span>
-                                    <span>{clase.hora_inicio}</span>
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <div className="w-1 h-1 rounded-full bg-orange-500" />
+                                    <span className="text-[7px] md:text-[8px] font-bold text-slate-500">{clase.hora_inicio}</span>
                                   </div>
-                                  <div className="flex items-center gap-0.5">
-                                    <span className="opacity-40 text-[6px]">OUT</span>
-                                    <span className="opacity-70 group-hover/item:opacity-100">{clase.hora_fin}</span>
+                                  <div className="flex items-center gap-1 opacity-60">
+                                    <div className="w-1 h-1 rounded-full bg-slate-300" />
+                                    <span className="text-[7px] md:text-[8px] font-bold text-slate-500">{clase.hora_fin}</span>
                                   </div>
                                 </div>
+                              </div>
+
+                              <div className="flex justify-end">
+                                <MapPin size={10} className="text-blue-100 group-hover/item:text-orange-200 transition-colors" />
                               </div>
                             </div>
                           </div>
@@ -144,14 +158,14 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
             </div>
           </div>
 
-          {/* Legend / Footer */}
-          <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4 px-2">
-            <div className="flex items-center gap-2 bg-orange-500/5 px-3 py-1 rounded-lg border border-orange-500/10">
-              <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-              <span className="text-[9px] font-black text-slate-400 uppercase italic">Schedule Active</span>
+          {/* Footer en Blanco/Azul */}
+          <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-slate-100 pt-4 px-2">
+            <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#1e3a8a]" />
+              <span className="text-[9px] font-black text-[#1e3a8a] uppercase italic tracking-widest opacity-70">Sistema Gema</span>
             </div>
-            <p className="text-[8px] font-bold text-slate-600 uppercase italic tracking-tighter">
-              Desliza horizontalmente para navegar días →
+            <p className="text-[8px] font-bold text-slate-400 uppercase italic">
+              Desliza para ver más horarios →
             </p>
           </div>
         </div>
