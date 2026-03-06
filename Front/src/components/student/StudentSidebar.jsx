@@ -15,7 +15,6 @@ const StudentSidebar = () => {
   const [hasNewNews, setHasNewNews] = useState(false);
 
   const userData = user?.user || user || {};
-  const debeCompletarEmail = userData?.debeCompletarEmail === true;
 
   const [openMenus, setOpenMenus] = useState({
     'Club': true,
@@ -53,19 +52,7 @@ const StudentSidebar = () => {
   }, []);
 
   const toggleMenu = (title) => {
-    if (debeCompletarEmail) return;
     setOpenMenus(prev => ({ ...prev, [title]: !prev[title] }));
-  };
-
-  const handleUpdateSuccess = (updatedData) => {
-    if (!user) return;
-    const plainData = updatedData?.user || updatedData;
-    const newUserState = {
-      ...user,
-      user: { ...(user.user || user), ...plainData, debeCompletarEmail: false },
-      debeCompletarEmail: false
-    };
-    login(newUserState);
   };
 
   const menuGroups = [
@@ -135,11 +122,11 @@ const StudentSidebar = () => {
             <div key={idx} className="space-y-1">
               {group.type === 'link' ? (
                 <Link
-                  to={debeCompletarEmail ? "#" : group.path}
+                  to={group.path}
                   className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${location.pathname === group.path
                     ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/20'
                     : 'text-blue-100/60 hover:bg-white/5'
-                    } ${debeCompletarEmail ? "cursor-not-allowed opacity-50" : ""}`}
+                    }`}
                 >
                   <group.icon size={18} />
                   <span className="text-sm font-bold">{group.title}</span>
@@ -148,7 +135,6 @@ const StudentSidebar = () => {
                 <div className="space-y-0.5">
                   <button
                     onClick={() => toggleMenu(group.title)}
-                    disabled={debeCompletarEmail}
                     className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-blue-100/60 hover:bg-white/5 transition-all group"
                   >
                     <div className="flex items-center gap-3">
@@ -165,11 +151,11 @@ const StudentSidebar = () => {
                         return (
                           <Link
                             key={item.path}
-                            to={debeCompletarEmail ? "#" : item.path}
+                            to={item.path}
                             className={`flex items-center justify-between px-4 py-2 rounded-xl transition-all text-xs ${isActive
                               ? 'text-orange-400 font-bold bg-orange-400/10'
                               : 'text-blue-100/50 hover:text-white'
-                              } ${debeCompletarEmail ? "cursor-not-allowed" : ""}`}
+                              }`}
                           >
                             <div className="flex items-center gap-3">
                               <item.icon size={14} />
