@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { roleData } from '../data/mockDashboard';
 import apiFetch from '../interceptors/api';
 import { API_ROUTES } from '../constants/apiRoutes';
-import { TrendingUp, Activity, Zap, FileSpreadsheet, Users, GraduationCap, MapPin, AlertCircle } from 'lucide-react';
+// Se añade el icono Home
+import { TrendingUp, Activity, Zap, FileSpreadsheet, Home, User, Clock, AlertCircle } from 'lucide-react'; 
 import * as XLSX from 'xlsx';
+import { Link } from 'react-router-dom'; // Importante para la redirección
 
 const StatCard = ({ id, title, value, icon: Icon, color }) => {
     const colors = {
@@ -91,19 +93,15 @@ const Dashboard = ({ role = 'student' }) => {
             const reportData = result.data;
             const workbook = XLSX.utils.book_new();
 
-            // 1. Pestaña Alumnos
             const alumnosWS = XLSX.utils.json_to_sheet(reportData.alumnos);
             XLSX.utils.book_append_sheet(workbook, alumnosWS, "Lista_Alumnos");
 
-            // 2. Pestaña Pagos
             const pagosWS = XLSX.utils.json_to_sheet(reportData.pagos);
             XLSX.utils.book_append_sheet(workbook, pagosWS, "Historial_Pagos");
 
-            // 3. Pestaña Deudas
             const deudasWS = XLSX.utils.json_to_sheet(reportData.deudas);
             XLSX.utils.book_append_sheet(workbook, deudasWS, "Cuentas_Pendientes");
 
-            // Estética de columnas (opcional)
             alumnosWS['!cols'] = [{ wch: 25 }, { wch: 30 }, { wch: 20 }];
 
             XLSX.writeFile(workbook, `Reporte_Gema_Detallado_${new Date().toISOString().split('T')[0]}.xlsx`);
@@ -137,11 +135,22 @@ const Dashboard = ({ role = 'student' }) => {
                     </h1>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white p-3 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40">
-                    <div className="h-10 w-10 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold">A</div>
-                    <div className="pr-4">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operaciones</p>
-                        <p className="text-xs font-bold text-slate-700">Administrador</p>
+                <div className="flex items-center gap-4">
+                    {/* BOTÓN IR AL INICIO */}
+                    <Link 
+                        to="/" 
+                        className="p-3 bg-white text-slate-400 hover:text-[#1e3a8a] border border-slate-100 rounded-2xl shadow-lg shadow-slate-200/40 transition-all hover:-translate-y-1"
+                        title="Ir al Inicio"
+                    >
+                        <Home size={22} />
+                    </Link>
+
+                    <div className="flex items-center gap-4 bg-white p-3 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/40">
+                        <div className="h-10 w-10 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-bold">A</div>
+                        <div className="pr-4">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operaciones</p>
+                            <p className="text-xs font-bold text-slate-700">Administrador</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,7 +164,6 @@ const Dashboard = ({ role = 'student' }) => {
 
             {/* Fila de Actividad y Herramientas */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-                {/* Tabla de Actividad */}
                 <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.03)] overflow-hidden">
                     <div className="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                         <div className="flex items-center gap-4">
@@ -183,7 +191,6 @@ const Dashboard = ({ role = 'student' }) => {
                     </div>
                 </div>
 
-                {/* Card de Acción (Excel) */}
                 <div className="bg-[#1e3a8a] rounded-[2.5rem] p-10 text-white relative overflow-hidden flex flex-col justify-between">
                     <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/20 rounded-full -mr-16 -mt-16 blur-3xl"></div>
 
