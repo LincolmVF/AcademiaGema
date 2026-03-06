@@ -12,7 +12,7 @@ export const API_ROUTES = {
     },
     HORARIOS: {
         BASE: '/horarios',
-        ACTIVOS: '/horarios', // Filtered usually in frontend or backend query
+        ACTIVOS: '/horarios', 
         BY_ID: (id) => `/horarios/${id}`,
     },
     USUARIOS: {
