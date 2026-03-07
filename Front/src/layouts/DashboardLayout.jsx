@@ -39,15 +39,7 @@ const DashboardLayout = () => {
                 {/* HEADER */}
                 <header className="bg-white border-b-2 border-[#1e3a8a]/10 h-20 flex items-center justify-between px-4 sm:px-8 z-10">
                     
-                    <div className="flex items-center gap-6">
-                        {/* El botón de menú lateral se mantiene por si el admin quiere abrir el sidebar completo */}
-                        <button
-                            onClick={() => setSidebarOpen(!isSidebarOpen)}
-                            className="md:hidden p-2 text-[#1e3a8a] hover:bg-orange-50 rounded-xl transition-colors"
-                        >
-                            {isSidebarOpen ? <X size={26} /> : <Menu size={26} />}
-                        </button>
-                    </div>
+                    {/* El botón de menú lateral fue removido de aquí */}
 
                     <div className="md:hidden flex items-center">
                         <img

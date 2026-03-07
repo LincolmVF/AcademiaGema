@@ -10,6 +10,10 @@ const AdminStudentsManager = () => {
     const [alumnos, setAlumnos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    
+    // Paginación
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     // 1. Cargar alumnos desde el Backend
     const fetchAlumnos = async () => {
@@ -57,6 +61,16 @@ const AdminStudentsManager = () => {
         alum.apellidos?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         alum.numero_documento?.includes(searchTerm)
     );
+
+    // Resetear a primera página cuando se busca
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchTerm]);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentAlumnos = filteredAlumnos.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredAlumnos.length / itemsPerPage);
 
     const handleViewDetails = (alumno) => {
         setSelectedAlumno(alumno);
@@ -244,7 +258,7 @@ const AdminStudentsManager = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {filteredAlumnos.length > 0 ? filteredAlumnos.map((alum) => (
+                            {currentAlumnos.length > 0 ? currentAlumnos.map((alum) => (
                                 <tr key={alum.id} className="hover:bg-blue-50/30 transition-colors group">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
@@ -277,6 +291,31 @@ const AdminStudentsManager = () => {
                     </table>
                 </div>
             </div>
+
+            {/* Paginación */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 mt-4 shadow-sm">
+                    <span className="text-xs font-bold text-slate-500 uppercase">
+                        Mostrando {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, filteredAlumnos.length)} de {filteredAlumnos.length}
+                    </span>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all bg-slate-100 text-slate-600 hover:bg-[#1e3a8a] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Anterior
+                        </button>
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all bg-slate-100 text-slate-600 hover:bg-[#1e3a8a] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            Siguiente
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

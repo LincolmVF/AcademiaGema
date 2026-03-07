@@ -4,7 +4,7 @@ import {
   LayoutDashboard, CheckCircle, Users, Menu, X, 
   MapPin, CalendarRange, BarChart3, TicketPercent, 
   UserCog, GraduationCap, DollarSign, Activity, Settings, LogOut,
-  Megaphone // <-- Icono añadido
+  Megaphone, Ticket
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -57,15 +57,18 @@ const MobileNavbarAdmin = () => {
                             <div className="space-y-1">
                                 <p className="px-4 text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-2">Comunidad</p>
                                 <NavLink to="/dashboard/admin/teachers" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><UserCog size={18}/> Profesores</NavLink>
+                                <NavLink to="/dashboard/admin/students" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><GraduationCap size={18}/> Alumnos</NavLink>
                                 <NavLink to="/dashboard/admin/benefits" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><TicketPercent size={18}/> Lista Beneficios</NavLink>
                                 {/* 👇 Enlace a Publicaciones añadido aquí */}
                                 <NavLink to="/dashboard/admin/publications" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><Megaphone size={18}/> Publicaciones</NavLink>
                             </div>
 
                             <div className="space-y-1">
-                                <p className="px-4 text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-2">Sistema</p>
+                                <p className="px-4 text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-2">Administración</p>
                                 <NavLink to="/dashboard/admin/catalog" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><DollarSign size={18}/> Catálogo Precios</NavLink>
+                                <NavLink to="/dashboard/admin/payment-validation" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><CheckCircle size={18}/> Validación de Pagos</NavLink>
                                 <NavLink to="/dashboard/admin/injuries" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><Activity size={18}/> Control Lesiones</NavLink>
+                                <NavLink to="/dashboard/admin/guest-passes" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><Ticket size={18}/> Pases de Invitado</NavLink>
                                 <NavLink to="/dashboard/admin/settings" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><Settings size={18}/> Configuración</NavLink>
                             </div>
                         </div>

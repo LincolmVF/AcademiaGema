@@ -60,12 +60,12 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
 
         // 2. Validación básica antes de disparar el loading
         if (canchasFiltradas.length === 0) {
-            alert("Debes agregar al menos una cancha con nombre.");
+            toast.error("Debes agregar al menos\nuna cancha con nombre.");
             return;
         }
 
         if (!formData.distrito) {
-            alert("Por favor selecciona un distrito.");
+            toast.error("Por favor selecciona\nun distrito.");
             return;
         }
 
@@ -100,8 +100,6 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
 
         } catch (error) {
             toast.error(error.message || "Error en los datos");
-
-            console.log("Campos fallidos:", error.errors);
         } finally {
             setLoading(false);
         }

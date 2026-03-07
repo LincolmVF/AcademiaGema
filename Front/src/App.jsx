@@ -57,7 +57,45 @@ function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster 
+        position="top-right" 
+        reverseOrder={false}
+        toastOptions={{
+          className: '',
+          style: {
+            border: '2px solid #1e3a8a',
+            padding: '16px',
+            color: '#1e3a8a',
+            borderRadius: '1rem',
+            fontWeight: '900',
+            fontStyle: 'italic',
+            textTransform: 'uppercase',
+            boxShadow: '0 10px 15px -3px rgba(30, 58, 138, 0.2), 0 4px 6px -2px rgba(30, 58, 138, 0.1)'
+          },
+          success: {
+            style: {
+              background: '#f8fafc',
+              borderLeft: '6px solid #1e3a8a', // Blue representing Gema successful operations
+            },
+            iconTheme: {
+              primary: '#1e3a8a',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            style: {
+              background: '#fff',
+              borderLeft: '6px solid #f97316', // Orange indicating errors
+              color: '#f97316',
+              borderColor: '#f97316'
+            },
+            iconTheme: {
+              primary: '#f97316',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
 
       <Routes>
         <Route
