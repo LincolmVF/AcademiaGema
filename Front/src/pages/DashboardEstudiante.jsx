@@ -265,41 +265,82 @@ const DashboardEstudiante = () => {
                 onClick={() => setShowNotifList(!showNotifList)} 
               />
               
-              {/* DROPDOWN DE ALERTAS */}
+              {/* DROPDOWN DE ALERTAS DIVIDIDO EN NUEVAS Y ANTERIORES */}
               {showNotifList && (
-                <div className="absolute right-0 top-16 w-72 md:w-80 bg-white rounded-[2rem] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
-                  <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                <div className="absolute right-0 top-16 w-72 md:w-96 bg-white rounded-[2rem] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                  <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/80">
                     <h3 className="font-black text-[#1e3a8a] text-[10px] uppercase italic tracking-widest">Centro de Alertas</h3>
                     {unreadCountDB > 0 && (
-                      <span className="text-[9px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">
+                      <span className="text-[9px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-black tracking-widest shadow-sm">
                         {unreadCountDB} NUEVAS
                       </span>
                     )}
                   </div>
-                  <div className="max-h-80 overflow-y-auto">
+                  
+                  <div className="max-h-[350px] overflow-y-auto custom-scrollbar">
                     {(notifications || []).length > 0 ? (
-                      notifications.map((n) => (
-                        <div 
-                          key={n.id} 
-                          className={`p-4 border-b border-slate-50 last:border-0 transition-colors cursor-pointer hover:bg-slate-50 ${!n.leido ? 'bg-blue-50/30' : 'opacity-60'}`}
-                          onClick={() => handleMarkAsRead(n.id)}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.leido ? 'bg-orange-500 animate-pulse' : 'bg-slate-300'}`} />
-                            <div>
-                              <h4 className="font-black text-[#1e3a8a] text-[11px] uppercase tracking-tight">{n.titulo}</h4>
-                              <p className="text-[10px] text-slate-500 font-medium leading-tight mt-1">{n.mensaje}</p>
-                              <span className="text-[8px] text-slate-400 font-bold uppercase mt-2 block italic">
-                                {new Date(n.creado_en).toLocaleString()}
-                              </span>
+                      <div className="flex flex-col">
+                        
+                        {/* --- GRUPO 1: PENDIENTES (NO LEÍDAS) --- */}
+                        {(notifications || []).filter(n => !n.leido).length > 0 && (
+                          <div>
+                            <div className="px-5 py-2 bg-blue-50/30 border-y border-slate-100 text-[9px] font-black text-[#1e3a8a] uppercase tracking-widest">
+                              Nuevas
                             </div>
+                            {notifications.filter(n => !n.leido).map((n) => (
+                              <div 
+                                key={n.id} 
+                                className="p-5 border-b border-slate-50 transition-all cursor-pointer hover:bg-blue-50/50 bg-white"
+                                onClick={() => handleMarkAsRead(n.id)}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="w-2.5 h-2.5 rounded-full mt-1 shrink-0 bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]" />
+                                  <div>
+                                    <h4 className="font-black text-[#1e3a8a] text-xs uppercase tracking-tight leading-none mb-1">{n.titulo}</h4>
+                                    <p className="text-[11px] text-slate-600 font-medium leading-snug">{n.mensaje}</p>
+                                    <span className="text-[9px] text-orange-500 font-black uppercase mt-2 block italic">
+                                      {new Date(n.creado_en).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        </div>
-                      ))
+                        )}
+
+                        {/* --- GRUPO 2: HISTORIAL (LEÍDAS) --- */}
+                        {(notifications || []).filter(n => n.leido).length > 0 && (
+                          <div>
+                            <div className="px-5 py-2 bg-slate-50 border-y border-slate-100 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                              Anteriores
+                            </div>
+                            {notifications.filter(n => n.leido).map((n) => (
+                              <div 
+                                key={n.id} 
+                                className="p-5 border-b border-slate-50 bg-slate-50/30 opacity-70"
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div className="w-2 h-2 rounded-full mt-1.5 shrink-0 bg-slate-300" />
+                                  <div>
+                                    <h4 className="font-black text-slate-600 text-[11px] uppercase tracking-tight leading-none mb-1">{n.titulo}</h4>
+                                    <p className="text-[10px] text-slate-500 font-medium leading-snug">{n.mensaje}</p>
+                                    <span className="text-[8px] text-slate-400 font-bold uppercase mt-2 block italic">
+                                      {new Date(n.creado_en).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                      </div>
                     ) : (
-                      <div className="p-10 text-center flex flex-col items-center gap-2">
-                        <BellOff size={24} className="text-slate-200" />
-                        <p className="text-[10px] font-black text-slate-300 uppercase italic">Sin alertas pendientes</p>
+                      <div className="p-10 text-center flex flex-col items-center gap-3">
+                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center">
+                          <BellOff size={28} className="text-slate-300" />
+                        </div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">No tienes notificaciones</p>
                       </div>
                     )}
                   </div>
