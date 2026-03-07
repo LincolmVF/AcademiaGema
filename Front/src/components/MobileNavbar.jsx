@@ -99,6 +99,17 @@ const MobileNavbar = () => {
                   <Ticket size={18}/> Mis Recuperaciones
                 </NavLink>
               </div>
+
+              {/* Grupo Administración */}
+              <div className="space-y-3">
+                <p className="text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em]">Administración</p>
+                <NavLink to="/dashboard/student/payments" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                  <CreditCard size={18}/> Mis Pagos
+                </NavLink>
+                <NavLink to="/dashboard/student/profile" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                  <User size={18}/> Mi Perfil
+                </NavLink>
+              </div>
             </nav>
 
             {/* FOOTER: CERRAR SESIÓN */}
