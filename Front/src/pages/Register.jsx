@@ -92,7 +92,7 @@ function Register() {
             const response = await registerService({ ...formData, rol_id: rolIdAlumno });
             const generatedUsername = response.data?.username || "Usuario";
             toast.success(
-                (t) => (<span>¡Bienvenido! Tu usuario es: <b>{generatedUsername}</b>.</span>),
+                (t) => (<span>¡Bienvenido! Tu usuario es: <b>{generatedUsername}</b></span>),
                 { id: toastId, duration: 10000 }
             );
             navigate('/login');
