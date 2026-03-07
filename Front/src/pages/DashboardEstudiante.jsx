@@ -127,36 +127,35 @@ const DashboardEstudiante = () => {
   // Estados de Notificaciones
   const [notifications, setNotifications] = useState([]);
   const [showNotifList, setShowNotifList] = useState(false);
+  const [unreadCountDB, setUnreadCountDB] = useState(0);
 
   const [filtroMes, setFiltroMes] = useState("TODOS");
   const [filtroAnio, setFiltroAnio] = useState(new Date().getFullYear().toString());
 
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-// 1. CARGA DE NOTIFICACIONES Y CONTEO
+  // 1. CARGA DE NOTIFICACIONES Y CONTEO
   const fetchNotifications = async () => {
     try {
       // Pedimos las notificaciones
       const res = await apiFetch.get(API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones");
       const result = await res.json();
-      if (result.success) {
+      if (result.success && result.data) {
         setNotifications(result.data);
+      } else {
+        setNotifications([]);
       }
 
       // Pedimos el conteo de no leídas (MUCHO más rápido)
       const resCount = await apiFetch.get((API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones") + "/conteo-no-leidas");
       const countResult = await resCount.json();
       if (countResult.success) {
-        // En lugar de calcularlo con useMemo, usamos el valor real de la BD
-        setUnreadCountDB(countResult.data); 
+        setUnreadCountDB(countResult.data || 0); 
       }
     } catch (error) {
       console.error("Error al cargar notificaciones:", error);
     }
   };
-
-  // Necesitamos un estado nuevo para el conteo de la BD (Añade esto arriba con los otros estados)
-  const [unreadCountDB, setUnreadCountDB] = useState(0);
 
   // 2. CARGA DE DATOS GENERALES
   useEffect(() => {
@@ -191,25 +190,13 @@ const DashboardEstudiante = () => {
     if (userId) {
       loadDashboardData();
       fetchNotifications();
-      // Polling suave cada 5 min para ver si el Francotirador disparó
+      // Polling suave cada 5 min para ver si hay nuevas alertas
       const interval = setInterval(fetchNotifications, 300000);
       return () => clearInterval(interval);
     }
   }, [userId]);
 
   // 3. LÓGICA DE INTERACCIÓN CON NOTIFICACIONES
-  // Ya no usamos useMemo para el conteo inicial, usamos el estado de la BD. 
-  // Pero sí lo usamos para actualizarlo en tiempo real cuando damos click.
-  const unreadCount = useMemo(() => {
-    // Cuenta localmente basándose en la lista actual cargada
-    return notifications.filter(n => !n.leido).length;
-  }, [notifications]);
-
-  // 3. LÓGICA DE INTERACCIÓN CON NOTIFICACIONES
-  
-  // En lugar de calcularlo, usamos el estado que ya tiene el número real de la BD.
-  // Pero cuando abran la campanita y le den a "marcar como leída", restaremos 1 manualmente
-  // para que se sienta instantáneo sin tener que recargar toda la página.
   const handleMarkAsRead = async (id) => {
     // 1. Actualizamos la lista visualmente al instante (Optimistic UI)
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: true } : n));
@@ -224,10 +211,9 @@ const DashboardEstudiante = () => {
       );
       
       if (!res.ok) {
-        // Si falla el backend, devolvemos el contador a como estaba (Opcional)
+        // Si falla el backend, devolvemos el contador a como estaba
         setUnreadCountDB(prev => prev + 1);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: false } : n));
-        console.error("Error del servidor al marcar como leída");
       }
     } catch (error) {
       console.error("Error al marcar como leída:", error);
@@ -235,7 +221,7 @@ const DashboardEstudiante = () => {
   };
 
   const agendaParaTimeline = useMemo(() => {
-    return attendance
+    return (attendance || [])
       .filter(s => s?.inscripciones?.horarios_clases)
       .map(s => ({
         ...s.inscripciones.horarios_clases,
@@ -244,9 +230,9 @@ const DashboardEstudiante = () => {
       }));
   }, [attendance]);
 
-  const firstName = user.user?.nombres || "Campeón";
-  const fullName = user.user ? `${user.user.nombres} ${user.user.apellidos}` : "Alumno Gema";
-  const initial = user.user?.nombres?.charAt(0).toUpperCase() || "G";
+  const firstName = user?.user?.nombres || "Campeón";
+  const fullName = user?.user ? `${user.user.nombres} ${user.user.apellidos}` : "Alumno Gema";
+  const initial = user?.user?.nombres?.charAt(0).toUpperCase() || "G";
 
   if (loading) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#f1f5f9]">
@@ -291,7 +277,7 @@ const DashboardEstudiante = () => {
                     )}
                   </div>
                   <div className="max-h-80 overflow-y-auto">
-                    {notifications.length > 0 ? (
+                    {(notifications || []).length > 0 ? (
                       notifications.map((n) => (
                         <div 
                           key={n.id} 
