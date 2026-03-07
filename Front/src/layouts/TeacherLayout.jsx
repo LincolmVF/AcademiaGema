@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import TeacherSidebar from '../components/teacher/TeacherSidebar';
+import MobileNavbarTeacher from '../components/MobileNavbarTeacher';
 
 const TeacherLayout = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -36,16 +37,8 @@ const TeacherLayout = () => {
             */}
             <div className="flex-1 flex flex-col min-w-0 transition-all duration-300 md:ml-64">
 
-                {/* HEADER: Barra superior blanca con sombra suave */}
-                <header className="bg-white border-b border-[#1e3a8a]/10 h-20 flex items-center justify-between px-4 sm:px-8 z-20 shadow-sm">
-
-                    {/* BOTÓN HAMBURGUESA: Solo visible en móviles para abrir el Sidebar */}
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="md:hidden p-2 rounded-xl bg-slate-50 text-[#1e3a8a] hover:bg-orange-500 hover:text-white transition-all"
-                    >
-                        <Menu size={24} />
-                    </button>
+                {/* HEADER: Barra superior blanca con sombra suave (oculto en móvil) */}
+                <header className="hidden md:flex bg-white border-b border-[#1e3a8a]/10 h-20 items-center justify-between px-4 sm:px-8 z-20 shadow-sm">
 
                     {/* PERFIL DE USUARIO: Alineado a la derecha */}
                     <div className="flex items-center gap-2 sm:gap-6 ml-auto">
@@ -73,7 +66,7 @@ const TeacherLayout = () => {
                 </header>
 
                 {/* AREA DE CONTENIDO (OUTLET): Aquí es donde se carga el DashboardTeacher */}
-                <main className="flex-1 overflow-y-auto bg-[#f1f5f9] p-4 sm:p-6 lg:p-10 relative">
+                <main className="flex-1 overflow-y-auto bg-[#f1f5f9] p-4 sm:p-6 lg:p-10 pb-24 md:pb-10 relative">
 
                     {/* MARCA DE AGUA: Logo de fondo sutil */}
                     <div className="absolute top-0 right-0 p-10 opacity-[0.02] pointer-events-none hidden xl:block">
@@ -85,6 +78,8 @@ const TeacherLayout = () => {
                         <Outlet />
                     </div>
                 </main>
+
+                <MobileNavbarTeacher />
             </div>
         </div>
     );

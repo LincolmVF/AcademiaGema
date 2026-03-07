@@ -26,11 +26,10 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
   return (
     <>
       <aside className={`
+        hidden md:flex flex-col
         fixed inset-y-0 left-0 z-50 w-64 h-screen 
         bg-gradient-to-b from-[#1e3a8a] to-[#0f172a] text-white 
-        transform transition-transform duration-300 ease-in-out flex flex-col
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        md:translate-x-0 border-r border-white/10 shadow-2xl
+        border-r border-white/10 shadow-2xl
         overflow-hidden
       `}>
 
@@ -69,14 +68,6 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
       </aside>
-
-      {/* Overlay Móvil con Blur */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-[#0f172a]/60 backdrop-blur-sm z-40 md:hidden transition-all"
-          onClick={onClose}
-        ></div>
-      )}
     </>
   );
 };

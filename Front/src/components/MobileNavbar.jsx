@@ -16,12 +16,7 @@ const MobileNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasNewNews, setHasNewNews] = useState(false);
   
-  const userData = user?.user || user || {};
-  const debeCompletarEmail = userData?.debeCompletarEmail === true;
-
-  // Bloqueo de apertura de menú si falta el email
   const toggleMenu = () => {
-    if (debeCompletarEmail) return; 
     setIsMenuOpen(!isMenuOpen);
   };
 
@@ -46,9 +41,6 @@ const MobileNavbar = () => {
     window.addEventListener('news_read', handleNewsRead);
     return () => window.removeEventListener('news_read', handleNewsRead);
   }, []);
-
-  // Helper para rutas bloqueadas por seguridad
-  const getPath = (targetPath) => debeCompletarEmail ? "#" : targetPath;
 
   return (
     <>
@@ -81,13 +73,13 @@ const MobileNavbar = () => {
               {/* Grupo Club Gema */}
               <div className="space-y-3">
                 <p className="text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em]">Club Gema</p>
-                <NavLink to={getPath("/dashboard/student/myRegistrations")} onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                <NavLink to="/dashboard/student/myRegistrations" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
                   <Home size={18}/> Horarios Actuales
                 </NavLink>
-                <NavLink to={getPath("/dashboard/student/enrollment")} onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                <NavLink to="/dashboard/student/enrollment" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
                   <UserPlus size={18}/> Nueva Inscripción
                 </NavLink>
-                <NavLink to={getPath("/dashboard/student/news")} onClick={toggleMenu} className="flex items-center justify-between text-blue-100/70 py-2 font-bold text-sm italic">
+                <NavLink to="/dashboard/student/news" onClick={toggleMenu} className="flex items-center justify-between text-blue-100/70 py-2 font-bold text-sm italic">
                   <div className="flex items-center gap-4">
                     <Megaphone size={18}/> Muro de Noticias
                   </div>
@@ -100,10 +92,10 @@ const MobileNavbar = () => {
               {/* Grupo Rendimiento */}
               <div className="space-y-3">
                 <p className="text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em]">Rendimiento</p>
-                <NavLink to={getPath("/dashboard/student/injuries")} onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                <NavLink to="/dashboard/student/injuries" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
                   <Activity size={18}/> Mis Lesiones
                 </NavLink>
-                <NavLink to={getPath("/dashboard/student/recoveries")} onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
+                <NavLink to="/dashboard/student/recoveries" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 py-2 font-bold text-sm italic">
                   <Ticket size={18}/> Mis Recuperaciones
                 </NavLink>
               </div>
@@ -118,20 +110,20 @@ const MobileNavbar = () => {
       </div>
 
       {/* NAVBAR INFERIOR (Pestañas principales) */}
-      <nav className={`fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-white/10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-50 md:hidden transition-all ${debeCompletarEmail ? 'opacity-50 grayscale pointer-events-none' : ''}`}>
+      <nav className="fixed bottom-0 left-0 w-full bg-[#0f172a] border-t border-white/10 shadow-[0_-10px_20px_rgba(0,0,0,0.3)] z-50 md:hidden transition-all">
         <div className="flex justify-around items-center h-20 max-w-md mx-auto">
           
-          <NavLink to={getPath("/dashboard/student")} end className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
+          <NavLink to="/dashboard/student" end className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
             <LayoutDashboard size={22} />
             <span className="text-[8px] uppercase font-black italic tracking-tighter">Inicio</span>
           </NavLink>
 
-          <NavLink to={getPath("/dashboard/student/payments")} className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
+          <NavLink to="/dashboard/student/payments" className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
             <CreditCard size={22} />
             <span className="text-[8px] uppercase font-black italic tracking-tighter">Pagos</span>
           </NavLink>
 
-          <NavLink to={getPath("/dashboard/student/profile")} className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
+          <NavLink to="/dashboard/student/profile" className={({ isActive }) => `flex flex-col items-center gap-1 w-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/50'}`}>
             <User size={22} />
             <span className="text-[8px] uppercase font-black italic tracking-tighter">Perfil</span>
           </NavLink>
