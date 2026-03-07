@@ -80,40 +80,32 @@ const AdminSchedule = ({ onBack, initialData }) => {
         setBloques([...bloques, { id: Date.now(), dia_semana: '', hora_inicio: '', hora_fin: '' }]);
     };
 
+    // 🔥 FUNCIÓN PRINCIPAL DE ELIMINADO 🔥
     const handleDelete = async (id) => {
-        // Si estamos creando un horario nuevo (el ID es un timestamp gigante)
-        // solo lo removemos de la pantalla
-        if (!isEdit || id.toString().length > 10) {
-             if (bloques.length > 1) {
+        // 1. Si es un bloque "temporal" (creado con el botón '+', el ID es larguísimo por Date.now)
+        if (id.toString().length > 10) {
+            if (bloques.length > 1) {
                 setBloques(bloques.filter(b => b.id !== id));
             } else {
-                toast.error("Debes mantener al menos un horario");
+                toast.error("Debes mantener al menos un horario en el formulario");
             }
             return;
         }
 
-        // Si es un horario real que viene de la BD (isEdit es true)
-        if (!window.confirm("¿Estás seguro de eliminar este horario definitivamente de la base de datos?")) return;
+        // 2. Si es un horario real que ya está en la Base de Datos (Tiene ID corto como 45, 12, etc.)
+        if (!window.confirm("¿Estás seguro de eliminar definitivamente este horario del sistema?")) return;
 
         try {
             const res = await apiFetch.delete(`${API_ROUTES.HORARIOS.BASE}/${id}`);
             if (res.ok) {
                 toast.success("Horario eliminado correctamente");
-                onBack(); // Regresamos a la lista anterior tras borrar
+                onBack(); // Regresa a la pantalla anterior
             } else {
                 const err = await res.json();
-                toast.error(err.message || "No se pudo eliminar");
+                toast.error(err.message || "Error al eliminar de la base de datos");
             }
         } catch (error) {
             toast.error("Error de conexión al eliminar");
-        }
-    };
-
-    const removeBloque = (id) => {
-        if (bloques.length > 1) {
-            setBloques(bloques.filter(b => b.id !== id));
-        } else {
-            toast.error("Debes mantener al menos un horario");
         }
     };
 
@@ -139,7 +131,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                     hora_fin: bloque.hora_fin
                 };
 
-                return isEdit
+                return isEdit && bloque.id.toString().length < 10
                     ? apiFetch.put(API_ROUTES.HORARIOS.BY_ID(bloque.id), payload)
                     : apiFetch.post(API_ROUTES.HORARIOS.BASE, payload);
             });
@@ -225,7 +217,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Coordinador</label>
                                 <select
-                                    value={commonData.coordinador_id || ''} // Aseguramos que si es null, muestre la opción vacía
+                                    value={commonData.coordinador_id || ''} 
                                     onChange={(e) => {
                                         const val = e.target.value;
                                         setCommonData({
@@ -265,7 +257,6 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                 <div className="p-2 bg-blue-100 text-[#1e3a8a] rounded-lg"><Clock size={20} /></div>
                                 <h3 className="font-black text-[#1e3a8a] uppercase tracking-wider text-sm">Horarios</h3>
                             </div>
-                            {/* BOTÓN PLUS VISIBLE SIEMPRE */}
                             <button
                                 onClick={addBloque}
                                 className="p-1.5 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors shadow-md shadow-orange-200"
@@ -276,7 +267,9 @@ const AdminSchedule = ({ onBack, initialData }) => {
                         <div className="p-6 space-y-4 overflow-y-auto custom-scrollbar">
                             {bloques.map((bloque, index) => (
                                 <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative group hover:bg-white hover:border-blue-100 transition-all">
-                                    {bloques.length > 1 && (
+                                    
+                                    {/* 🔥 CONDICIÓN CAMBIADA: Ahora puedes borrar si estás editando O si tienes varios bloques nuevos */}
+                                    {(isEdit || bloques.length > 1) && (
                                         <button
                                             onClick={() => handleDelete(bloque.id)}
                                             className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors"
@@ -284,6 +277,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                             <Trash2 size={16} />
                                         </button>
                                     )}
+                                    
                                     <div className="space-y-1">
                                         <label className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Día de la semana</label>
                                         <select
