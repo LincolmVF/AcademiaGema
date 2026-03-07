@@ -5,7 +5,8 @@ import { API_ROUTES } from '../constants/apiRoutes';
 // Se añade el icono Home
 import { TrendingUp, Activity, Zap, FileSpreadsheet, Home, User, Clock, AlertCircle } from 'lucide-react'; 
 import * as XLSX from 'xlsx';
-import { Link } from 'react-router-dom'; // Importante para la redirección
+import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const StatCard = ({ id, title, value, icon: Icon, color }) => {
     const colors = {
@@ -108,7 +109,7 @@ const Dashboard = ({ role = 'student' }) => {
 
         } catch (error) {
             console.error("Error exportando excel:", error);
-            alert(error.message);
+            toast.error(error.message);
         } finally {
             setIsExporting(false);
         }
