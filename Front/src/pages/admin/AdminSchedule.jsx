@@ -80,6 +80,35 @@ const AdminSchedule = ({ onBack, initialData }) => {
         setBloques([...bloques, { id: Date.now(), dia_semana: '', hora_inicio: '', hora_fin: '' }]);
     };
 
+    const handleDelete = async (id) => {
+        // Si estamos creando un horario nuevo (el ID es un timestamp gigante)
+        // solo lo removemos de la pantalla
+        if (!isEdit || id.toString().length > 10) {
+             if (bloques.length > 1) {
+                setBloques(bloques.filter(b => b.id !== id));
+            } else {
+                toast.error("Debes mantener al menos un horario");
+            }
+            return;
+        }
+
+        // Si es un horario real que viene de la BD (isEdit es true)
+        if (!window.confirm("¿Estás seguro de eliminar este horario definitivamente de la base de datos?")) return;
+
+        try {
+            const res = await apiFetch.delete(`${API_ROUTES.HORARIOS.BASE}/${id}`);
+            if (res.ok) {
+                toast.success("Horario eliminado correctamente");
+                onBack(); // Regresamos a la lista anterior tras borrar
+            } else {
+                const err = await res.json();
+                toast.error(err.message || "No se pudo eliminar");
+            }
+        } catch (error) {
+            toast.error("Error de conexión al eliminar");
+        }
+    };
+
     const removeBloque = (id) => {
         if (bloques.length > 1) {
             setBloques(bloques.filter(b => b.id !== id));
@@ -249,7 +278,7 @@ const AdminSchedule = ({ onBack, initialData }) => {
                                 <div key={bloque.id} className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 relative group hover:bg-white hover:border-blue-100 transition-all">
                                     {bloques.length > 1 && (
                                         <button
-                                            onClick={() => removeBloque(bloque.id)}
+                                            onClick={() => handleDelete(bloque.id)}
                                             className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors"
                                         >
                                             <Trash2 size={16} />
