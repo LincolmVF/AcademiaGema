@@ -44,6 +44,24 @@ const AdminSchedulesManager = () => {
         }
     };
 
+    // 🔥 AÑADIMOS LA FUNCIÓN DE ELIMINAR AQUÍ 🔥
+    const handleDelete = async (id) => {
+        if (!window.confirm("¿Estás seguro de eliminar este horario?")) return;
+
+        try {
+            const res = await apiFetch.delete(`${API_ROUTES.HORARIOS.BASE}/${id}`);
+            if (res.ok) {
+                toast.success("Horario eliminado correctamente");
+                fetchHorarios(); // Recargamos la lista para que desaparezca la tarjeta
+            } else {
+                const err = await res.json();
+                toast.error(err.message || "No se pudo eliminar");
+            }
+        } catch (error) {
+            toast.error("Error de conexión al eliminar");
+        }
+    };
+
     useEffect(() => {
         if (view === 'list') fetchHorarios();
     }, [view]);
