@@ -37,7 +37,13 @@ const AdminBenefits = () => {
                 const dataTipos = await resTipos.json();
 
                 if (resAlumnos.ok) setAlumnos(dataAlumnos.data);
-                if (resTipos.ok) setTiposBeneficio(dataTipos.data || dataTipos);
+                
+                if (resTipos.ok) {
+                    const todosLosTipos = dataTipos.data || dataTipos;
+                    // 🔥 CORRECCIÓN: Filtramos para que SOLO se guarden los que están activos (true o 1)
+                    const tiposActivos = todosLosTipos.filter(tipo => tipo.activo === true || tipo.activo === 1);
+                    setTiposBeneficio(tiposActivos);
+                }
             } catch (error) {
                 toast.error("Error al sincronizar datos");
             } finally {
