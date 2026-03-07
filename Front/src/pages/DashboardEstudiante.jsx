@@ -133,18 +133,30 @@ const DashboardEstudiante = () => {
 
   const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-  // 1. CARGA DE NOTIFICACIONES (Logs de Crons como el Francotirador)
+// 1. CARGA DE NOTIFICACIONES Y CONTEO
   const fetchNotifications = async () => {
     try {
+      // Pedimos las notificaciones
       const res = await apiFetch.get(API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones");
       const result = await res.json();
       if (result.success) {
         setNotifications(result.data);
       }
+
+      // Pedimos el conteo de no leídas (MUCHO más rápido)
+      const resCount = await apiFetch.get((API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones") + "/conteo-no-leidas");
+      const countResult = await resCount.json();
+      if (countResult.success) {
+        // En lugar de calcularlo con useMemo, usamos el valor real de la BD
+        setUnreadCountDB(countResult.data); 
+      }
     } catch (error) {
       console.error("Error al cargar notificaciones:", error);
     }
   };
+
+  // Necesitamos un estado nuevo para el conteo de la BD (Añade esto arriba con los otros estados)
+  const [unreadCountDB, setUnreadCountDB] = useState(0);
 
   // 2. CARGA DE DATOS GENERALES
   useEffect(() => {
@@ -186,15 +198,36 @@ const DashboardEstudiante = () => {
   }, [userId]);
 
   // 3. LÓGICA DE INTERACCIÓN CON NOTIFICACIONES
-  const unreadCount = useMemo(() => 
-    notifications.filter(n => !n.leido).length, 
-  [notifications]);
+  // Ya no usamos useMemo para el conteo inicial, usamos el estado de la BD. 
+  // Pero sí lo usamos para actualizarlo en tiempo real cuando damos click.
+  const unreadCount = useMemo(() => {
+    // Cuenta localmente basándose en la lista actual cargada
+    return notifications.filter(n => !n.leido).length;
+  }, [notifications]);
 
+  // 3. LÓGICA DE INTERACCIÓN CON NOTIFICACIONES
+  
+  // En lugar de calcularlo, usamos el estado que ya tiene el número real de la BD.
+  // Pero cuando abran la campanita y le den a "marcar como leída", restaremos 1 manualmente
+  // para que se sienta instantáneo sin tener que recargar toda la página.
   const handleMarkAsRead = async (id) => {
+    // 1. Actualizamos la lista visualmente al instante (Optimistic UI)
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: true } : n));
+    
+    // 2. Bajamos el contador rojito al instante
+    setUnreadCountDB(prev => Math.max(0, prev - 1));
+    
     try {
-      const res = await apiFetch.patch(API_ROUTES.NOTIFICACIONES?.MARCAR_LEIDA(id) || `/notificaciones/${id}/leer`);
-      if (res.ok) {
-        setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: true } : n));
+      // 3. Le avisamos a la base de datos en segundo plano
+      const res = await apiFetch.patch(
+        (API_ROUTES.NOTIFICACIONES?.BASE || "/notificaciones") + `/${id}/leer`
+      );
+      
+      if (!res.ok) {
+        // Si falla el backend, devolvemos el contador a como estaba (Opcional)
+        setUnreadCountDB(prev => prev + 1);
+        setNotifications(prev => prev.map(n => n.id === id ? { ...n, leido: false } : n));
+        console.error("Error del servidor al marcar como leída");
       }
     } catch (error) {
       console.error("Error al marcar como leída:", error);
@@ -242,7 +275,7 @@ const DashboardEstudiante = () => {
             {/* CAMPANITA GEMA */}
             <div className="relative">
               <NotificationBell 
-                count={unreadCount} 
+                count={unreadCountDB} 
                 onClick={() => setShowNotifList(!showNotifList)} 
               />
               
@@ -251,9 +284,9 @@ const DashboardEstudiante = () => {
                 <div className="absolute right-0 top-16 w-72 md:w-80 bg-white rounded-[2rem] shadow-2xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
                   <div className="p-5 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
                     <h3 className="font-black text-[#1e3a8a] text-[10px] uppercase italic tracking-widest">Centro de Alertas</h3>
-                    {unreadCount > 0 && (
+                    {unreadCountDB > 0 && (
                       <span className="text-[9px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-bold">
-                        {unreadCount} NUEVAS
+                        {unreadCountDB} NUEVAS
                       </span>
                     )}
                   </div>
