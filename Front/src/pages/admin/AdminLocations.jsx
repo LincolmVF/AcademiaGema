@@ -100,8 +100,6 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
 
         } catch (error) {
             toast.error(error.message || "Error en los datos");
-
-            console.log("Campos fallidos:", error.errors);
         } finally {
             setLoading(false);
         }
