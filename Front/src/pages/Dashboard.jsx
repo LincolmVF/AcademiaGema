@@ -44,6 +44,7 @@ const StatCard = ({ id, title, value, icon: Icon, color }) => {
 const Dashboard = ({ role = 'student' }) => {
     const data = roleData[role];
     const [stats, setStats] = useState(data?.stats || []);
+    const [actividad, setActividad] = useState(data?.activity || []);
     const [isExporting, setIsExporting] = useState(false);
 
     useEffect(() => {
@@ -67,6 +68,10 @@ const Dashboard = ({ role = 'student' }) => {
                                 }
                             })
                         );
+
+                        if (d.actividadReciente) {
+                            setActividad(d.actividadReciente);
+                        }
                     }
                 } catch (error) {
                     console.error("Error cargando estadísticas:", error);
@@ -178,11 +183,11 @@ const Dashboard = ({ role = 'student' }) => {
                     </div>
 
                     <div className="divide-y divide-slate-50">
-                        {data.activity?.map((item, idx) => (
+                        {actividad?.map((item, idx) => (
                             <div key={item.id} className="px-10 py-6 flex items-center justify-between hover:bg-slate-50 transition-all group">
                                 <div className="flex items-center gap-6">
                                     <span className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">
-                                        {idx === 0 ? '✨' : idx === 1 ? '💰' : '👥'}
+                                        {item.type === 'pago' ? '💰' : item.type === 'alumno' ? '👥' : idx === 0 ? '✨' : idx === 1 ? '💰' : '👥'}
                                     </span>
                                     <span className="text-slate-700 font-bold group-hover:text-[#1e3a8a] transition-colors">{item.text}</span>
                                 </div>
