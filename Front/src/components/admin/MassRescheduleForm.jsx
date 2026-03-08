@@ -119,7 +119,7 @@ const MassRescheduleForm = () => {
                         <option value="">Selecciona un horario base</option>
                         {horarios.map(h => (
                             <option key={h.id} value={h.id}>
-                                {`Día: ${diasSemana[h.dia_semana]} | ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | Nivel: ${h.niveles_entrenamiento?.nombre || 'General'} | Sede: ${h.canchas?.sedes?.nombre} (${h.canchas?.nombre})`}
+                                {`Día: ${diasSemana[h.dia_semana]} | ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | Nivel: ${h.nivel?.nombre || 'General'} | Sede: ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
                             </option>
                         ))}
                     </select>
