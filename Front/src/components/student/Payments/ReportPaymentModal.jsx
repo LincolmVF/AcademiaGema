@@ -52,17 +52,22 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSuccess }) => {
       if (voucherFile && !esEfectivo) paymentData.append('voucher', voucherFile);
 
       const response = await apiFetch.post(API_ROUTES.PAGOS.REPORTAR, paymentData);
-      if (!response.ok) throw new Error("Error al reportar");
+      if (!response.ok) {
+        // Intentamos leer el JSON que nos mandó tu backend (donde está el textazo)
+        const errorData = await response.json(); 
+        
+        // Lanzamos el error usando el texto del backend (o uno genérico si falla)
+        throw new Error(errorData.message || "Error al reportar el pago."); 
+      }
 
       toast.success("¡Pago reportado!");
       if (onSuccess) await onSuccess();
       onClose();
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || error.message || "Error al procesar el pago";
-      
-      toast.error(errorMsg, { 
-        duration: 5000, // Démosle más tiempo para que el alumno pueda leer todo el texto
-        style: { maxWidth: '500px' } // Hacemos el toast un poco más ancho
+   } catch (error) {
+      // Ahora error.message contendrá tu mensaje "⛔ PAGO DENEGADO..."
+      toast.error(error.message, { 
+        duration: 5000, 
+        style: { maxWidth: '500px' } 
       });
     } finally {
       setLoading(false);
