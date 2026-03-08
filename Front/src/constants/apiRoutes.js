@@ -73,6 +73,7 @@ export const API_ROUTES = {
     },
     CLASES: {
         BASE: '/clases',
+        REPROGRAMAR_MASIVO: '/clases/reprogramar-masivo',
     },
     CATALOGO: {
         BASE: '/catalogo',

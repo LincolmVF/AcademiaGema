@@ -51,6 +51,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             items: [
                 { icon: MapPin, label: 'Sedes y Canchas', path: '/dashboard/admin/locations' },
                 { icon: CalendarRange, label: 'Horarios', path: '/dashboard/admin/schedule' },
+                { icon: CalendarRange, label: 'Reprogramaciones', path: '/dashboard/admin/reprogramaciones' },
                 { icon: BarChart3, label: 'Niveles', path: '/dashboard/admin/levels' },
                 { icon: TicketPercent, label: 'Crear Beneficio', path: '/dashboard/admin/CreateBenefits' },
             ]

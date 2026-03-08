@@ -43,6 +43,7 @@ import AdminBenefits from "./pages/admin/AdminBenefits";
 import AdminCreateBenefits from "./pages/admin/AdminCreateBenefits";
 import AdminPublications from "./pages/admin/AdminPublications";
 import AdminGuestPasses from "./pages/admin/AdminGuestPasses";
+import AdminReprogramaciones from "./pages/admin/AdminReprogramaciones";
 // 5. Nuevas Páginas de Estudiante
 import Payments from "./pages/student/Payments";
 import Profile from "./pages/student/Profile";
@@ -160,6 +161,7 @@ function App() {
               <Route path="admin/benefits" element={<AdminBenefits />} />
               <Route path="admin/CreateBenefits" element={<AdminCreateBenefits />} />
               <Route path="admin/schedule" element={<AdminSchedulesManager />} />
+              <Route path="admin/reprogramaciones" element={<AdminReprogramaciones />} />
               <Route path="admin/levels" element={<AdminLevelsManager />} />
               <Route path="admin/catalog" element={<AdminCatalogManager />} />
               <Route path="admin/locations" element={<AdminLocationsManager />} />
