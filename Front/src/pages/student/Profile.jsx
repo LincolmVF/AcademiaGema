@@ -104,7 +104,7 @@ const Profile = () => {
                   </button>
                   <button
                     onClick={() => setIsPasswordModalOpen(true)}
-                    className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-6 py-4 rounded-2xl transition-all duration-300 active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full sm:w-auto"
+                    className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] py-4 rounded-2xl transition-all duration-300 active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full sm:w-auto"
                   >
                     <KeyRound size={18} />
                     <span>Contraseña</span>
