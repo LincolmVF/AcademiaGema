@@ -34,8 +34,9 @@ const TeacherProfile = () => {
     </div>
   );
 
-  // El endpoint AUTH.USER devuelve directo los datos del usuario logueado en data.user
+  // El endpoint AUTH.USER devuelve directo los datos del usuario logueado en data.user o data
   const user = profileData?.user || profileData || {};
+  const coordinadorData = user.coordinador || {};
 
   const fullName = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || 'Coordinador Gema';
   const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
@@ -112,7 +113,7 @@ const TeacherProfile = () => {
 
       {/* Grid de Datos: Diseño Horizontal y Robusto */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-
+        
         {/* Columna Izquierda: Contacto */}
         <section className="space-y-6">
           <SectionHeader icon={<User size={16} />} title="Información Personal" />
@@ -120,6 +121,22 @@ const TeacherProfile = () => {
           <InfoCard icon={<Phone />} label="Celular / WhatsApp" value={user.telefono_personal} color="orange" />
         </section>
 
+        {/* Columna Derecha: Datos Profesionales */}
+        <section className="space-y-6">
+          <SectionHeader icon={<Shield size={16} />} title="Datos Profesionales" />
+          <InfoCard 
+            icon={<User />} 
+            label="Especialización" 
+            value={coordinadorData.especializacion || 'Por definir'} 
+            color="blue" 
+          />
+          <InfoCard 
+            icon={<Shield />} 
+            label="Tarifa por Hora (S/)" 
+            value={coordinadorData.tarifa_hora ? `S/ ${coordinadorData.tarifa_hora}` : 'No registrada'} 
+            color="orange" 
+          />
+        </section>
       </div>
 
       <EditTeacherProfileModal

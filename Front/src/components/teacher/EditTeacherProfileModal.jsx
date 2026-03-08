@@ -7,15 +7,23 @@ import { API_ROUTES } from '../../constants/apiRoutes.js';
 const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
+    nombres: '',
+    apellidos: '',
     email: '', 
-    telefono_personal: ''
+    telefono_personal: '',
+    especializacion: '',
+    tarifa_hora: ''
   });
 
   useEffect(() => {
     if (isOpen && currentUser) {
         setFormData({
+            nombres: currentUser.nombres || '',
+            apellidos: currentUser.apellidos || '',
             email: currentUser.email || '',
             telefono_personal: currentUser.telefono_personal || '',
+            especializacion: currentUser.coordinador?.especializacion || '',
+            tarifa_hora: currentUser.coordinador?.tarifa_hora || ''
         });
     }
   }, [isOpen, currentUser]);
@@ -73,7 +81,15 @@ const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) =>
                 <User size={14} className="text-[#1e3a8a]" />
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Datos Generales</span>
               </div>
-              <div className="grid grid-cols-1 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                   <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Nombres</label>
+                   <input type="text" placeholder="Tus nombres" value={formData.nombres} onChange={e => setFormData({ ...formData, nombres: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Apellidos</label>
+                   <input type="text" placeholder="Tus apellidos" value={formData.apellidos} onChange={e => setFormData({ ...formData, apellidos: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+                </div>
                 <div>
                    <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Email Asociado</label>
                    <input type="email" placeholder="Ingresa tu correo" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
@@ -81,6 +97,23 @@ const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) =>
                 <div>
                    <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Celular / WhatsApp</label>
                    <input type="text" placeholder="Número de contacto" value={formData.telefono_personal} onChange={e => setFormData({ ...formData, telefono_personal: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2">
+              <div className="border-b border-slate-100 pb-1.5 flex items-center gap-2">
+                <ArrowLeft size={14} className="text-[#1e3a8a] rotate-180" />
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Datos Profesionales</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <div>
+                   <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Especialización</label>
+                   <input type="text" placeholder="Ej. Baloncesto Técnico" value={formData.especializacion} onChange={e => setFormData({ ...formData, especializacion: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Tarifa (S/)</label>
+                   <input type="number" step="0.5" placeholder="S/ por hora" value={formData.tarifa_hora} onChange={e => setFormData({ ...formData, tarifa_hora: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
                 </div>
               </div>
             </div>
