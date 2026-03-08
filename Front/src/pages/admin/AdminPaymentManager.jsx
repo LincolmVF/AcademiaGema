@@ -56,41 +56,42 @@ const AdminPaymentManager = () => {
         });
     }, [payments, selectedYear, selectedMonth, statusFilter, searchTerm]);
 
-    // 2. Lógica para el componente de Estadísticas
-    const statsData = useMemo(() => {
-        const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-        const recaudacionMes = {};
-        let pendientes = 0;
+const statsData = useMemo(() => {
+    const mesesNombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+    const recaudacionMes = {};
+    let pendientesTotalAno = 0;
 
-        // Solo procesamos lo que ya pasó el filtro de AÑO
-        payments.forEach(p => {
-            const date = new Date(p.fecha_pago);
-            if (date.getFullYear().toString() !== selectedYear) return;
+    // Procesamos todos los pagos del año seleccionado para la gráfica y el contador operativo
+    payments.forEach(p => {
+        const date = new Date(p.fecha_pago);
+        
+        // Filtro estricto por año seleccionado
+        if (date.getFullYear().toString() !== selectedYear) return;
 
-            if (p.estado_validacion === 'PENDIENTE') pendientes++;
+        // Contador para la tarjeta "Por Validar" (Solo pendientes del año actual)
+        if (p.estado_validacion === 'PENDIENTE') {
+            pendientesTotalAno++;
+        }
 
-            if (p.estado_validacion === 'APROBADO') {
-                const mesIdx = date.getMonth();
-                recaudacionMes[mesIdx] = (recaudacionMes[mesIdx] || 0) + parseFloat(p.monto_pagado);
-            }
-        });
+        // Acumulador para la gráfica de barras (Solo aprobados)
+        if (p.estado_validacion === 'APROBADO') {
+            const mesIdx = date.getMonth();
+            recaudacionMes[mesIdx] = (recaudacionMes[mesIdx] || 0) + parseFloat(p.monto_pagado);
+        }
+    });
 
-        const chartData = mesesNombres.map((name, index) => ({
-            name,
-            total: recaudacionMes[index] || 0
-        }));
+    // Construcción del array para las barras
+    const chartData = mesesNombres.map((name, index) => ({
+        name,
+        total: recaudacionMes[index] || 0
+    }));
 
-        const totalAprobado = filteredPayments
-            .filter(p => p.estado_validacion === 'APROBADO')
-            .reduce((acc, curr) => acc + parseFloat(curr.monto_pagado), 0);
-
-        return {
-            chartData,
-            totalAprobado,
-            pendientes,
-            maxRecaudacion: Math.max(...chartData.map(d => d.total), 1)
-        };
-    }, [payments, selectedYear, filteredPayments]);
+    return {
+        chartData,
+        pendientes: pendientesTotalAno, // Valor para la tarjeta izquierda
+        maxRecaudacion: Math.max(...chartData.map(d => d.total), 1) // Base para la altura de las barras
+    };
+}, [payments, selectedYear]);
 
     const getStatusStyle = (status) => {
         switch (status) {
