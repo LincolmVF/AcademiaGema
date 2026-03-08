@@ -32,13 +32,15 @@ export const apiFetch = async (endpoint, options = {}) => {
 
   // Excluimos las rutas de auth y refresh para prevenir loops infinitos
   if (response.status === 401 && !endpoint.includes('/auth/')) {
+    if (options._retry) {
+      return response;
+    }
+
     if (isRefreshing) {
-      // Si ya se está refrescando, pausamos esta petición y la encolamos
       return new Promise(function (resolve, reject) {
         failedQueue.push({ resolve, reject });
       }).then(() => {
-        // Al resolverse, reintentamos la lectura al mismo endpoint original
-        return fetch(`${API_URL}${endpoint}`, defaultOptions);
+        return apiFetch(endpoint, { ...options, _retry: true });
       }).catch(err => {
         return Promise.reject(err);
       });
@@ -53,24 +55,22 @@ export const apiFetch = async (endpoint, options = {}) => {
       });
 
       if (refreshRes.ok) {
-        // ¡Tokens renovados vía cookies HTTP-only exitosamente!
         processQueue(null, true);
-        // Reintentamos inmediatamente la petición que gatilló el error
-        response = await fetch(`${API_URL}${endpoint}`, defaultOptions);
+        return await apiFetch(endpoint, { ...options, _retry: true });
       } else {
         processQueue(new Error('Refresh auth cookie failed'), null);
         throw new Error('No se pudo refrescar credenciales automáticas');
       }
     } catch (error) {
-      // Refresh token expirado o robado. Cierre de sesión inminente.
       Cookies.remove('user_role');
       Cookies.remove('user_name');
       Cookies.remove('user_id');
-      Cookies.remove('auth_token'); // Si siguen existiendo frontend-side
+      Cookies.remove('auth_token');
       Cookies.remove('refresh_token');
       Cookies.remove('last_viewed_news');
       toast.error("Tu sesión ha expirado", { id: 'session-expired' });
       window.location.href = '/login';
+      return response;
     } finally {
       isRefreshing = false;
     }
