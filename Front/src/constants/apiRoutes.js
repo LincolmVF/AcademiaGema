@@ -37,6 +37,7 @@ export const API_ROUTES = {
     SEDES: {
         BASE: '/sedes',
         ACTIVOS: '/sedes/activas',
+        OCUPACION: '/sedes/dashboard/ocupacion',
         BY_ID: (id) => `/sedes/${id}`,
     },
     RECUPERACIONES: {
@@ -104,5 +105,8 @@ export const API_ROUTES = {
     NOTIFICACIONES: {
         BASE: '/notificaciones',
         MARCAR_LEIDA: (id) => `/notificaciones/${id}/leer`,
+    },
+    METODOS_PAGO: {
+        BASE: '/metodos-pago',
     },
 };
