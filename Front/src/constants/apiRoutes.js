@@ -14,7 +14,7 @@ export const API_ROUTES = {
     },
     HORARIOS: {
         BASE: '/horarios',
-        ACTIVOS: '/horarios', 
+        ACTIVOS: '/horarios',
         BY_ID: (id) => `/horarios/${id}`,
     },
     USUARIOS: {
@@ -112,5 +112,9 @@ export const API_ROUTES = {
     },
     METODOS_PAGO: {
         BASE: '/metodos-pago',
+    },
+    COORDINADORES: {
+        BASE: '/coordinadores',
+        BY_ID: (id) => `/coordinadores/${id}`,
     },
 };

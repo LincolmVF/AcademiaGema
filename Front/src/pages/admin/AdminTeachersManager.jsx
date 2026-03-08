@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Phone, Loader2, UserCog, ArrowLeft, Mail, Award, Calendar, Fingerprint, User, ShieldCheck, Hash, Info } from 'lucide-react';
+import { 
+    Plus, Search, Phone, Loader2, UserCog, ArrowLeft, 
+    Mail, Award, Calendar, Fingerprint, User, 
+    ShieldCheck, Info, Save, Edit3 
+} from 'lucide-react';
 import AdminTeachers from './AdminTeachers';
+import AdminTeacherEdit from './AdminTeacherEdit'; // 🔥 Importamos el nuevo componente
 import { apiFetch } from '../../interceptors/api';
 import toast from 'react-hot-toast';
 import { API_ROUTES } from '../../constants/apiRoutes';
@@ -24,11 +29,11 @@ const AdminTeachersManager = () => {
                     nombres: user.nombres,
                     apellidos: user.apellidos,
                     email: user.email,
-                    rol_id: "Coordinador", // Etiqueta visual
+                    rol_id: "Coordinador",
                     telefono_personal: user.telefono_personal || 'No registrado',
                     tipo_documento_id: user.tipo_documento_id,
                     numero_documento: user.numero_documento,
-                    fecha_nacimiento: user.fecha_nacimiento ? new Date(user.fecha_nacimiento).toLocaleDateString() : '---',
+                    fecha_nacimiento: user.fecha_nacimiento ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE') : '---',
                     genero: user.genero,
                     datosRolEspecifico: {
                         especializacion: user.coordinadores?.especializacion || 'Coordinador General'
@@ -57,28 +62,51 @@ const AdminTeachersManager = () => {
         setView('details');
     };
 
+    // --- RENDERIZADO CONDICIONAL DE VISTAS ---
+
     if (view === 'create') {
-        return <AdminTeachers onBack={() => setView('list')} showTariff={true} />;
+        return <AdminTeachers onBack={() => setView('list')} />;
+    }
+
+    if (view === 'edit' && selectedTeacher) {
+        return (
+            <AdminTeacherEdit 
+                teacherData={selectedTeacher} 
+                onBack={() => setView('details')} 
+                onSuccess={() => {
+                    setView('list');
+                    fetchCoordinadores();
+                }} 
+            />
+        );
     }
 
     if (view === 'details' && selectedTeacher) {
         return (
             <div className="space-y-6 animate-fade-in-up p-1">
-                {/* Header Expediente */}
-                <div className="flex items-center gap-4">
-                    <button onClick={() => setView('list')} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm text-slate-600 transition-all">
-                        <ArrowLeft size={20} />
-                    </button>
-                    <div>
-                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
-                            Expediente <span className="text-[#1e3a8a]">Profesional</span>
-                        </h1>
-                        <p className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] ml-1">Staff Técnico Gema</p>
+                <div className="flex justify-between items-center gap-4">
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => setView('list')} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 shadow-sm text-slate-600 transition-all">
+                            <ArrowLeft size={20} />
+                        </button>
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
+                                Expediente <span className="text-[#1e3a8a]">Profesional</span>
+                            </h1>
+                            <p className="text-[10px] font-black text-orange-500 uppercase tracking-[0.2em] ml-1">Staff Técnico Gema</p>
+                        </div>
                     </div>
+
+                    {/* 🔥 BOTÓN PARA ACTIVAR EDICIÓN */}
+                    <button 
+                        onClick={() => setView('edit')}
+                        className="bg-orange-500 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-[#0f172a] transition-all shadow-lg"
+                    >
+                        <Edit3 size={16} /> Editar Perfil
+                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Columna Lateral: Perfil */}
                     <div className="lg:col-span-1 space-y-6">
                         <div className="bg-[#0f172a] rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
                             <div className="absolute top-0 right-0 p-4 opacity-10"><Award size={100} /></div>
@@ -92,7 +120,6 @@ const AdminTeachersManager = () => {
                                 </span>
                             </div>
                         </div>
-
                         <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
                             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Especialidad Principal</h4>
                             <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
@@ -102,82 +129,45 @@ const AdminTeachersManager = () => {
                         </div>
                     </div>
 
-                    {/* Columna Principal: Todos los Datos */}
                     <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                             <div className="p-6 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
                                 <UserCog className="text-[#1e3a8a]" size={18} />
                                 <span className="text-xs font-black text-slate-800 uppercase italic">Información Detallada del Usuario</span>
                             </div>
-
                             <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                                {/* Bloque: Identificación */}
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <Fingerprint size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Identificación</p>
+                                        <Fingerprint size={14} /><p className="text-[9px] font-black uppercase">Identificación</p>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700">
                                         <span className="text-blue-600 mr-2">{selectedTeacher.tipo_documento_id}</span>
                                         {selectedTeacher.numero_documento}
                                     </p>
                                 </div>
-
-                                {/* Bloque: Email */}
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <Mail size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Correo Electrónico</p>
+                                        <Mail size={14} /><p className="text-[9px] font-black uppercase">Email</p>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700 lowercase">{selectedTeacher.email}</p>
                                 </div>
-
-                                {/* Bloque: Teléfono */}
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <Phone size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Teléfono Personal</p>
+                                        <Phone size={14} /><p className="text-[9px] font-black uppercase">Teléfono</p>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700">{selectedTeacher.telefono_personal}</p>
                                 </div>
-
-                                {/* Bloque: Nacimiento */}
                                 <div className="space-y-1">
                                     <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <Calendar size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Fecha de Nacimiento</p>
+                                        <Calendar size={14} /><p className="text-[9px] font-black uppercase">Nacimiento</p>
                                     </div>
                                     <p className="text-sm font-bold text-slate-700">{selectedTeacher.fecha_nacimiento}</p>
                                 </div>
-
-                                {/* Bloque: Género */}
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <User size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Género</p>
-                                    </div>
-                                    <p className="text-sm font-bold text-slate-700 uppercase">
-                                        {selectedTeacher.genero === 'F' ? 'Femenino' : 'Masculino'}
-                                    </p>
-                                </div>
-
-                                {/* Bloque: Rol */}
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                        <ShieldCheck size={14} />
-                                        <p className="text-[9px] font-black uppercase tracking-widest">Acceso de Sistema</p>
-                                    </div>
-                                    <p className="text-sm font-bold text-slate-700 uppercase tracking-tighter">Acceso de {selectedTeacher.rol_id}</p>
-                                </div>
                             </div>
                         </div>
-
-                        {/* Banner Footer de Privacidad */}
                         <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex items-center gap-3">
                             <Info size={16} className="text-blue-500" />
-                            <p className="text-[9px] font-bold text-slate-500 leading-tight uppercase">
-                                Los datos de acceso y contraseñas son confidenciales y no se muestran por motivos de seguridad institucional.
-                            </p>
+                            <p className="text-[9px] font-bold text-slate-500 leading-tight uppercase italic">Los datos de acceso y contraseñas son confidenciales por motivos de seguridad.</p>
                         </div>
                     </div>
                 </div>
@@ -193,7 +183,8 @@ const AdminTeachersManager = () => {
                     <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight italic">
                         Panel <span className="text-[#1e3a8a]">Coordinador</span>
                     </h1>
-                </div>                <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all hover:bg-orange-500 shadow-lg">
+                </div>
+                <button onClick={() => setView('create')} className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all hover:bg-orange-500 shadow-lg">
                     <Plus size={20} /> Registrar Coordinador
                 </button>
             </div>
