@@ -66,13 +66,10 @@ const DashboardTeacher = () => {
             const fechaKey = reg.fecha.split('T')[0];
             const fechaDate = fechaObj.setHours(0, 0, 0, 0);
 
-            // Override time if this specific date has a REPG_MASIVA custom time
+            // Override time if this specific date has custom override columns
             let timeRange = baseTimeRange;
-            if (reg.comentario && reg.comentario.includes('[REPG_MASIVA|')) {
-              const match = reg.comentario.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
-              if (match) {
-                timeRange = `${match[1]} - ${match[2]}`;
-              }
+            if (reg.hora_inicio_override && reg.hora_fin_override) {
+               timeRange = `${reg.hora_inicio_override} - ${reg.hora_fin_override}`;
             }
 
             if (!fechasUnicas[fechaKey]) {
@@ -93,12 +90,9 @@ const DashboardTeacher = () => {
                 inscripcionesEnEstaFecha: []
               };
             } else {
-              // Priority override: If ANY student in this date bucket has the custom time tag, force it onto the bucket.
-              if (reg.comentario && reg.comentario.includes('[REPG_MASIVA|')) {
-                const match = reg.comentario.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
-                if (match) {
-                  fechasUnicas[fechaKey].timeRange = `${match[1]} - ${match[2]}`;
-                }
+              // Priority override: If ANY student in this date bucket has the custom time override, force it onto the bucket.
+              if (reg.hora_inicio_override && reg.hora_fin_override) {
+                 fechasUnicas[fechaKey].timeRange = `${reg.hora_inicio_override} - ${reg.hora_fin_override}`;
               }
             }
             fechasUnicas[fechaKey].inscripcionesEnEstaFecha.push({ ...ins, registro_especifico: reg });

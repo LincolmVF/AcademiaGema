@@ -225,8 +225,7 @@ const DashboardEstudiante = () => {
       .filter(s => s?.inscripciones?.horarios_clases)
       .map(s => {
         const horario = s.inscripciones.horarios_clases;
-        const overrideMatch = s.comentario?.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
-        const horaInicioFinal = overrideMatch ? (overrideMatch[1] + ":00") : horario.hora_inicio;
+        const horaInicioFinal = s.hora_inicio_override ? (s.hora_inicio_override + ":00") : horario.hora_inicio;
 
         return {
           ...horario,
