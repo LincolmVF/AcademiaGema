@@ -60,6 +60,7 @@ const StatCard = ({ id, title, value, icon: Icon, color }) => {
 const Dashboard = ({ role = 'student' }) => {
     const data = roleData[role];
     const [stats, setStats] = useState(data?.stats || []);
+    const [actividad, setActividad] = useState(data?.activity || []);
     const [isExporting, setIsExporting] = useState(false);
     
     const [rawPagos, setRawPagos] = useState([]); 
@@ -78,7 +79,6 @@ const Dashboard = ({ role = 'student' }) => {
         return meses.map((mes, idx) => ({ monthIndex: idx, year: año, mes, ingresos: 0 }));
     };
 
-    // Efecto 1: Carga la data inicial
     useEffect(() => {
         if (role === 'admin') {
             const fetchDashboardData = async () => {
@@ -91,27 +91,33 @@ const Dashboard = ({ role = 'student' }) => {
 
                     const extractArray = (json) => Array.isArray(json?.data?.data) ? json.data.data : (Array.isArray(json?.data) ? json.data : (Array.isArray(json) ? json : []));
 
-                    // STATS
-                    const statsJson = resStats.ok ? await resStats.json() : {};
-                    const dStats = statsJson.data || {};
-                    setStats(prevStats => prevStats.map(stat => {
-                        switch (stat.id) {
-                            case "alumnos": return { ...stat, value: (dStats.alumno || 0).toString() };
-                            case "coordinadores": return { ...stat, value: (dStats.coordinador || 0).toString() };
-                            case "sedes": return { ...stat, value: (dStats.sedes || 0).toString() };
-                            case "ingresos": return { ...stat, value: `S/ ${dStats.ingresosTotales || '0.00'}` };
-                            case "pendientes": return { ...stat, value: `S/ ${dStats.deudaPendiente || '0.00'}` };
-                            default: return stat;
-                        }
-                    }));
+                    // 1. STATS Y ACTIVIDAD DINÁMICA (Lógica de tu compañero unificada)
+                    const resultStats = resStats.ok ? await resStats.json() : {};
+                    if (resStats.ok && resultStats.data) {
+                        const d = resultStats.data;
+                        setStats(prevStats => prevStats.map(stat => {
+                            switch (stat.id) {
+                                case "alumnos": return { ...stat, value: (d.alumno || 0).toString() };
+                                case "coordinadores": return { ...stat, value: (d.coordinador || 0).toString() };
+                                case "sedes": return { ...stat, value: (d.sedes || 0).toString() };
+                                case "ingresos": return { ...stat, value: `S/ ${d.ingresosTotales || '0.00'}` };
+                                case "pendientes": return { ...stat, value: `S/ ${d.deudaPendiente || '0.00'}` };
+                                default: return stat;
+                            }
+                        }));
 
-                    // SEDES
+                        if (d.actividadReciente) {
+                            setActividad(d.actividadReciente);
+                        }
+                    }
+
+                    // 2. PROCESAMIENTO DE SEDES
                     const ocupacionJson = resOcupacion.ok ? await resOcupacion.json() : {};
                     let distribucionSedes = extractArray(ocupacionJson);
                     if(distribucionSedes.length === 0) distribucionSedes = [{ nombre: 'Sin Datos', valor: 1 }];
                     const alumnosActivosTotales = distribucionSedes.reduce((acc, curr) => acc + (curr.valor === 1 && curr.nombre === 'Sin Datos' ? 0 : curr.valor), 0);
 
-                    // PAGOS (Preparamos los años disponibles)
+                    // 3. PROCESAMIENTO DE PAGOS (Años disponibles)
                     const pagosJson = resPagos.ok ? await resPagos.json() : {};
                     const dPagos = extractArray(pagosJson);
                     
@@ -128,7 +134,7 @@ const Dashboard = ({ role = 'student' }) => {
                     setChartData(prev => ({ ...prev, sedes: distribucionSedes, totalAlumnos: alumnosActivosTotales }));
 
                 } catch (error) {
-                    console.error("Error calculando analíticas:", error);
+                    console.error("Error cargando analíticas:", error);
                 }
             };
             fetchDashboardData();
@@ -137,7 +143,7 @@ const Dashboard = ({ role = 'student' }) => {
         }
     }, [role, data]);
 
-    // Efecto 2: Procesar los gráficos cuando cambia el año
+    // Efecto 2: Recalcular gráficos cuando cambia el año seleccionado
     useEffect(() => {
         if(rawPagos.length === 0) return;
 
@@ -239,7 +245,7 @@ const Dashboard = ({ role = 'student' }) => {
             </div>
 
             {/* ========================================================= */}
-            {/* ACTO 1: EL CONTEXTO (RESUMEN EJECUTIVO)                   */}
+            {/* ACTO 1: EL CONTEXTO (KPIs GENERALES)                      */}
             {/* ========================================================= */}
             <div className="mb-14">
                 <div className="flex items-center gap-3 mb-6">
@@ -254,19 +260,19 @@ const Dashboard = ({ role = 'student' }) => {
             </div>
 
             {/* ========================================================= */}
-            {/* ACTO 2: EL PROTAGONISTA (INTELIGENCIA VISUAL)             */}
+            {/* ACTO 2: EL PROTAGONISTA (GRÁFICOS DE IMPACTO)             */}
             {/* ========================================================= */}
             <div className="mb-16 pt-8 border-t border-slate-200/60">
                 <div className="mb-8">
                     <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight italic">
                         Inteligencia <span className="text-orange-500">Financiera y Operativa</span>
                     </h2>
-                    <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Análisis de rendimiento interactivo</p>
+                    <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-1">Métricas basadas en datos reales ({selectedYear})</p>
                 </div>
                 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    {/* GRÁFICO 1: LÍNEA DE INGRESOS */}
+                    {/* 1. FLUJO DE CAJA (LINEAL) */}
                     <div className="lg:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.03)] p-8 flex flex-col relative z-20">
                         <div className="mb-6 flex justify-between items-start">
                             <div>
@@ -290,7 +296,7 @@ const Dashboard = ({ role = 'student' }) => {
                             </div>
                         </div>
 
-                        <div style={{ width: '100%', height: 280 }} className="relative z-10">
+                        <div style={{ width: '100%', height: 280 }}>
                             <ResponsiveContainer width="100%" height="100%">
                                 <AreaChart data={chartData.ingresos} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
@@ -309,7 +315,7 @@ const Dashboard = ({ role = 'student' }) => {
                         </div>
                     </div>
 
-                    {/* GRÁFICO 2: DONA DE SEDES Y LEYENDA */}
+                    {/* 2. OCUPACIÓN (DONA) */}
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.03)] p-8 flex flex-col">
                         <div className="mb-4">
                             <h2 className="font-black text-[#1e3a8a] uppercase tracking-tight text-xl italic mb-1 flex items-center gap-2">
@@ -346,14 +352,14 @@ const Dashboard = ({ role = 'student' }) => {
                         </div>
                     </div>
 
-                    {/* GRÁFICO 3: MÉTODOS DE PAGO */}
+                    {/* 3. RECAUDACIÓN (BARRAS) */}
                     <div className="lg:col-span-3 bg-white rounded-[2.5rem] border border-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.03)] p-8 flex flex-col mt-4">
                         <div className="mb-6 flex justify-between items-start">
                             <div>
                                 <h2 className="font-black text-[#1e3a8a] uppercase tracking-tight text-xl italic mb-1 flex items-center gap-2">
-                                    <CreditCard size={20} className="text-orange-500"/> Estructura de Recaudación ({selectedYear})
+                                    <CreditCard size={20} className="text-orange-500"/> Estructura de Recaudación
                                 </h2>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Ingresos por Método de Pago</p>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Distribución por Método de Pago</p>
                             </div>
                         </div>
                         
@@ -377,18 +383,17 @@ const Dashboard = ({ role = 'student' }) => {
                                     </BarChart>
                                 </ResponsiveContainer>
                             ) : (
-                                <div className="h-full w-full flex items-center justify-center text-slate-400 font-bold text-sm uppercase tracking-widest bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
-                                    No hay pagos validados en {selectedYear}
+                                <div className="h-full w-full flex items-center justify-center text-slate-400 font-bold text-sm uppercase bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                                    No hay pagos registrados para este periodo
                                 </div>
                             )}
                         </div>
                     </div>
-
                 </div>
             </div>
 
             {/* ========================================================= */}
-            {/* ACTO 3: LA ACCIÓN TÁCTICA (DÍA A DÍA Y HERRAMIENTAS)      */}
+            {/* ACTO 3: GESTIÓN OPERATIVA (MOVIMIENTO Y REPORTES)         */}
             {/* ========================================================= */}
             <div className="pt-10 border-t border-slate-200/60 mt-10">
                 <div className="flex items-center gap-3 mb-8">
@@ -405,10 +410,13 @@ const Dashboard = ({ role = 'student' }) => {
                             </div>
                         </div>
                         <div className="divide-y divide-slate-50">
-                            {data.activity?.map((item, idx) => (
+                            {/* 🔥 LÓGICA DINÁMICA DE TU COMPAÑERO TOTALMENTE RESTAURADA 🔥 */}
+                            {actividad?.map((item, idx) => (
                                 <div key={item.id} className="px-10 py-6 flex items-center justify-between hover:bg-slate-50 transition-all group">
                                     <div className="flex items-center gap-6">
-                                        <span className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">{idx === 0 ? '✨' : idx === 1 ? '💰' : '👥'}</span>
+                                        <span className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">
+                                            {item.type === 'pago' ? '💰' : item.type === 'alumno' ? '👥' : '✨'}
+                                        </span>
                                         <span className="text-slate-700 font-bold group-hover:text-[#1e3a8a] transition-colors">{item.text}</span>
                                     </div>
                                     <span className="text-[10px] text-slate-400 font-black uppercase bg-white px-3 py-1.5 rounded-lg border border-slate-100">{item.date}</span>
@@ -433,7 +441,6 @@ const Dashboard = ({ role = 'student' }) => {
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };
