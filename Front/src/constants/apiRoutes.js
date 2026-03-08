@@ -66,6 +66,7 @@ export const API_ROUTES = {
     ASISTENCIAS: {
         BASE: '/asistencias',
         ALUMNO_HISTORIAL: (id) => `/asistencias/alumno/${id}`,
+        ALUMNO_ESTADISTICAS: (id) => `/asistencias/alumno/${id}/estadisticas`,
     },
     CUENTAS_POR_COBRAR: {
         BASE: '/cuentas-por-cobrar',

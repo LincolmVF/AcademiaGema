@@ -1,25 +1,58 @@
-import React, { useMemo } from 'react';
-import { CalendarCheck, History, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CalendarCheck, History, Loader2 } from 'lucide-react';
+import { apiFetch } from '../../interceptors/api';
+import { API_ROUTES } from '../../constants/apiRoutes';
+import { useAuth } from '../../context/AuthContext';
 
-const StudentStats = ({ attendance }) => {
-  const stats = useMemo(() => {
-    const total = attendance.length;
-    const asistidas = attendance.filter(a => a.estado === 'ASISTIO').length;
-    const faltasRecuperables = attendance.filter(a => a.estado === 'FALTO' && !a.recuperada).length;
-    
-    const porcentaje = total > 0 ? Math.round((asistidas / total) * 100) : 0;
+const StudentStats = () => {
+  const { userId } = useAuth();
+  const [stats, setStats] = useState({
+    porcentaje: 0,
+    faltas: 0,
+    loading: true
+  });
 
-    return {
-      porcentaje,
-      faltasRecuperables,
-      totalSesiones: total
+  useEffect(() => {
+    const getStats = async () => {
+      if (!userId) return;
+      try {
+        // 🔥 CONSUMIMOS TU NUEVO ENDPOINT
+        const res = await apiFetch.get(API_ROUTES.ASISTENCIAS.ALUMNO_ESTADISTICAS(userId));
+        const result = await res.json();
+
+        if (res.ok && result.data) {
+          setStats({
+            porcentaje: result.data.porcentaje_asistencia_real,
+            faltas: result.data.detalle.FALTA.cantidad,
+            loading: false
+          });
+        }
+      } catch (error) {
+        console.error("Error al cargar stats:", error);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
     };
-  }, [attendance]);
+
+    getStats();
+  }, [userId]);
+
+  if (stats.loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="h-28 bg-white/50 animate-pulse rounded-[2rem] border border-slate-100 flex items-center justify-center">
+          <Loader2 className="animate-spin text-slate-300" />
+        </div>
+        <div className="h-28 bg-white/50 animate-pulse rounded-[2rem] border border-slate-100 flex items-center justify-center">
+          <Loader2 className="animate-spin text-slate-300" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       {/* Tarjeta de Asistencia Real */}
-      <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
+      <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5 transition-all hover:shadow-md">
         <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
           <CalendarCheck size={28} />
         </div>
@@ -34,20 +67,20 @@ const StudentStats = ({ attendance }) => {
       </div>
 
       {/* Tarjeta de Faltas Recuperables */}
-      <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
+      <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5 transition-all hover:shadow-md">
         <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 shadow-inner">
           <History size={28} />
         </div>
         <div>
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-            Faltas Recuperables
+            Faltas Totales
           </p>
           <div className="flex items-end gap-2">
             <h3 className="text-3xl font-black text-[#1e3a8a] italic">
-              {stats.faltasRecuperables}
+              {stats.faltas}
             </h3>
             <span className="text-[10px] font-bold text-orange-500 uppercase mb-1.5 italic">
-              Clases pendientes
+              Sesiones perdidas
             </span>
           </div>
         </div>
