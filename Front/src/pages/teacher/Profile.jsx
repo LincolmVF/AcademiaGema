@@ -58,19 +58,19 @@ const TeacherProfile = () => {
       </div>
 
       {/* Hero Card Premium */}
-      <div className="relative mb-12">
-        <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5">
-          <img src="/logo.png" className="absolute -right-20 -bottom-20 w-80 opacity-[0.05] rotate-12 pointer-events-none" alt="" />
+      <div className="relative mb-8 md:mb-12">
+        <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] rounded-[2rem] md:rounded-[3.5rem] p-6 sm:p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5">
+          <img src="/logo.png" className="absolute -right-10 -bottom-10 md:-right-20 md:-bottom-20 w-64 md:w-80 opacity-[0.05] rotate-12 pointer-events-none" alt="" />
           
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 relative z-10">
             <div className="relative shrink-0">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2.5rem] md:rounded-[3rem] bg-white p-1 shadow-2xl transform rotate-3">
-                <div className="w-full h-full rounded-[2.2rem] md:rounded-[2.8rem] bg-slate-100 flex items-center justify-center text-6xl font-black text-[#1e3a8a] italic">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-[2rem] md:rounded-[3rem] bg-white p-1 shadow-2xl transform rotate-3">
+                <div className="w-full h-full rounded-[1.7rem] sm:rounded-[2.2rem] md:rounded-[2.8rem] bg-slate-100 flex items-center justify-center text-5xl md:text-6xl font-black text-[#1e3a8a] italic">
                   {userInitial}
                 </div>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-orange-500 p-3 rounded-2xl shadow-xl border-4 border-[#1e3a8a]">
-                <Shield size={20} fill="white" />
+              <div className="absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2 bg-orange-500 p-2 sm:p-3 rounded-xl sm:rounded-2xl shadow-xl border-4 border-[#1e3a8a]">
+                <Shield size={18} className="sm:w-[20px] sm:h-[20px]" fill="white" />
               </div>
             </div>
 
@@ -78,29 +78,29 @@ const TeacherProfile = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                 <div className="space-y-2">
                   <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Perfil Administrativo Gema</p>
-                  <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
+                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight break-words">
                     {fullName}
                   </h1>
-                  <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
+                  <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 sm:mt-4">
                     <span className="text-[10px] font-bold px-5 py-2 rounded-full uppercase tracking-widest bg-orange-500 shadow-lg shadow-orange-500/20">
                       Coordinador Oficial
                     </span>
                   </div>
                 </div>
 
-                <div className="mx-auto md:mx-0 flex flex-col sm:flex-row items-center gap-3">
+                <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:mt-0">
                   <button 
                     onClick={() => setIsEditModalOpen(true)}
-                    className="flex items-center justify-center gap-3 bg-orange-500 hover:bg-white hover:text-orange-500 text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-transparent hover:border-orange-500 w-full sm:w-auto"
+                    className="flex-1 flex items-center justify-center gap-3 bg-orange-500 hover:bg-white hover:text-orange-500 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 shadow-xl active:scale-95 font-black text-[10px] sm:text-xs uppercase tracking-widest border-2 border-transparent hover:border-orange-500 w-full"
                   >
-                    <Edit2 size={18} />
+                    <Edit2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                     <span>Editar Datos</span>
                   </button>
                   <button 
                     onClick={() => setIsPasswordModalOpen(true)}
-                    className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-8 py-4 rounded-2xl transition-all duration-300 active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full sm:w-auto"
+                    className="flex-1 flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 active:scale-95 font-black text-[10px] sm:text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full"
                   >
-                    <KeyRound size={18} />
+                    <KeyRound size={16} className="sm:w-[18px] sm:h-[18px]" />
                     <span>Contraseña</span>
                   </button>
                 </div>
@@ -153,14 +153,14 @@ const InfoCard = ({ icon, label, value, color }) => {
   };
 
   return (
-    <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 group transition-all duration-300">
-      <div className="flex items-start gap-6">
-        <div className={`shrink-0 p-4 md:p-5 rounded-2xl transition-all group-hover:bg-orange-500 group-hover:text-white ${styles[color]}`}>
-          {React.cloneElement(icon, { size: 22, strokeWidth: 2.5 })}
+    <div className="bg-white p-5 sm:p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 group transition-all duration-300">
+      <div className="flex items-center sm:items-start gap-4 sm:gap-6">
+        <div className={`shrink-0 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl transition-all group-hover:bg-orange-500 group-hover:text-white ${styles[color]}`}>
+          {React.cloneElement(icon, { size: 20, className: 'sm:w-[22px] sm:h-[22px]', strokeWidth: 2.5 })}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 italic">{label}</p>
-          <p className="font-black text-[#1e3a8a] tracking-tight break-words text-sm">
+          <p className="text-[9px] sm:text-[10px] font-black text-slate-300 uppercase tracking-widest mb-0.5 sm:mb-1 italic">{label}</p>
+          <p className="font-black text-[#1e3a8a] tracking-tight break-words text-xs sm:text-sm">
             {value || 'Pendiente de registro'}
           </p>
         </div>
