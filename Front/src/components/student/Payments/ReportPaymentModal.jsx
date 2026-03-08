@@ -58,7 +58,12 @@ const ReportPaymentModal = ({ isOpen, onClose, debt, onSuccess }) => {
       if (onSuccess) await onSuccess();
       onClose();
     } catch (error) {
-      toast.error(error.message);
+      const errorMsg = error.response?.data?.message || error.message || "Error al procesar el pago";
+      
+      toast.error(errorMsg, { 
+        duration: 5000, // Démosle más tiempo para que el alumno pueda leer todo el texto
+        style: { maxWidth: '500px' } // Hacemos el toast un poco más ancho
+      });
     } finally {
       setLoading(false);
     }
