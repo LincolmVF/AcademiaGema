@@ -80,7 +80,7 @@ const DashboardTeacher = () => {
               fechasUnicas[fechaKey] = {
                 id: `${horario.id}-${fechaKey}`,
                 title: horario.niveles_entrenamiento?.nombre || 'BASICO-C',
-                timeRange,
+                timeRange, // Start with whatever time range this first student gives us
                 court: horario.canchas?.nombre || 'T1',
                 level: horario.niveles_entrenamiento?.nombre || 'BASICO-C',
                 fechaReal: reg.fecha,
@@ -94,7 +94,7 @@ const DashboardTeacher = () => {
                 inscripcionesEnEstaFecha: []
               };
             } else {
-              // Update timeRange if we find the tag later in the loop for the same date
+              // Priority override: If ANY student in this date bucket has the custom time tag, force it onto the bucket.
               if (reg.comentario && reg.comentario.includes('[REPG_MASIVA|')) {
                 const match = reg.comentario.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
                 if (match) {
