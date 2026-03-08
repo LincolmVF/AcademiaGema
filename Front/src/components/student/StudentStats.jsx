@@ -16,16 +16,18 @@ const StudentStats = () => {
     const getStats = async () => {
       if (!userId) return;
       try {
-        // 🔥 CONSUMIMOS TU NUEVO ENDPOINT
         const res = await apiFetch.get(API_ROUTES.ASISTENCIAS.ALUMNO_ESTADISTICAS(userId));
         const result = await res.json();
 
         if (res.ok && result.data) {
           setStats({
-            porcentaje: result.data.porcentaje_asistencia_real,
-            faltas: result.data.detalle.FALTA.cantidad,
+            // Usamos || 0 para asegurar que siempre se vea un número
+            porcentaje: result.data.porcentaje_asistencia_real || 0,
+            faltas: result.data.detalle?.FALTA?.cantidad || 0,
             loading: false
           });
+        } else {
+          setStats(prev => ({ ...prev, loading: false }));
         }
       } catch (error) {
         console.error("Error al cargar stats:", error);
@@ -60,7 +62,7 @@ const StudentStats = () => {
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
             Asistencia Real
           </p>
-          <h3 className="text-3xl font-black text-[#1e3a8a] italic">
+          <h3 className={`text-3xl font-black italic ${stats.porcentaje < 50 ? 'text-rose-500' : 'text-[#1e3a8a]'}`}>
             {stats.porcentaje}%
           </h3>
         </div>

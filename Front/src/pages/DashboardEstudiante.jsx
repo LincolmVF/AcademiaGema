@@ -371,7 +371,7 @@ const DashboardEstudiante = () => {
         <StudentAnnouncements />
 
         {/* 3. STATS */}
-        <StudentStats attendance={attendance} />
+        <StudentStats />
 
         {/* 4. TIMELINE SEMANAL */}
         <div className="mb-10">
