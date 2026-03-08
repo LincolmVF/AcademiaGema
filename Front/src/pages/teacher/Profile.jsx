@@ -41,7 +41,7 @@ const TeacherProfile = () => {
   const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
 
   const handleProfileUpdate = (newData) => {
-    fetchProfile(); 
+    fetchProfile();
     if (updateUserData) updateUserData(newData);
   };
 
@@ -61,7 +61,7 @@ const TeacherProfile = () => {
       <div className="relative mb-8 md:mb-12">
         <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] rounded-[2rem] md:rounded-[3.5rem] p-6 sm:p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5">
           <img src="/logo.png" className="absolute -right-10 -bottom-10 md:-right-20 md:-bottom-20 w-64 md:w-80 opacity-[0.05] rotate-12 pointer-events-none" alt="" />
-          
+
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 relative z-10">
             <div className="relative shrink-0">
               <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-[2rem] md:rounded-[3rem] bg-white p-1 shadow-2xl transform rotate-3">
@@ -78,7 +78,7 @@ const TeacherProfile = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                 <div className="space-y-2">
                   <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Perfil Administrativo Gema</p>
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight break-words">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-tight break-words">
                     {fullName}
                   </h1>
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 sm:mt-4">
@@ -89,14 +89,14 @@ const TeacherProfile = () => {
                 </div>
 
                 <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-2 md:mt-0">
-                  <button 
+                  <button
                     onClick={() => setIsEditModalOpen(true)}
                     className="flex-1 flex items-center justify-center gap-3 bg-orange-500 hover:bg-white hover:text-orange-500 text-white px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 shadow-xl active:scale-95 font-black text-[10px] sm:text-xs uppercase tracking-widest border-2 border-transparent hover:border-orange-500 w-full"
                   >
                     <Edit2 size={16} className="sm:w-[18px] sm:h-[18px]" />
                     <span>Editar Datos</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => setIsPasswordModalOpen(true)}
                     className="flex-1 flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 active:scale-95 font-black text-[10px] sm:text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full"
                   >
@@ -112,7 +112,7 @@ const TeacherProfile = () => {
 
       {/* Grid de Datos: Diseño Horizontal y Robusto */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        
+
         {/* Columna Izquierda: Contacto */}
         <section className="space-y-6">
           <SectionHeader icon={<User size={16} />} title="Información Personal" />
