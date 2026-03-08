@@ -172,15 +172,20 @@ const Enrollment = () => {
           ))}
         </div>
 
+        {/* CONTENEDOR DEL BOTÓN AJUSTADO PARA MÓVIL */}
         {!pendingPayment && (
-          <div className="fixed bottom-10 inset-x-0 flex justify-center z-[110] px-4 pointer-events-none">
+          <div className="fixed bottom-24 md:bottom-10 inset-x-0 flex justify-center z-[110] px-4 pointer-events-none">
             <button
               onClick={handleEnrollment}
               disabled={selectedIds.length === 0 || submitting}
-              className={`pointer-events-auto flex items-center gap-4 px-12 py-6 rounded-full font-black uppercase italic transition-all duration-500 shadow-2xl ${selectedIds.length > 0 ? 'bg-orange-500 text-white hover:scale-110 active:scale-95' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}`}
+              className={`pointer-events-auto flex items-center justify-center gap-4 px-10 py-5 rounded-full font-black uppercase italic transition-all duration-500 shadow-2xl w-full max-w-sm md:w-auto ${
+                selectedIds.length > 0 
+                ? 'bg-orange-500 text-white hover:scale-105 active:scale-95' 
+                : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}
             >
-              {submitting ? <Loader2 className="animate-spin" /> : <Send size={20} />}
-              <span className="tracking-widest text-sm uppercase">Confirmar Matrícula ({selectedIds.length})</span>
+              {submitting ? <Loader2 className="animate-spin" size={20} /> : <Send size={20} />}
+              <span className="tracking-widest text-xs">Confirmar Matrícula ({selectedIds.length})</span>
             </button>
           </div>
         )}
