@@ -68,8 +68,11 @@ const DashboardTeacher = () => {
 
             // Override time if this specific date has custom override columns
             let timeRange = baseTimeRange;
+            let reprogramacionData = null;
+
             if (reg.reprogramaciones_clases) {
                timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
+               reprogramacionData = reg.reprogramaciones_clases;
             }
 
             if (!fechasUnicas[fechaKey]) {
@@ -77,6 +80,7 @@ const DashboardTeacher = () => {
                 id: `${horario.id}-${fechaKey}`,
                 title: horario.niveles_entrenamiento?.nombre || 'BASICO-C',
                 timeRange, // Start with whatever time range this first student gives us
+                reprogramacionData, // Track the full object for UI rendering
                 court: horario.canchas?.nombre || 'T1',
                 level: horario.niveles_entrenamiento?.nombre || 'BASICO-C',
                 fechaReal: reg.fecha,
@@ -93,6 +97,7 @@ const DashboardTeacher = () => {
               // Priority override: If ANY student in this date bucket has the custom time override, force it onto the bucket.
               if (reg.reprogramaciones_clases) {
                  fechasUnicas[fechaKey].timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
+                 fechasUnicas[fechaKey].reprogramacionData = reg.reprogramaciones_clases;
               }
             }
             fechasUnicas[fechaKey].inscripcionesEnEstaFecha.push({ ...ins, registro_especifico: reg });
