@@ -20,7 +20,7 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
         referencia: initialData?.direcciones?.referencia || '',
         // Mapeamos las canchas existentes o iniciamos una vacía
         canchas: initialData?.canchas?.length > 0
-            ? initialData.canchas.map(c => ({ nombre: c.nombre, descripcion: c.descripcion }))
+            ? initialData.canchas.map(c => ({ id: c.id, nombre: c.nombre, descripcion: c.descripcion }))
             : [{ nombre: '', descripcion: '' }]
     });
 
@@ -54,6 +54,7 @@ const AdminLocations = ({ onBack, onSuccess, initialData }) => {
         const canchasFiltradas = formData.canchas
             .filter(c => c.nombre && c.nombre.trim() !== '')
             .map(c => ({
+                id: c.id,
                 nombre: c.nombre.trim(),
                 descripcion: c.descripcion ? c.descripcion.trim() : ''
             }));
