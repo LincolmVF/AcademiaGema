@@ -261,15 +261,26 @@ const AdminGuestPasses = () => {
                     .reduce((acc, current) => {
                       // 1. Filtramos para que no se repitan los días en la lista
                       const existe = acc.find(item => item.dia_semana === current.dia_semana);
-                      // 2. Solo incluimos de Lunes (1) a Sábado (6)
-                      if (!existe && current.dia_semana >= 1 && current.dia_semana <= 6) {
+
+                      // 🔥 CAMBIO AQUÍ: Eliminamos el filtro (<= 6) para permitir el 7 o 0 (Domingo)
+                      if (!existe) {
                         acc.push(current);
                       }
                       return acc;
                     }, [])
-                    .sort((a, b) => a.dia_semana - b.dia_semana) // Ordenamos de Lunes a Sábado
+                    // 2. Ordenamos: Lunes(1) a Sábado(6) y Domingo(7 o 0) al final
+                    .sort((a, b) => {
+                      const diaA = a.dia_semana === 0 ? 7 : a.dia_semana;
+                      const diaB = b.dia_semana === 0 ? 7 : b.dia_semana;
+                      return diaA - diaB;
+                    })
                     .map(h => {
-                      const nombresDias = ['', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'];
+                      // 🔥 CAMBIO AQUÍ: Agregamos 'DOMINGO' al array de nombres
+                      const nombresDias = {
+                        1: 'LUNES', 2: 'MARTES', 3: 'MIÉRCOLES',
+                        4: 'JUEVES', 5: 'VIERNES', 6: 'SÁBADO',
+                        7: 'DOMINGO', 0: 'DOMINGO'
+                      };
                       return (
                         <option key={h.id} value={h.id}>
                           {nombresDias[h.dia_semana]}
