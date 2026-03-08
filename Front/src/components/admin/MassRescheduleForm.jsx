@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CalendarRange, Send, AlertTriangle, Loader2 } from 'lucide-react';
-import { apiFetch } from '../../shared/utils/apiFetch';
+import apiFetch from '../../interceptors/api';
 import { API_ROUTES } from '../../constants/apiRoutes';
 import toast from 'react-hot-toast';
 
@@ -22,8 +22,8 @@ const MassRescheduleForm = () => {
 
     const fetchHorarios = async () => {
         try {
-            const data = await apiFetch(API_ROUTES.HORARIOS.ACTIVOS);
-            setHorarios(data);
+            const response = await apiFetch.get(API_ROUTES.HORARIOS.ACTIVOS);
+            setHorarios(response.data?.data || response.data || []);
         } catch (error) {
             console.error('Error fetching horarios:', error);
             toast.error('No se pudieron cargar los horarios disponibles.');
@@ -56,14 +56,11 @@ const MassRescheduleForm = () => {
         setIsSubmitting(true);
 
         try {
-            await apiFetch(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
-                method: 'POST',
-                body: JSON.stringify({
-                    horario_origen_id: parseInt(formData.horario_origen_id),
-                    fecha_origen: formData.fecha_origen,
-                    fecha_destino: formData.fecha_destino,
-                    motivo: formData.motivo
-                })
+            await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
+                horario_origen_id: parseInt(formData.horario_origen_id),
+                fecha_origen: formData.fecha_origen,
+                fecha_destino: formData.fecha_destino,
+                motivo: formData.motivo
             });
 
             toast.success('Reprogramación masiva ejecutada con éxito. Los alumnos afectados han sido notificados.', {
