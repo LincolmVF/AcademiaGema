@@ -43,12 +43,12 @@ const Profile = () => {
   const fullName = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || 'Atleta Gema';
   const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
 
-  const userBirth = user.fecha_nacimiento 
-    ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' }) 
+  const userBirth = user.fecha_nacimiento
+    ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })
     : 'No registrada';
 
   const handleProfileUpdate = (newData) => {
-    fetchProfile(); 
+    fetchProfile();
     if (updateUserData) updateUserData(newData);
   };
 
@@ -68,7 +68,7 @@ const Profile = () => {
       <div className="relative mb-12">
         <div className="bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden border border-white/5">
           <img src="/logo.png" className="absolute -right-20 -bottom-20 w-80 opacity-[0.05] rotate-12 pointer-events-none" alt="" />
-          
+
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
             <div className="relative shrink-0">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-[2.5rem] md:rounded-[3rem] bg-white p-1 shadow-2xl transform rotate-3">
@@ -95,16 +95,16 @@ const Profile = () => {
                 </div>
 
                 <div className="mx-auto md:mx-0 flex flex-col sm:flex-row items-center gap-3">
-                  <button 
+                  <button
                     onClick={() => setIsEditModalOpen(true)}
                     className="flex items-center justify-center gap-3 bg-orange-500 hover:bg-white hover:text-orange-500 text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-transparent hover:border-orange-500 w-full sm:w-auto"
                   >
                     <Edit2 size={18} />
                     <span>Editar Perfil</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => setIsPasswordModalOpen(true)}
-                    className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-8 py-4 rounded-2xl transition-all duration-300 active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full sm:w-auto"
+                    className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white text-white hover:text-[#1e3a8a] px-6 py-4 rounded-2xl transition-all duration-300 active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-white/20 hover:border-white w-full sm:w-auto"
                   >
                     <KeyRound size={18} />
                     <span>Contraseña</span>
@@ -118,7 +118,7 @@ const Profile = () => {
 
       {/* Grid de Datos: Diseño Horizontal y Robusto */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        
+
         {/* Columna Izquierda: Contacto */}
         <section className="space-y-6">
           <SectionHeader icon={<Activity />} title="Datos de Contacto" />
@@ -130,18 +130,18 @@ const Profile = () => {
         {/* Columna Derecha: Seguridad y Salud (TARJETAS GRANDES) */}
         <section className="space-y-6">
           <SectionHeader icon={<Shield />} title="Seguridad y Salud" />
-          <InfoCard 
-            icon={<MapPin />} 
-            label="Dirección Actual" 
-            value={direccionesData.direccion_completa} 
+          <InfoCard
+            icon={<MapPin />}
+            label="Dirección Actual"
+            value={direccionesData.direccion_completa}
             subText={direccionesData.distrito ? `Distrito: ${direccionesData.distrito}` : null}
-            color="blue" 
-            isLarge 
+            color="blue"
+            isLarge
           />
-          <InfoCard 
-            icon={<HeartPulse />} 
-            label="Condición Médica" 
-            value={alumnosData.condiciones_medicas || 'Atleta Saludable'} 
+          <InfoCard
+            icon={<HeartPulse />}
+            label="Condición Médica"
+            value={alumnosData.condiciones_medicas || 'Atleta Saludable'}
             color="rose"
             isLarge
             footer={`GS: ${alumnosData.grupo_sanguineo || 'N/A'} | Seguro: ${alumnosData.seguro_medico || 'Particular'}`}
