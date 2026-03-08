@@ -11,8 +11,7 @@ const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) =>
     apellidos: '',
     email: '', 
     telefono_personal: '',
-    especializacion: '',
-    tarifa_hora: ''
+    especializacion: ''
   });
 
   useEffect(() => {
@@ -22,8 +21,7 @@ const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) =>
             apellidos: currentUser.apellidos || '',
             email: currentUser.email || '',
             telefono_personal: currentUser.telefono_personal || '',
-            especializacion: currentUser.coordinador?.especializacion || '',
-            tarifa_hora: currentUser.coordinador?.tarifa_hora || ''
+            especializacion: currentUser.coordinador?.especializacion || ''
         });
     }
   }, [isOpen, currentUser]);
@@ -106,14 +104,10 @@ const EditTeacherProfileModal = ({ isOpen, onClose, onSuccess, currentUser }) =>
                 <ArrowLeft size={14} className="text-[#1e3a8a] rotate-180" />
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Datos Profesionales</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 gap-4 mt-4">
                 <div>
                    <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Especialización</label>
                    <input type="text" placeholder="Ej. Baloncesto Técnico" value={formData.especializacion} onChange={e => setFormData({ ...formData, especializacion: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
-                </div>
-                <div>
-                   <label className="text-[10px] font-black uppercase text-slate-400 block mb-1">Tarifa (S/)</label>
-                   <input type="number" step="0.5" placeholder="S/ por hora" value={formData.tarifa_hora} onChange={e => setFormData({ ...formData, tarifa_hora: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-orange-500" />
                 </div>
               </div>
             </div>

@@ -130,12 +130,6 @@ const TeacherProfile = () => {
             value={coordinadorData.especializacion || 'Por definir'} 
             color="blue" 
           />
-          <InfoCard 
-            icon={<Shield />} 
-            label="Tarifa por Hora (S/)" 
-            value={coordinadorData.tarifa_hora ? `S/ ${coordinadorData.tarifa_hora}` : 'No registrada'} 
-            color="orange" 
-          />
         </section>
       </div>
 
