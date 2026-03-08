@@ -8,7 +8,7 @@ import ChangePasswordModal from '../../components/shared/ChangePasswordModal.jsx
 import EditTeacherProfileModal from '../../components/teacher/EditTeacherProfileModal.jsx';
 
 const TeacherProfile = () => {
-  const { updateUserData } = useAuth();
+  const { updateUserData, user: authUser } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
@@ -38,8 +38,8 @@ const TeacherProfile = () => {
   const user = profileData?.user || profileData || {};
   const coordinadorData = user.coordinador || {};
 
-  const fullName = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || 'Coordinador Gema';
-  const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
+  const coordinatorFullName = authUser?.user ? `${authUser.user.nombres} ${authUser.user.apellidos}` : 'Coordinador Gema';
+  const userInitial = authUser?.user?.nombres?.charAt(0).toUpperCase() || 'G';
 
   const handleProfileUpdate = (newData) => {
     fetchProfile();
@@ -80,7 +80,7 @@ const TeacherProfile = () => {
                 <div className="space-y-2">
                   <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Perfil Administrativo Gema</p>
                   <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-tight break-words">
-                    {fullName}
+                    {coordinatorFullName}
                   </h1>
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 sm:mt-4">
                     <span className="text-[10px] font-bold px-5 py-2 rounded-full uppercase tracking-widest bg-orange-500 shadow-lg shadow-orange-500/20">
