@@ -220,18 +220,22 @@ const DashboardEstudiante = () => {
     }
   };
 
-  const agendaParaTimeline = useMemo(() => {
+ const agendaParaTimeline = useMemo(() => {
     return (attendance || [])
       .filter(s => s?.inscripciones?.horarios_clases)
       .map(s => {
         const horario = s.inscripciones.horarios_clases;
+        
+        // Si hay reprogramación, usamos las horas destino. Si no, las originales.
         const horaInicioFinal = s.reprogramaciones_clases ? (s.reprogramaciones_clases.hora_inicio_destino + ":00") : horario.hora_inicio;
+        const horaFinFinal = s.reprogramaciones_clases ? (s.reprogramaciones_clases.hora_fin_destino + ":00") : horario.hora_fin;
 
         return {
           ...horario,
           id: s.id,
           nivel: horario.niveles_entrenamiento,
-          hora_inicio: horaInicioFinal
+          hora_inicio: horaInicioFinal,
+          hora_fin: horaFinFinal // 🔥 AHORA SÍ ENVIAMOS LA HORA DE FIN
         };
       });
   }, [attendance]);
