@@ -100,6 +100,10 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                 ? `${coordinatorData.nombres.trim()} ${coordinatorData.apellidos.trim()}`
                 : 'COORDINATOR GEMA';
 
+              // 🔥 EXTRACT TIME OVERRIDE FOR REPROGRAMMED SESSIONS
+              const overrideMatch = sesion?.comentario?.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
+              const horaInicioMostrar = overrideMatch ? overrideMatch[1] + ":00" : horario?.hora_inicio;
+
               const fechaObj = parseLocalDate(sesion.fecha || sesion.fecha_programada);
               const esPresente = estadoReal === 'PRESENTE';
               const esFalta = estadoReal === 'FALTA';
@@ -130,7 +134,7 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                         <div className="flex items-center gap-1 text-orange-500 font-black">
                           <Clock size={12} />
                           <span className="text-[10px] uppercase tracking-tighter">
-                            {formatTimeDirect(horario?.hora_inicio)}
+                            {formatTimeDirect(horaInicioMostrar)}
                           </span>
                         </div>
                         <h4 className="text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">Sesión Técnica</h4>

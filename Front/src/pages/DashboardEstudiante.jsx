@@ -223,11 +223,18 @@ const DashboardEstudiante = () => {
   const agendaParaTimeline = useMemo(() => {
     return (attendance || [])
       .filter(s => s?.inscripciones?.horarios_clases)
-      .map(s => ({
-        ...s.inscripciones.horarios_clases,
-        id: s.id,
-        nivel: s.inscripciones.horarios_clases.niveles_entrenamiento
-      }));
+      .map(s => {
+        const horario = s.inscripciones.horarios_clases;
+        const overrideMatch = s.comentario?.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
+        const horaInicioFinal = overrideMatch ? (overrideMatch[1] + ":00") : horario.hora_inicio;
+
+        return {
+          ...horario,
+          id: s.id,
+          nivel: horario.niveles_entrenamiento,
+          hora_inicio: horaInicioFinal
+        };
+      });
   }, [attendance]);
 
   const firstName = user?.user?.nombres || "Campeón";

@@ -59,13 +59,22 @@ const DashboardTeacher = () => {
 
       data.forEach(horario => {
         const fechasUnicas = {};
-        const timeRange = `${horario.hora_inicio} - ${horario.hora_fin}`; //
+        const baseTimeRange = `${horario.hora_inicio} - ${horario.hora_fin}`;
 
         horario.inscripciones.forEach(ins => {
           ins.registros_asistencia.forEach(reg => {
             const fechaObj = new Date(reg.fecha);
             const fechaKey = reg.fecha.split('T')[0];
             const fechaDate = fechaObj.setHours(0, 0, 0, 0);
+
+            // Override time if this specific date has a REPG_MASIVA custom time
+            let timeRange = baseTimeRange;
+            if (reg.comentario && reg.comentario.includes('[REPG_MASIVA|')) {
+              const match = reg.comentario.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
+              if (match) {
+                timeRange = `${match[1]} - ${match[2]}`;
+              }
+            }
 
             if (!fechasUnicas[fechaKey]) {
               fechasUnicas[fechaKey] = {
@@ -84,6 +93,14 @@ const DashboardTeacher = () => {
                 totalStudents: horario.inscripciones.length,
                 inscripcionesEnEstaFecha: []
               };
+            } else {
+              // Update timeRange if we find the tag later in the loop for the same date
+              if (reg.comentario && reg.comentario.includes('[REPG_MASIVA|')) {
+                const match = reg.comentario.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
+                if (match) {
+                  fechasUnicas[fechaKey].timeRange = `${match[1]} - ${match[2]}`;
+                }
+              }
             }
             fechasUnicas[fechaKey].inscripcionesEnEstaFecha.push({ ...ins, registro_especifico: reg });
           });
