@@ -54,6 +54,22 @@ const MassRescheduleForm = () => {
             return;
         }
 
+        // Validación frontend del día de la semana
+        const horarioSeleccionado = horarios.find(h => h.id === parseInt(formData.horario_origen_id));
+        if (horarioSeleccionado) {
+            // Recrear fechas de forma segura neutralizando Zonas Horarias
+            const fechaO = new Date(formData.fecha_origen);
+            fechaO.setHours(12, 0, 0, 0);
+            
+            const diaViernesEs5DomingoEs0 = fechaO.getUTCDay(); // 0 is Sunday
+            const diaOrigen = diaViernesEs5DomingoEs0 === 0 ? 7 : diaViernesEs5DomingoEs0;
+
+            if (diaOrigen !== horarioSeleccionado.dia_semana) {
+                toast.error(`La Fecha Original seleccionada no es un ${diasSemana[horarioSeleccionado.dia_semana]}. El horario seleccionado solo ocurre los ${diasSemana[horarioSeleccionado.dia_semana]}s.`);
+                return;
+            }
+        }
+
         setIsSubmitting(true);
 
         try {
