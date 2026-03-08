@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ClipboardList, LogOut } from 'lucide-react';
+import { ClipboardList, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const TeacherSidebar = ({ isOpen, onClose }) => {
@@ -21,6 +21,7 @@ const TeacherSidebar = ({ isOpen, onClose }) => {
 
   const menuItems = [
     { icon: ClipboardList, label: 'Mis Clases', path: '/dashboard/teacher' },
+    { icon: User, label: 'Mi Perfil', path: '/dashboard/teacher/profile' },
   ];
 
   return (

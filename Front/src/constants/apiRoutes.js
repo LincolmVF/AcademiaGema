@@ -6,6 +6,8 @@ export const API_ROUTES = {
         COMPLETAR_EMAIL: '/auth/completar-email',
         FORGOT_PASSWORD: '/auth/forgot-password',
         RESET_PASSWORD: '/auth/reset-password',
+        CHANGE_PASSWORD: '/api/auth/change-password',
+        UPDATE_PROFILE: '/api/auth/profile',
     },
     ROLES: {
         BASE: '/roles',

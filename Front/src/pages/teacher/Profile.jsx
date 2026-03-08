@@ -1,28 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Edit2, ArrowLeft, HeartPulse, Shield, Calendar, Activity, Loader2 } from 'lucide-react';
+import { Mail, Phone, Edit2, ArrowLeft, Shield, KeyRound, Loader2, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { Link } from 'react-router-dom';
 import apiFetch from '../../interceptors/api.js';
 import { API_ROUTES } from '../../constants/apiRoutes.js';
-import EditProfileModal from '../../components/student/DataUsuario/EditProfileModal.jsx';
 import ChangePasswordModal from '../../components/shared/ChangePasswordModal.jsx';
-import { KeyRound } from 'lucide-react';
+import EditTeacherProfileModal from '../../components/teacher/EditTeacherProfileModal.jsx';
 
-const Profile = () => {
+const TeacherProfile = () => {
   const { updateUserData } = useAuth();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔄 SINCRONIZACIÓN TOTAL: Trae usuarios + alumnos + direcciones
   const fetchProfile = async () => {
     try {
-      const response = await apiFetch.get(API_ROUTES.ALUMNOS.MI_PERFIL);
+      const response = await apiFetch.get(API_ROUTES.AUTH.USER);
       const result = await response.json();
       if (response.ok) setProfileData(result.data);
     } catch (error) {
-      console.error("Error cargando expediente:", error);
+      console.error("Error cargando perfil del coordinador:", error);
     } finally {
       setLoading(false);
     }
@@ -36,16 +34,11 @@ const Profile = () => {
     </div>
   );
 
-  const user = profileData || {};
-  const alumnosData = user.alumnos || {};
-  const direccionesData = alumnosData.direcciones || {};
+  // El endpoint AUTH.USER devuelve directo los datos del usuario logueado en data.user
+  const user = profileData?.user || profileData || {};
 
-  const fullName = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || 'Atleta Gema';
+  const fullName = `${user.nombres || ''} ${user.apellidos || ''}`.trim() || 'Coordinador Gema';
   const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
-
-  const userBirth = user.fecha_nacimiento 
-    ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' }) 
-    : 'No registrada';
 
   const handleProfileUpdate = (newData) => {
     fetchProfile(); 
@@ -56,7 +49,7 @@ const Profile = () => {
     <div className="w-full max-w-5xl mx-auto p-4 md:p-10 animate-fade-in pb-32">
       {/* Navegación Superior */}
       <div className="flex justify-between items-center mb-6">
-        <Link to="/dashboard/student" className="flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all group">
+        <Link to="/dashboard/teacher" className="flex items-center gap-2 text-slate-400 hover:text-[#1e3a8a] transition-all group">
           <div className="bg-white p-2 rounded-xl shadow-sm border border-slate-100 group-hover:border-orange-200">
             <ArrowLeft size={16} />
           </div>
@@ -84,13 +77,14 @@ const Profile = () => {
             <div className="flex-1 text-center md:text-left w-full">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                 <div className="space-y-2">
-                  <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Expediente Oficial Gema</p>
+                  <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Perfil Administrativo Gema</p>
                   <h1 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
                     {fullName}
                   </h1>
                   <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-4">
-                    <Badge label={`ID: #${user.id}`} />
-                    <Badge label="Atleta Elite" active />
+                    <span className="text-[10px] font-bold px-5 py-2 rounded-full uppercase tracking-widest bg-orange-500 shadow-lg shadow-orange-500/20">
+                      Coordinador Oficial
+                    </span>
                   </div>
                 </div>
 
@@ -100,7 +94,7 @@ const Profile = () => {
                     className="flex items-center justify-center gap-3 bg-orange-500 hover:bg-white hover:text-orange-500 text-white px-8 py-4 rounded-2xl transition-all duration-300 shadow-xl active:scale-95 font-black text-xs uppercase tracking-widest border-2 border-transparent hover:border-orange-500 w-full sm:w-auto"
                   >
                     <Edit2 size={18} />
-                    <span>Editar Perfil</span>
+                    <span>Editar Datos</span>
                   </button>
                   <button 
                     onClick={() => setIsPasswordModalOpen(true)}
@@ -121,35 +115,14 @@ const Profile = () => {
         
         {/* Columna Izquierda: Contacto */}
         <section className="space-y-6">
-          <SectionHeader icon={<Activity />} title="Datos de Contacto" />
-          <InfoCard icon={<Mail />} label="Email Principal" value={user.email} color="blue" />
+          <SectionHeader icon={<User size={16} />} title="Información Personal" />
+          <InfoCard icon={<Mail />} label="Email Asociado" value={user.email} color="blue" />
           <InfoCard icon={<Phone />} label="Celular / WhatsApp" value={user.telefono_personal} color="orange" />
-          <InfoCard icon={<Calendar />} label="Fecha de Nacimiento" value={userBirth} color="indigo" />
         </section>
 
-        {/* Columna Derecha: Seguridad y Salud (TARJETAS GRANDES) */}
-        <section className="space-y-6">
-          <SectionHeader icon={<Shield />} title="Seguridad y Salud" />
-          <InfoCard 
-            icon={<MapPin />} 
-            label="Dirección Actual" 
-            value={direccionesData.direccion_completa} 
-            subText={direccionesData.distrito ? `Distrito: ${direccionesData.distrito}` : null}
-            color="blue" 
-            isLarge 
-          />
-          <InfoCard 
-            icon={<HeartPulse />} 
-            label="Condición Médica" 
-            value={alumnosData.condiciones_medicas || 'Atleta Saludable'} 
-            color="rose"
-            isLarge
-            footer={`GS: ${alumnosData.grupo_sanguineo || 'N/A'} | Seguro: ${alumnosData.seguro_medico || 'Particular'}`}
-          />
-        </section>
       </div>
 
-      <EditProfileModal
+      <EditTeacherProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         currentUser={user} // Pasamos el objeto completo para pre-llenar
@@ -173,41 +146,27 @@ const SectionHeader = ({ icon, title }) => (
   </div>
 );
 
-const Badge = ({ label, active }) => (
-  <span className={`text-[10px] font-bold px-5 py-2 rounded-full uppercase tracking-widest ${active ? 'bg-orange-500 shadow-lg shadow-orange-500/20' : 'bg-white/10 border border-white/20'}`}>
-    {label}
-  </span>
-);
-
-const InfoCard = ({ icon, label, value, color, footer, subText, isLarge }) => {
+const InfoCard = ({ icon, label, value, color }) => {
   const styles = {
     blue: "bg-blue-50 text-blue-600",
     orange: "bg-orange-50 text-orange-600",
-    indigo: "bg-indigo-50 text-indigo-600",
-    rose: "bg-rose-50 text-rose-600"
   };
 
   return (
-    <div className={`bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 group transition-all duration-300 ${isLarge ? 'border-orange-100 ring-4 ring-orange-50/50' : ''}`}>
+    <div className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/40 group transition-all duration-300">
       <div className="flex items-start gap-6">
         <div className={`shrink-0 p-4 md:p-5 rounded-2xl transition-all group-hover:bg-orange-500 group-hover:text-white ${styles[color]}`}>
-          {React.cloneElement(icon, { size: isLarge ? 28 : 22, strokeWidth: 2.5 })}
+          {React.cloneElement(icon, { size: 22, strokeWidth: 2.5 })}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1 italic">{label}</p>
-          <p className={`font-black text-[#1e3a8a] tracking-tight break-words ${isLarge ? 'text-lg md:text-xl' : 'text-sm'}`}>
+          <p className="font-black text-[#1e3a8a] tracking-tight break-words text-sm">
             {value || 'Pendiente de registro'}
           </p>
-          {subText && <p className="text-[11px] font-bold text-slate-400 mt-1 uppercase tracking-tighter italic">{subText}</p>}
-          {footer && (
-            <div className="mt-4 pt-4 border-t border-slate-50 flex items-center gap-2 text-[10px] font-black text-orange-500 uppercase italic tracking-widest">
-              {footer}
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default TeacherProfile;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { 
-  ClipboardList, Menu, X, LogOut 
+  ClipboardList, Menu, X, LogOut, User 
 } from 'lucide-react';
 import { logoutService } from '../services/auth.service';
 import toast from 'react-hot-toast';
@@ -46,6 +46,7 @@ const MobileNavbarTeacher = () => {
                             <div className="space-y-1">
                                 <p className="px-4 text-[10px] font-black text-blue-300/40 uppercase tracking-[0.2em] mb-2">Panel del Coordinador</p>
                                 <NavLink to="/dashboard/teacher" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><ClipboardList size={18}/> Mis Clases</NavLink>
+                                <NavLink to="/dashboard/teacher/profile" onClick={toggleMenu} className="flex items-center gap-4 text-blue-100/70 px-4 py-3 rounded-xl hover:bg-white/5"><User size={18}/> Mi Perfil</NavLink>
                             </div>
                         </div>
 
@@ -68,6 +69,15 @@ const MobileNavbarTeacher = () => {
                             <>
                                 <ClipboardList size={isActive ? 24 : 22} />
                                 <span className="text-[9px] uppercase font-black tracking-tighter">Mis Clases</span>
+                            </>
+                        )}
+                    </NavLink>
+
+                    <NavLink to="/dashboard/teacher/profile" className={({ isActive }) => `flex flex-col items-center justify-center gap-1 w-full h-full transition-all ${isActive ? 'text-orange-500 scale-110' : 'text-blue-100/40 hover:text-blue-100/70'}`}>
+                        {({ isActive }) => (
+                            <>
+                                <User size={isActive ? 24 : 22} />
+                                <span className="text-[9px] uppercase font-black tracking-tighter">Mi Perfil</span>
                             </>
                         )}
                     </NavLink>
