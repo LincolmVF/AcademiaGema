@@ -85,7 +85,7 @@ const Profile = () => {
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6">
                 <div className="space-y-2">
                   <p className="text-orange-500 font-black uppercase tracking-[0.4em] text-[10px] italic">Expediente Oficial Gema</p>
-                  <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight break-words">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase italic tracking-tighter leading-tight break-words">
                     {fullName}
                   </h1>
                   <div className="flex flex-wrap justify-center md:justify-start gap-2 sm:gap-3 mt-3 sm:mt-4">
