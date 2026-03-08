@@ -90,8 +90,17 @@ const DashboardTeacher = () => {
         });
 
         Object.values(fechasUnicas).forEach(sesion => {
-          const completada = sesion.inscripcionesEnEstaFecha.every(al => al.registro_especifico.estado !== 'PROGRAMADA');
-          todasLasSesiones.push({ ...sesion, attended: completada, totalStudents: sesion.inscripcionesEnEstaFecha.length });
+          const reprogramada = sesion.inscripcionesEnEstaFecha.length > 0 && sesion.inscripcionesEnEstaFecha.every(al => al.registro_especifico.estado === 'REPROGRAMADO');
+          const completada = sesion.inscripcionesEnEstaFecha.length > 0 && sesion.inscripcionesEnEstaFecha.every(al => 
+              al.registro_especifico.estado !== 'PROGRAMADA' && al.registro_especifico.estado !== 'PENDIENTE'
+          );
+
+          todasLasSesiones.push({ 
+            ...sesion, 
+            attended: completada && !reprogramada, 
+            isReprogramada: reprogramada,
+            totalStudents: sesion.inscripcionesEnEstaFecha.length 
+          });
         });
       });
 
@@ -213,9 +222,14 @@ const DashboardTeacher = () => {
                       <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest border border-orange-100 italic">
                         {item.level}
                       </span>
-                      {item.attended && (
+                      {item.attended && !item.isReprogramada && (
                         <span className="bg-green-50 text-green-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-green-100 italic">
                           <CheckCircle size={14} strokeWidth={3} /> SESIÓN FINALIZADA
+                        </span>
+                      )}
+                      {item.isReprogramada && (
+                        <span className="bg-orange-50 text-orange-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-orange-100 italic">
+                          <ShieldAlert size={14} strokeWidth={3} /> REPROGRAMADA (ADMIN)
                         </span>
                       )}
                     </div>
