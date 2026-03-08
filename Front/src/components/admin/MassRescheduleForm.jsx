@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 const MassRescheduleForm = () => {
     const [horarios, setHorarios] = useState([]);
     const [isLoadingHorarios, setIsLoadingHorarios] = useState(true);
+    const [fechasDisponibles, setFechasDisponibles] = useState([]);
+    const [isLoadingFechas, setIsLoadingFechas] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -20,6 +22,15 @@ const MassRescheduleForm = () => {
         fetchHorarios();
     }, []);
 
+    useEffect(() => {
+        if (formData.horario_origen_id) {
+            fetchFechasDisponibles(formData.horario_origen_id);
+        } else {
+            setFechasDisponibles([]);
+            setFormData(prev => ({ ...prev, fecha_origen: '' }));
+        }
+    }, [formData.horario_origen_id]);
+
     const fetchHorarios = async () => {
         try {
             const response = await apiFetch.get(API_ROUTES.HORARIOS.ACTIVOS);
@@ -30,6 +41,21 @@ const MassRescheduleForm = () => {
             toast.error('No se pudieron cargar los horarios disponibles.');
         } finally {
             setIsLoadingHorarios(false);
+        }
+    };
+
+    const fetchFechasDisponibles = async (horarioId) => {
+        setIsLoadingFechas(true);
+        try {
+            const response = await apiFetch.get(`/clases/${horarioId}/fechas-disponibles`);
+            const json = await response.json();
+            setFechasDisponibles(json.data || json || []);
+        } catch (error) {
+            console.error('Error fetching fechas:', error);
+            toast.error('No se pudieron cargar las fechas disponibles de este horario.');
+            setFechasDisponibles([]);
+        } finally {
+            setIsLoadingFechas(false);
         }
     };
 
@@ -52,22 +78,6 @@ const MassRescheduleForm = () => {
         if (formData.motivo.length < 3) {
             toast.error("El motivo debe ser más descriptivo.");
             return;
-        }
-
-        // Validación frontend del día de la semana
-        const horarioSeleccionado = horarios.find(h => h.id === parseInt(formData.horario_origen_id));
-        if (horarioSeleccionado) {
-            // Recrear fechas de forma segura neutralizando Zonas Horarias
-            const fechaO = new Date(formData.fecha_origen);
-            fechaO.setHours(12, 0, 0, 0);
-            
-            const diaViernesEs5DomingoEs0 = fechaO.getUTCDay(); // 0 is Sunday
-            const diaOrigen = diaViernesEs5DomingoEs0 === 0 ? 7 : diaViernesEs5DomingoEs0;
-
-            if (diaOrigen !== horarioSeleccionado.dia_semana) {
-                toast.error(`La Fecha Original seleccionada no es un ${diasSemana[horarioSeleccionado.dia_semana]}. El horario seleccionado solo ocurre los ${diasSemana[horarioSeleccionado.dia_semana]}s.`);
-                return;
-            }
         }
 
         setIsSubmitting(true);
@@ -147,23 +157,35 @@ const MassRescheduleForm = () => {
                     </select>
                 </div>
 
-                {/* Date Picker - Origen */}
+                {/* Date Picker - Origen (Ahora es Select) */}
                 <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-1">Fecha Original (Día que falló) *</label>
                     <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <CalendarRange size={18} className="text-slate-400" />
-                        </div>
-                        <input
-                            type="date"
+                        <select
                             name="fecha_origen"
                             value={formData.fecha_origen}
                             onChange={handleChange}
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                            className={`w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all ${isLoadingFechas ? 'opacity-50 cursor-wait' : ''}`}
+                            disabled={!formData.horario_origen_id || isLoadingFechas}
                             required
-                        />
+                        >
+                            <option value="">
+                                {!formData.horario_origen_id 
+                                    ? "Selecciona un horario primero" 
+                                    : isLoadingFechas 
+                                        ? "Cargando fechas..." 
+                                        : fechasDisponibles.length === 0 
+                                            ? "No hay clases programadas" 
+                                            : "Selecciona la fecha a reprogramar"}
+                            </option>
+                            {fechasDisponibles.map(fecha => (
+                                <option key={fecha} value={fecha}>
+                                    {fecha}
+                                </option>
+                            ))}
+                        </select>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">El día exacto que corresponde a la clase suspendida.</p>
+                    <p className="text-xs text-slate-500 mt-1">Solo muestra fechas con asistencias generadas.</p>
                 </div>
 
                 {/* Date Picker - Destino */}
