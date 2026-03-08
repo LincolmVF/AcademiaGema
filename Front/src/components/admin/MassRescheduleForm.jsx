@@ -24,7 +24,8 @@ const MassRescheduleForm = () => {
     const fetchHorarios = async () => {
         try {
             const response = await apiFetch.get(API_ROUTES.HORARIOS.ACTIVOS);
-            setHorarios(response.data?.data || response.data || []);
+            const json = await response.json();
+            setHorarios(json.data || json || []);
         } catch (error) {
             console.error('Error fetching horarios:', error);
             toast.error('No se pudieron cargar los horarios disponibles.');
@@ -57,13 +58,18 @@ const MassRescheduleForm = () => {
         setIsSubmitting(true);
 
         try {
-            await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
+            const response = await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
                 horario_origen_id: parseInt(formData.horario_origen_id),
                 fecha_origen: formData.fecha_origen,
                 horario_destino_id: parseInt(formData.horario_destino_id),
                 fecha_destino: formData.fecha_destino,
                 motivo: formData.motivo
             });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Error en el servidor al reprogramar la clase.');
+            }
 
             toast.success('Reprogramación masiva ejecutada con éxito. Los alumnos afectados han sido notificados.', {
                 duration: 5000
