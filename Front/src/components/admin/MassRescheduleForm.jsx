@@ -12,6 +12,7 @@ const MassRescheduleForm = () => {
     const [formData, setFormData] = useState({
         horario_origen_id: '',
         fecha_origen: '',
+        horario_destino_id: '',
         fecha_destino: '',
         motivo: ''
     });
@@ -43,7 +44,7 @@ const MassRescheduleForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        if (!formData.horario_origen_id || !formData.fecha_origen || !formData.fecha_destino || !formData.motivo) {
+        if (!formData.horario_origen_id || !formData.fecha_origen || !formData.horario_destino_id || !formData.fecha_destino || !formData.motivo) {
             toast.error("Por favor completa todos los campos.");
             return;
         }
@@ -59,6 +60,7 @@ const MassRescheduleForm = () => {
             await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
                 horario_origen_id: parseInt(formData.horario_origen_id),
                 fecha_origen: formData.fecha_origen,
+                horario_destino_id: parseInt(formData.horario_destino_id),
                 fecha_destino: formData.fecha_destino,
                 motivo: formData.motivo
             });
@@ -71,6 +73,7 @@ const MassRescheduleForm = () => {
             setFormData({
                 horario_origen_id: '',
                 fecha_origen: '',
+                horario_destino_id: '',
                 fecha_destino: '',
                 motivo: ''
             });
@@ -105,9 +108,9 @@ const MassRescheduleForm = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Horario Selector */}
+                {/* Horario Selector - Origen */}
                 <div className="col-span-1 md:col-span-2">
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Horario Afectado *</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Horario Origen (Afectado) *</label>
                     <select
                         name="horario_origen_id"
                         value={formData.horario_origen_id}
@@ -116,7 +119,27 @@ const MassRescheduleForm = () => {
                         disabled={isLoadingHorarios}
                         required
                     >
-                        <option value="">Selecciona un horario base</option>
+                        <option value="">Selecciona el horario original</option>
+                        {horarios.map(h => (
+                            <option key={h.id} value={h.id}>
+                                {`Día: ${diasSemana[h.dia_semana]} | ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | Nivel: ${h.nivel?.nombre || 'General'} | Sede: ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                {/* Horario Selector - Destino */}
+                <div className="col-span-1 md:col-span-2">
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Horario Destino (A dónde van) *</label>
+                    <select
+                        name="horario_destino_id"
+                        value={formData.horario_destino_id}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                        disabled={isLoadingHorarios}
+                        required
+                    >
+                        <option value="">Selecciona a qué horario los mueves</option>
                         {horarios.map(h => (
                             <option key={h.id} value={h.id}>
                                 {`Día: ${diasSemana[h.dia_semana]} | ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | Nivel: ${h.nivel?.nombre || 'General'} | Sede: ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
