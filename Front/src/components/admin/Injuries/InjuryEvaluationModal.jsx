@@ -31,13 +31,16 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
     };
 
     return (
-        /* Elevamos el z-index a 110 para superar la barra móvil (z-50) */
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-2 md:p-4 bg-[#0f172a]/80 backdrop-blur-md animate-in fade-in duration-300">
+        /* z-[110] para estar por encima de la barra móvil y el sidebar */
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-3 md:p-6 bg-[#0f172a]/80 backdrop-blur-md animate-in fade-in duration-300">
             
-            {/* Contenedor principal con límite de altura y scroll para móviles */}
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh] md:max-h-[90vh]">
+            {/* AJUSTE CLAVE: 
+                - En móvil (default): max-h-[80vh] y overflow-y-auto (para que no lo tape la barra inferior).
+                - En PC (md:): max-h-none y h-auto (para que se vea completo y estirado).
+            */}
+            <div className="bg-white border border-slate-200 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[80vh] md:max-h-[95vh] lg:max-h-none h-auto overflow-hidden">
                 
-                {/* Botón Cerrar - Siempre visible arriba */}
+                {/* Botón Cerrar */}
                 <button 
                     onClick={onClose} 
                     className="absolute top-6 right-6 text-slate-400 hover:text-[#1e3a8a] z-[120] transition-colors p-2 hover:bg-slate-50 rounded-full"
@@ -45,8 +48,8 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                     <X size={20} />
                 </button>
 
-                {/* Área con scroll interno */}
-                <div className="p-6 md:p-8 overflow-y-auto custom-scrollbar">
+                {/* Contenido con scroll condicional */}
+                <div className="p-6 md:p-10 overflow-y-auto md:overflow-visible custom-scrollbar">
                     
                     {/* Header Informativo */}
                     <div className="mb-8">
@@ -72,7 +75,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                         </div>
                     </div>
 
-                    <form onSubmit={handleEvaluate} className="space-y-6 pb-6">
+                    <form onSubmit={handleEvaluate} className="space-y-6">
                         {/* Selector de Estado Dual */}
                         <div className="grid grid-cols-2 gap-3 bg-slate-100/80 p-1.5 rounded-[1.5rem] border border-slate-200/50">
                             <button
@@ -91,7 +94,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                             </button>
                         </div>
 
-                        {/* Campos Dinámicos (Solo si es aprobada) */}
+                        {/* Campos Dinámicos */}
                         {evalData.estado === 'APROBADA' && (
                             <div className="space-y-5 animate-in fade-in slide-in-from-top-2 duration-300">
                                 <div className="bg-[#1e3a8a]/5 p-5 rounded-[1.5rem] border border-[#1e3a8a]/10">
@@ -124,7 +127,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                                 {evalData.tipo === 'INDEFINIDO' && (
                                     <div className="text-[9px] font-black text-amber-700 bg-amber-50 p-4 rounded-2xl border border-amber-200/50 flex gap-3 items-center uppercase tracking-wider leading-relaxed">
                                         <AlertTriangle size={18} className="shrink-0 text-amber-500" />
-                                        <span>Atención: Se suspenderá la asistencia del alumno hasta que se registre una alta médica manual.</span>
+                                        <span>Suspensión de asistencia activa hasta alta médica manual.</span>
                                     </div>
                                 )}
                             </div>
@@ -135,8 +138,8 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                             <textarea rows="3" className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-4 text-slate-700 text-xs focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-bold shadow-sm resize-none" placeholder="Indique los motivos de la decisión..." value={evalData.notas} onChange={(e) => setEvalData({ ...evalData, notas: e.target.value })} />
                         </div>
 
-                        {/* Botón de acción final - Con margen extra inferior para móviles */}
-                        <div className="pt-2 mb-4">
+                        {/* Botón de acción final - Ajustado para no chocar con la nav bar móvil */}
+                        <div className="pt-2 mb-2 md:mb-0">
                             <button
                                 type="submit"
                                 disabled={loading}
@@ -164,9 +167,6 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
                     background: #e2e8f0;
                     border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: #cbd5e1;
                 }
             `}</style>
         </div>
