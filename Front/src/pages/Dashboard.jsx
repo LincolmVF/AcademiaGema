@@ -6,7 +6,7 @@ import {
     TrendingUp, Activity, Zap, FileSpreadsheet, Home, 
     Wallet, MapPin, CreditCard, CalendarDays, BarChart2
 } from 'lucide-react'; 
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { 
@@ -190,15 +190,70 @@ const Dashboard = ({ role = 'student' }) => {
 
             const reportData = result.data;
             const workbook = XLSX.utils.book_new();
-            const alumnosWS = XLSX.utils.json_to_sheet(reportData.alumnos);
-            XLSX.utils.book_append_sheet(workbook, alumnosWS, "Lista_Alumnos");
-            const pagosWS = XLSX.utils.json_to_sheet(reportData.pagos);
-            XLSX.utils.book_append_sheet(workbook, pagosWS, "Historial_Pagos");
-            const deudasWS = XLSX.utils.json_to_sheet(reportData.deudas);
-            XLSX.utils.book_append_sheet(workbook, deudasWS, "Cuentas_Pendientes");
 
-            alumnosWS['!cols'] = [{ wch: 25 }, { wch: 30 }, { wch: 20 }];
-            XLSX.writeFile(workbook, `Reporte_Gema_Detallado_${new Date().toISOString().split('T')[0]}.xlsx`);
+            const applyStyles = (ws, range) => {
+                // Style Headers (Row 0)
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const address = XLSX.utils.encode_cell({ r: 0, c: C });
+                    if (!ws[address]) continue;
+                    ws[address].s = {
+                        font: { bold: true, color: { rgb: "FFFFFF" } },
+                        fill: { fgColor: { rgb: "1E3A8A" } }, // Gema Blue
+                        alignment: { horizontal: "center", vertical: "center" },
+                        border: {
+                            top: { style: "thin", color: { rgb: "cbd5e1" } },
+                            bottom: { style: "thin", color: { rgb: "cbd5e1" } },
+                            left: { style: "thin", color: { rgb: "cbd5e1" } },
+                            right: { style: "thin", color: { rgb: "cbd5e1" } }
+                        }
+                    };
+                }
+
+                // Style Body cells
+                for (let R = 1; R <= range.e.r; ++R) {
+                    for (let C = range.s.c; C <= range.e.c; ++C) {
+                        const address = XLSX.utils.encode_cell({ r: R, c: C });
+                        if (!ws[address]) continue;
+                        ws[address].s = {
+                            alignment: { horizontal: "left", vertical: "center" },
+                            border: {
+                                bottom: { style: "thin", color: { rgb: "f1f5f9" } }
+                            }
+                        };
+                    }
+                }
+                
+                return ws;
+            };
+
+            const addSheet = (dataArray, sheetName, cols) => {
+                const ws = XLSX.utils.json_to_sheet(dataArray);
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                ws['!cols'] = cols;
+                applyStyles(ws, range);
+                XLSX.utils.book_append_sheet(workbook, ws, sheetName);
+            };
+
+            addSheet(reportData.alumnos, "Directorio_Alumnos", [
+                {wch: 10}, {wch: 15}, {wch: 25}, {wch: 25}, {wch: 15}, {wch: 10}, 
+                {wch: 10}, {wch: 15}, {wch: 30}, {wch: 20}, {wch: 15}, {wch: 10},
+                {wch: 30}, {wch: 15}, {wch: 20}
+            ]);
+
+            addSheet(reportData.inscripciones, "Inscripciones_Activas", [
+                {wch: 35}, {wch: 15}, {wch: 20}, {wch: 20}, {wch: 25}, 
+                {wch: 15}, {wch: 25}, {wch: 15}
+            ]);
+
+            addSheet(reportData.pagos, "Historial_Pagos", [
+                {wch: 15}, {wch: 35}, {wch: 30}, {wch: 15}, {wch: 15}, {wch: 20}, {wch: 15}
+            ]);
+
+            addSheet(reportData.deudas, "Cuentas_Pendientes", [
+                {wch: 35}, {wch: 15}, {wch: 35}, {wch: 15}, {wch: 15}, {wch: 15}
+            ]);
+
+            XLSX.writeFile(workbook, `Reporte_Inteligencia_Gema_${new Date().toISOString().split('T')[0]}.xlsx`);
 
         } catch (error) {
             toast.error(error.message);
