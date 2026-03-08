@@ -15,6 +15,8 @@ const MassRescheduleForm = () => {
         horario_origen_id: '',
         fecha_origen: '',
         fecha_destino: '',
+        hora_inicio_destino: '',
+        hora_fin_destino: '',
         motivo: ''
     });
 
@@ -25,11 +27,19 @@ const MassRescheduleForm = () => {
     useEffect(() => {
         if (formData.horario_origen_id) {
             fetchFechasDisponibles(formData.horario_origen_id);
+            const selectedHorario = horarios.find(h => h.id.toString() === formData.horario_origen_id.toString());
+            if (selectedHorario) {
+                setFormData(prev => ({
+                    ...prev,
+                    hora_inicio_destino: selectedHorario.hora_inicio.substring(0, 5),
+                    hora_fin_destino: selectedHorario.hora_fin.substring(0, 5)
+                }));
+            }
         } else {
             setFechasDisponibles([]);
-            setFormData(prev => ({ ...prev, fecha_origen: '' }));
+            setFormData(prev => ({ ...prev, fecha_origen: '', hora_inicio_destino: '', hora_fin_destino: '' }));
         }
-    }, [formData.horario_origen_id]);
+    }, [formData.horario_origen_id, horarios]);
 
     const fetchHorarios = async () => {
         try {
@@ -87,6 +97,8 @@ const MassRescheduleForm = () => {
                 horario_origen_id: parseInt(formData.horario_origen_id),
                 fecha_origen: formData.fecha_origen,
                 fecha_destino: formData.fecha_destino,
+                hora_inicio_destino: formData.hora_inicio_destino || undefined,
+                hora_fin_destino: formData.hora_fin_destino || undefined,
                 motivo: formData.motivo
             });
 
@@ -104,6 +116,8 @@ const MassRescheduleForm = () => {
                 horario_origen_id: '',
                 fecha_origen: '',
                 fecha_destino: '',
+                hora_inicio_destino: '',
+                hora_fin_destino: '',
                 motivo: ''
             });
 
@@ -205,6 +219,30 @@ const MassRescheduleForm = () => {
                         />
                     </div>
                     <p className="text-xs text-slate-500 mt-1">A qué día se están pasando los alumnos.</p>
+                </div>
+
+                {/* Time Picker - Inicio */}
+                <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Hora Inicio Revisada</label>
+                    <input
+                        type="time"
+                        name="hora_inicio_destino"
+                        value={formData.hora_inicio_destino}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                    />
+                </div>
+
+                {/* Time Picker - Fin */}
+                <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">Hora Fin Revisada</label>
+                    <input
+                        type="time"
+                        name="hora_fin_destino"
+                        value={formData.hora_fin_destino}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                    />
                 </div>
 
                 {/* Motivo */}
