@@ -379,7 +379,7 @@ const DashboardEstudiante = () => {
             <div className="w-1.5 h-4 bg-white rounded-full"></div>
             <h2 className="font-black uppercase tracking-tighter italic text-xs text-slate-700">Tu Horario de la Semana</h2>
           </div>
-          <WeeklyTimeline agendaSeleccionada={agendaParaTimeline} />
+          <WeeklyTimeline />
         </div>
 
         {/* 5. GRID PRINCIPAL */}
