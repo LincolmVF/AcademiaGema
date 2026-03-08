@@ -101,8 +101,9 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                 : 'COORDINATOR GEMA';
 
               // 🔥 EXTRACT TIME OVERRIDE FOR REPROGRAMMED SESSIONS
-              const overrideMatch = sesion?.comentario?.match(/\[REPG_MASIVA\|(\d{2}:\d{2})-(\d{2}:\d{2})\]/);
-              const horaInicioMostrar = overrideMatch ? overrideMatch[1] + ":00" : horario?.hora_inicio;
+              const horaInicioMostrar = sesion.reprogramaciones_clases 
+                ? sesion.reprogramaciones_clases.hora_inicio_destino + ":00" 
+                : horario?.hora_inicio;
 
               const fechaObj = parseLocalDate(sesion.fecha || sesion.fecha_programada);
               const esPresente = estadoReal === 'PRESENTE';

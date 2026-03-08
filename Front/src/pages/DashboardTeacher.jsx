@@ -68,8 +68,8 @@ const DashboardTeacher = () => {
 
             // Override time if this specific date has custom override columns
             let timeRange = baseTimeRange;
-            if (reg.hora_inicio_override && reg.hora_fin_override) {
-               timeRange = `${reg.hora_inicio_override} - ${reg.hora_fin_override}`;
+            if (reg.reprogramaciones_clases) {
+               timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
             }
 
             if (!fechasUnicas[fechaKey]) {
@@ -91,8 +91,8 @@ const DashboardTeacher = () => {
               };
             } else {
               // Priority override: If ANY student in this date bucket has the custom time override, force it onto the bucket.
-              if (reg.hora_inicio_override && reg.hora_fin_override) {
-                 fechasUnicas[fechaKey].timeRange = `${reg.hora_inicio_override} - ${reg.hora_fin_override}`;
+              if (reg.reprogramaciones_clases) {
+                 fechasUnicas[fechaKey].timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
               }
             }
             fechasUnicas[fechaKey].inscripcionesEnEstaFecha.push({ ...ins, registro_especifico: reg });
@@ -123,6 +123,7 @@ const DashboardTeacher = () => {
       }
 
     } catch (error) {
+      console.error("DashboardTeacher error:", error);
       toast.error("Error al cargar la agenda deportiva");
     } finally {
       setLoading(false);

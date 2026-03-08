@@ -225,7 +225,7 @@ const DashboardEstudiante = () => {
       .filter(s => s?.inscripciones?.horarios_clases)
       .map(s => {
         const horario = s.inscripciones.horarios_clases;
-        const horaInicioFinal = s.hora_inicio_override ? (s.hora_inicio_override + ":00") : horario.hora_inicio;
+        const horaInicioFinal = s.reprogramaciones_clases ? (s.reprogramaciones_clases.hora_inicio_destino + ":00") : horario.hora_inicio;
 
         return {
           ...horario,
