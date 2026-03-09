@@ -161,7 +161,7 @@ const WeeklyTimelineEnrollment = ({ agendaSeleccionada = [] }) => {
           <div className="mt-4 flex flex-col sm:flex-row gap-4 items-center justify-between border-t border-slate-100 pt-4 px-2">
             <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-lg border border-blue-100">
               <div className="w-1.5 h-1.5 rounded-full bg-[#1e3a8a]" />
-              <span className="text-[9px] font-black text-[#1e3a8a] uppercase italic tracking-widest opacity-70">Gema Academy</span>
+              <span className="text-[9px] font-black text-[#1e3a8a] uppercase italic tracking-widest opacity-70">Club Gema</span>
             </div>
             <p className="text-[8px] font-bold text-slate-400 uppercase italic">
               Horario de Lunes a Domingo • 08:00 - 00:00

@@ -139,7 +139,7 @@ const StudentNews = () => {
             </div>
 
             <p className="mt-20 text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.5em] italic opacity-50">
-                GEMA ACADEMY | COMUNIDAD
+                CLUB GEMA | COMUNIDAD
             </p>
         </div>
     );

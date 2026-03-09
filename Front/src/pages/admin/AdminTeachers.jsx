@@ -185,7 +185,7 @@ const AdminTeachers = ({ onBack }) => {
                             <Lock size={28} className="text-orange-500 mb-4" />
                             <h4 className="font-black uppercase italic tracking-tighter text-lg leading-tight">Clave Temporal</h4>
                             <p className="text-[10px] text-slate-400 font-bold uppercase mt-3 leading-relaxed">
-                                Una vez registrado, el coordinador podrá ingresar usando su número de documento como contraseña inicial.
+                                Una vez registrado, el coordinador podrá ingresar usando su número de documento como contraseña inicial. <br></br> Recibirá sus credenciales de acceso en su correo electrónico.
                             </p>
                         </div>
                         <ShieldCheck size={100} className="absolute -right-6 -bottom-6 opacity-5 rotate-12" />

@@ -46,7 +46,7 @@ export const ResetPassword = () => {
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/5 rounded-full"></div>
 
                         <h1 className="text-3xl font-black text-white tracking-tight uppercase italic relative z-10">
-                            GEMA<span className="text-orange-500 not-italic">ACADEMY</span>
+                            GEMA<span className="text-orange-500 not-italic">CLUB</span>
                         </h1>
                         <div className="h-1.5 w-14 bg-orange-500 mx-auto mt-3 rounded-full relative z-10"></div>
                         <p className="text-blue-100 mt-5 text-sm font-semibold tracking-wide relative z-10 uppercase">
@@ -124,7 +124,7 @@ export const ResetPassword = () => {
 
                 {/* Footer Decorativo */}
                 <p className="text-center text-slate-500 text-[10px] mt-10 font-bold uppercase tracking-[0.2em] opacity-60">
-                    Gema Academy © 2026 · Sports Management System
+                    Club Gema © 2026 · Sports Management System
                 </p>
             </div>
         </div>

@@ -104,7 +104,7 @@ const Blog = () => {
                   <div className="w-12 h-12 bg-white border-2 border-slate-100 rounded-2xl p-1.5 shadow-md">
                     <img src="/Logo con borde blanco.png" alt="Gema" className="w-full h-full object-contain" />
                   </div>
-                  <span className="font-black italic text-sm">Gema Academy Oficial</span>
+                  <span className="font-black italic text-sm">Club Gema Oficial</span>
                 </div>
               </div>
             </div>

@@ -1,11 +1,11 @@
 import React from 'react';
 import MassRescheduleForm from '../../components/admin/MassRescheduleForm';
 import MassRescheduleHistory from '../../components/admin/MassRescheduleHistory';
-import { 
-    History, 
-    Info, 
-    Bell, 
-    ShieldCheck, 
+import {
+    History,
+    Info,
+    Bell,
+    ShieldCheck,
     Cpu
 } from 'lucide-react';
 
@@ -33,10 +33,10 @@ const AdminReprogramaciones = () => {
                                 REPROGRAMACIÓN <span className="text-blue-400">MASIVA</span>
                             </h1>
                             <p className="text-blue-100/80 text-base md:text-lg font-medium leading-relaxed">
-                                Gestiona cambios globales en el calendario de la academia. Mueve bloques completos de clases de manera eficiente y notifica automáticamente a todos los involucrados.
+                                Gestiona cambios globales en el calendario del club. Mueve bloques completos de clases de manera eficiente y notifica automáticamente a todos los involucrados.
                             </p>
                         </div>
-                        
+
                         {/* Quick Info Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-auto">
                             <div className="bg-white/10 backdrop-blur-xl border border-white/10 p-4 rounded-2xl flex items-center gap-4 transition-transform hover:scale-105">
@@ -71,7 +71,7 @@ const AdminReprogramaciones = () => {
                             <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Editor de Reprogramación</h2>
                         </div>
                     </div>
-                    
+
                     <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                         <div className="p-4 sm:p-8 md:p-12">
                             <MassRescheduleForm />
@@ -111,7 +111,7 @@ const AdminReprogramaciones = () => {
                             <History size={20} className="text-[#1e3a8a]" />
                             <h2 className="text-sm font-black text-slate-700 uppercase tracking-widest underline decoration-blue-500/30 underline-offset-8">Historial Reciente</h2>
                         </div>
-                        
+
                         <div className="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden min-h-[400px]">
                             <div className="p-6 bg-slate-50/50 border-b border-slate-100">
                                 <p className="text-xs font-bold text-slate-500 italic">Puedes revertir reprogramaciones que aún no se han ejecutado o que fueron recientes.</p>

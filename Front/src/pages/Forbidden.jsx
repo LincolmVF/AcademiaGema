@@ -59,7 +59,7 @@ const Forbidden = () => {
             </div>
 
             <p className="mt-8 text-[10px] text-slate-400 font-black uppercase tracking-[0.3em] opacity-50">
-                GEMA ACADEMY | SEGURIDAD
+                CLUB GEMA | SEGURIDAD
             </p>
         </div>
     );
