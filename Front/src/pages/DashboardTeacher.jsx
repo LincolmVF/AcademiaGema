@@ -71,8 +71,8 @@ const DashboardTeacher = () => {
             let reprogramacionData = null;
 
             if (reg.reprogramaciones_clases) {
-               timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
-               reprogramacionData = reg.reprogramaciones_clases;
+              timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
+              reprogramacionData = reg.reprogramaciones_clases;
             }
 
             if (!fechasUnicas[fechaKey]) {
@@ -96,8 +96,8 @@ const DashboardTeacher = () => {
             } else {
               // Priority override: If ANY student in this date bucket has the custom time override, force it onto the bucket.
               if (reg.reprogramaciones_clases) {
-                 fechasUnicas[fechaKey].timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
-                 fechasUnicas[fechaKey].reprogramacionData = reg.reprogramaciones_clases;
+                fechasUnicas[fechaKey].timeRange = `${reg.reprogramaciones_clases.hora_inicio_destino} - ${reg.reprogramaciones_clases.hora_fin_destino}`;
+                fechasUnicas[fechaKey].reprogramacionData = reg.reprogramaciones_clases;
               }
             }
             fechasUnicas[fechaKey].inscripcionesEnEstaFecha.push({ ...ins, registro_especifico: reg });
@@ -234,6 +234,12 @@ const DashboardTeacher = () => {
                   </div>
 
                   <div className="flex flex-col justify-center">
+                    <div className="md:hidden flex items-center gap-2 mb-2 bg-blue-50 w-fit px-3 py-1 rounded-lg border border-blue-100">
+                      <Calendar size={12} className="text-orange-500" />
+                      <span className="text-[10px] font-black text-[#1e3a8a] uppercase italic tracking-widest">
+                        {item.dateFormatted} {/* Esto mostrará ej: 11 MAR */}
+                      </span>
+                    </div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest border border-orange-100 italic">
                         {item.level}
