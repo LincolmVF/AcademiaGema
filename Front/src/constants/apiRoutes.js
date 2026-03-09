@@ -75,6 +75,8 @@ export const API_ROUTES = {
     CLASES: {
         BASE: '/clases',
         REPROGRAMAR_MASIVO: '/clases/reprogramar-masivo',
+        REVERTIR_MASIVO: '/clases/revertir-masivo',
+        ACTIVAS_MASIVAS: '/clases/reprogramaciones-masivas-activas',
     },
     CATALOGO: {
         BASE: '/catalogo',
