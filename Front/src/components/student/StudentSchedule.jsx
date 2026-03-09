@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar, RefreshCw } from 'lucide-react';
+import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar, RefreshCw, CalendarX } from 'lucide-react';
 
 const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   const diasSemana = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
@@ -108,11 +108,13 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
               const fechaObj = parseLocalDate(sesion.fecha || sesion.fecha_programada);
               const esPresente = estadoReal === 'PRESENTE';
               const esFalta = estadoReal === 'FALTA';
+              const esReprogramado = estadoReal === 'REPROGRAMADO';
 
               return (
                 <div key={esRecuperacion ? `recu-${sesion.id}` : `asist-${sesion.id}`} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
                   esFalta ? 'bg-red-50/50 border-red-200 shadow-sm' :
-                    'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
+                    esReprogramado ? 'bg-slate-100/50 border-slate-200 opacity-60 grayscale-[0.5]' :
+                      'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
                   }`}>
                   {/* 🔥 BADGE VISUAL DE RECUPERACIÓN */}
                   {esRecuperacion && (
@@ -126,7 +128,8 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                     <div className="flex items-center gap-4 min-w-[140px]">
                       <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-2xl font-black shadow-md ${esPresente ? 'bg-green-600 text-white' :
                         esFalta ? 'bg-red-600 text-white' :
-                          'bg-[#1e3a8a] text-white'
+                          esReprogramado ? 'bg-slate-400 text-white' :
+                            'bg-[#1e3a8a] text-white'
                         }`}>
                         <span className="text-[9px] opacity-70 uppercase italic">{diasSemana[fechaObj.getDay()]}</span>
                         <span className="text-2xl leading-none">{fechaObj.getDate()}</span>
@@ -173,9 +176,12 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                     {/* STATUS BADGE */}
                     <div className={`shrink-0 flex items-center justify-center min-w-[100px] gap-2 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase italic shadow-sm border ${esPresente ? 'bg-green-100 text-green-700 border-green-200' :
                       esFalta ? 'bg-red-100 text-red-700 border-red-200' :
-                        'bg-blue-50 text-blue-600 border-blue-100'
+                        esReprogramado ? 'bg-slate-200 text-slate-500 border-slate-300' :
+                          'bg-blue-50 text-blue-600 border-blue-100'
                       }`}>
-                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> : <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
+                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> : 
+                       esReprogramado ? <CalendarX size={14} strokeWidth={3} /> : 
+                       <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
                       {sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
                     </div>
                   </div>
