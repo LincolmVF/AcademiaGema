@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { RefreshCcw, CalendarClock, ArrowLeftRight, Clock, Trash2, CalendarX2 } from 'lucide-react';
+import { 
+    RefreshCcw, 
+    CalendarClock, 
+    ArrowRight, 
+    RotateCcw, 
+    CalendarX2,
+    User,
+    Users,
+    MapPin,
+    AlertCircle,
+    CheckCircle2
+} from 'lucide-react';
 import apiFetch from '../../interceptors/api';
 import { API_ROUTES } from '../../constants/apiRoutes';
 import toast from 'react-hot-toast';
@@ -21,14 +32,14 @@ const MassRescheduleHistory = () => {
             setHistory(json.data || json || []);
         } catch (error) {
             console.error('Error fetching mass reschedules history:', error);
-            toast.error('No se pudo cargar el historial de reprogramaciones masivas.');
+            toast.error('No se pudo cargar el historial.');
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleRevert = async (grupo_uuid) => {
-        if (!window.confirm('¿Estás seguro que deseas REVERTIR esta reprogramación masiva? Todos los alumnos volverán a su fecha original y esta acción se marcará como revertida.')) {
+        if (!window.confirm('¿ESTÁS SEGURO? Esta acción revertirá todos los cambios de este lote. Los alumnos volverán a sus horarios originales.')) {
             return;
         }
 
@@ -37,15 +48,14 @@ const MassRescheduleHistory = () => {
             const response = await apiFetch.post(API_ROUTES.CLASES.REVERTIR_MASIVO, { grupo_uuid });
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Error revirtiendo la reprogramación.');
+                throw new Error(errorData.message || 'Error al revertir.');
             }
 
-            toast.success('Reprogramación masiva revertida exitosamente.');
-            // Actualizamos la lista local para remover el item (o podríamos volver a fetchear)
+            toast.success('Cambios revertidos correctamente.');
             setHistory(prev => prev.filter(h => h.grupo_uuid !== grupo_uuid));
         } catch (error) {
-            console.error('Error revertiendo:', error);
-            toast.error(error.message || 'Error al tratar de revertir la reprogramación.');
+            console.error('Error reverting:', error);
+            toast.error(error.message || 'Error al tratar de revertir.');
         } finally {
             setIsRevertingUuid(null);
         }
@@ -53,95 +63,125 @@ const MassRescheduleHistory = () => {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center p-8">
-                <RefreshCcw className="animate-spin text-slate-400" size={24} />
+            <div className="flex flex-col justify-center items-center p-20 space-y-4">
+                <div className="relative">
+                    <div className="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+                    <RefreshCcw className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600/50 animate-pulse" size={20} />
+                </div>
+                <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Consultando Historial...</p>
             </div>
         );
     }
 
     if (history.length === 0) {
         return (
-            <div className="text-center p-8 bg-slate-50 border border-slate-200 rounded-xl">
-                <CalendarX2 className="mx-auto text-slate-300 mb-3" size={40} />
-                <h3 className="text-sm font-semibold text-slate-600">No hay reprogramaciones masivas activas</h3>
-                <p className="text-xs text-slate-400 mt-1">Las reprogramaciones en lote aparecerán aquí permitiendo su reversión.</p>
+            <div className="flex flex-col items-center justify-center p-12 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-200 group hover:border-blue-200 transition-colors">
+                <div className="p-5 bg-white rounded-3xl shadow-xl shadow-slate-200 group-hover:scale-110 transition-transform mb-6">
+                    <CalendarX2 className="text-slate-300 group-hover:text-blue-400 transition-colors" size={48} />
+                </div>
+                <h3 className="text-lg font-black text-slate-700 uppercase tracking-tight">Sin actividad pendiente</h3>
+                <p className="text-sm text-slate-400 font-medium text-center max-w-[250px] mt-2 italic">
+                    Aquí aparecerán las reprogramaciones que aún puedes deshacer.
+                </p>
+                <button 
+                    onClick={fetchHistory}
+                    className="mt-8 flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-500 hover:text-blue-600 hover:border-blue-200 shadow-sm transition-all active:scale-95"
+                >
+                    <RefreshCcw size={14} />
+                    Refrescar ahora
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                    <Clock size={16} className="text-blue-600" />
-                    Últimas Reprogramaciones Activas
-                </h3>
-                <button 
-                    onClick={fetchHistory}
-                    className="text-xs flex items-center gap-1 text-slate-500 hover:text-blue-600 transition-colors bg-white border border-slate-200 px-2 py-1 rounded-md shadow-sm"
-                >
-                    <RefreshCcw size={12} />
-                    Actualizar
-                </button>
-            </div>
+        <div className="relative pl-4">
+            {/* Timeline Line */}
+            <div className="absolute left-[23px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-blue-200 via-slate-100 to-transparent"></div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-6">
                 {history.map((item) => {
                     const origen = new Date(item.fecha_origen).toLocaleDateString();
                     const destino = new Date(item.fecha_destino).toLocaleDateString();
                     const isReverting = isRevertingUuid === item.grupo_uuid;
 
                     return (
-                        <div key={item.id} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm relative overflow-hidden group hover:border-blue-200 hover:shadow-md transition-all">
+                        <div key={item.id} className="relative group pl-10">
+                            {/* Dot */}
+                            <div className="absolute left-[12px] top-6 w-5 h-5 bg-white border-4 border-blue-500 rounded-full z-10 shadow-sm group-hover:scale-125 transition-transform"></div>
                             
-                            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-                            
-                            <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 pl-2">
-                                
-                                <div className="space-y-3 flex-1">
-                                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-md font-semibold font-mono">
-                                            Lote: {item.grupo_uuid.split('-')[0]}
-                                        </span>
-                                        <span className="text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-                                            Por: {item.usuarios?.nombres} {item.usuarios?.apellidos?.charAt(0)}.
-                                        </span>
-                                        <span className="text-amber-600 bg-amber-50 px-2 py-1 rounded-md font-medium">
-                                            {item._count?.registros_asistencia} Asistencias Movidas
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-center flex-wrap gap-2 md:gap-4 mt-2">
-                                        <div className="flex items-center gap-2 text-sm text-slate-600 font-medium">
-                                            <CalendarClock size={16} className="text-slate-400" />
-                                            {origen}
+                            <div className="bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/40 p-5 group-hover:border-blue-200 group-hover:shadow-xl transition-all duration-300">
+                                <div className="flex flex-col gap-4">
+                                    {/* Header info */}
+                                    <div className="flex items-start justify-between">
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2 mb-2">
+                                                <span className="text-[10px] font-black bg-blue-600 text-white px-2 py-0.5 rounded-full uppercase tracking-widest shadow-sm">
+                                                    Lote {item.grupo_uuid.split('-')[0]}
+                                                </span>
+                                                <div className="flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100/50">
+                                                    <Users size={12} />
+                                                    {item._count?.registros_asistencia} Alumnos
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                                                <User size={14} />
+                                                <span className="uppercase tracking-wider">{item.usuarios?.nombres} {item.usuarios?.apellidos}</span>
+                                            </div>
                                         </div>
-                                        <ArrowLeftRight size={14} className="text-slate-300 hidden md:block" />
-                                        <div className="flex items-center gap-2 text-sm text-blue-700 font-bold bg-blue-50 px-2 py-1 rounded-lg">
-                                            <CalendarClock size={16} className="text-blue-500" />
-                                            {destino} ({item.hora_inicio_destino} - {item.hora_fin_destino})
+                                        <button
+                                            onClick={() => handleRevert(item.grupo_uuid)}
+                                            disabled={isReverting}
+                                            className="flex items-center justify-center p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100 disabled:opacity-30 group/btn"
+                                            title="Revertir cambio"
+                                        >
+                                            {isReverting ? (
+                                                <RefreshCcw size={18} className="animate-spin" />
+                                            ) : (
+                                                <RotateCcw size={18} className="group-hover/btn:-rotate-45 transition-transform" />
+                                            )}
+                                        </button>
+                                    </div>
+
+                                    {/* Path Info */}
+                                    <div className="flex flex-col sm:flex-row items-center gap-3 bg-slate-50/80 p-3 rounded-2xl border border-slate-100/50">
+                                        <div className="flex flex-col items-center flex-1">
+                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Original</span>
+                                            <div className="flex items-center gap-1.5 text-slate-600 font-bold text-xs uppercase">
+                                                <CalendarClock size={14} className="text-slate-400" />
+                                                {origen}
+                                            </div>
+                                        </div>
+                                        <div className="flex-shrink-0 bg-white p-1.5 rounded-full shadow-sm border border-slate-100">
+                                            <ArrowRight size={14} className="text-blue-500" />
+                                        </div>
+                                        <div className="flex flex-col items-center flex-1">
+                                            <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">Nuevo</span>
+                                            <div className="flex flex-col items-center">
+                                                <div className="flex items-center gap-1.5 text-blue-700 font-black text-xs uppercase">
+                                                    <CheckCircle2 size={14} className="text-blue-500" />
+                                                    {destino}
+                                                </div>
+                                                <span className="text-[10px] font-bold text-blue-400/80 mt-0.5">{item.hora_inicio_destino} - {item.hora_fin_destino}</span>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="text-xs text-slate-500">
-                                        <span className="font-semibold text-slate-600">Horario Origen:</span> {item.horarios_clases?.canchas?.nombre} ({item.horarios_clases?.niveles_entrenamiento?.nombre}) <br/>
-                                        <span className="font-semibold text-slate-600">Motivo:</span> "{item.motivo}"
+                                    {/* Footer details */}
+                                    <div className="pt-2 flex flex-col gap-2 border-t border-slate-50">
+                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500">
+                                            <MapPin size={12} className="text-slate-300" />
+                                            <span className="text-slate-600 font-black">{item.horarios_clases?.canchas?.nombre}</span>
+                                            <span className="opacity-40">|</span>
+                                            <span className="bg-slate-100 px-1.5 rounded uppercase tracking-tighter">{item.horarios_clases?.niveles_entrenamiento?.nombre}</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <AlertCircle size={12} className="text-slate-300 flex-shrink-0 mt-0.5" />
+                                            <p className="text-[10px] text-slate-500 italic leading-snug font-medium line-clamp-2">
+                                                "{item.motivo}"
+                                            </p>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="flex-shrink-0 flex self-start md:self-center">
-                                    <button
-                                        onClick={() => handleRevert(item.grupo_uuid)}
-                                        disabled={isReverting}
-                                        className="flex items-center gap-2 text-red-600 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg font-semibold text-sm transition-colors border border-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {isReverting ? (
-                                            <RefreshCcw size={16} className="animate-spin" />
-                                        ) : (
-                                            <Trash2 size={16} />
-                                        )}
-                                        Revertir Masivamente
-                                    </button>
                                 </div>
                             </div>
                         </div>
