@@ -141,7 +141,19 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                             {formatTimeDirect(horaInicioMostrar)}
                           </span>
                         </div>
-                        <h4 className="text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">Sesión Técnica</h4>
+                        <h4 className="text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">
+                          {esReprogramado ? 'Clase Movida' : 'Sesión Técnica'}
+                        </h4>
+                        {esReprogramado && sesion.comentario && (
+                          <p className="text-[8px] text-slate-400 font-bold mt-0.5 line-clamp-1 italic">
+                            {sesion.comentario.split(' al ')[1] ? `Hacia el ${sesion.comentario.split(' al ')[1].split(' por ')[0]}` : ''}
+                          </p>
+                        )}
+                        {sesion.fecha_original && !esReprogramado && (
+                          <p className="text-[8px] text-indigo-500 font-black mt-0.5 italic uppercase tracking-tighter">
+                            Original: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -177,12 +189,15 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                     <div className={`shrink-0 flex items-center justify-center min-w-[100px] gap-2 px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase italic shadow-sm border ${esPresente ? 'bg-green-100 text-green-700 border-green-200' :
                       esFalta ? 'bg-red-100 text-red-700 border-red-200' :
                         esReprogramado ? 'bg-slate-200 text-slate-500 border-slate-300' :
-                          'bg-blue-50 text-blue-600 border-blue-100'
+                          sesion.fecha_original ? 'bg-indigo-100 text-indigo-700 border-indigo-200' :
+                            'bg-blue-50 text-blue-600 border-blue-100'
                       }`}>
                       {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> : 
                        esReprogramado ? <CalendarX size={14} strokeWidth={3} /> : 
+                       sesion.fecha_original ? <RefreshCw size={14} className="animate-pulse" /> :
                        <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
-                      {sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
+                      {sesion.estado === 'PROGRAMADA' && sesion.fecha_original ? 'REPROGRAMADA' : 
+                       sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
                     </div>
                   </div>
                 </div>
