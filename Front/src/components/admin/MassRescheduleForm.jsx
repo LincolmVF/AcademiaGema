@@ -20,6 +20,9 @@ const MassRescheduleForm = () => {
         motivo: ''
     });
 
+    const [filterDay, setFilterDay] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+
     useEffect(() => {
         fetchHorarios();
     }, []);
@@ -94,7 +97,7 @@ const MassRescheduleForm = () => {
 
         try {
             const response = await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
-                horario_origen_id: parseInt(formData.horario_origen_id),
+                horario_origen_id: Number.parseInt(formData.horario_origen_id),
                 fecha_origen: formData.fecha_origen,
                 fecha_destino: formData.fecha_destino,
                 hora_inicio_destino: formData.hora_inicio_destino || undefined,
@@ -134,6 +137,18 @@ const MassRescheduleForm = () => {
         5: 'Viernes', 6: 'Sábado', 7: 'Domingo'
     };
 
+    const filteredHorarios = horarios.filter(h => {
+        const matchesDay = filterDay === '' || h.dia_semana.toString() === filterDay;
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch = searchTerm === '' || 
+            diasSemana[h.dia_semana].toLowerCase().includes(searchLower) ||
+            h.nivel?.nombre?.toLowerCase().includes(searchLower) ||
+            h.cancha?.nombre?.toLowerCase().includes(searchLower) ||
+            h.cancha?.sede?.nombre?.toLowerCase().includes(searchLower);
+        
+        return matchesDay && matchesSearch;
+    });
+
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             
@@ -151,31 +166,67 @@ const MassRescheduleForm = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Filtros de Búsqueda */}
+                <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-100 p-4 rounded-xl border border-slate-200">
+                    <div className="md:col-span-1">
+                        <label htmlFor="filterDay" className="block text-xs font-bold text-slate-500 uppercase mb-1">Filtrar por Día</label>
+                        <select
+                            id="filterDay"
+                            value={filterDay}
+                            onChange={(e) => setFilterDay(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white focus:border-orange-500 outline-none text-sm transition-all"
+                        >
+                            <option value="">Todos los días</option>
+                            {Object.entries(diasSemana).map(([val, label]) => (
+                                <option key={val} value={val}>{label}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="md:col-span-2">
+                        <label htmlFor="searchTerm" className="block text-xs font-bold text-slate-500 uppercase mb-1">Buscar (Nivel, Sede o Cancha)</label>
+                        <input
+                            id="searchTerm"
+                            type="text"
+                            placeholder="Ej. Intermedio, Sede Norte..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-white focus:border-orange-500 outline-none text-sm transition-all"
+                        />
+                    </div>
+                </div>
+
                 {/* Horario Selector */}
                 <div className="col-span-1 md:col-span-2">
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Horario Afectado *</label>
+                    <label htmlFor="horario_origen_id" className="block text-sm font-semibold text-slate-700 mb-1">Horario Afectado *</label>
                     <select
+                        id="horario_origen_id"
                         name="horario_origen_id"
                         value={formData.horario_origen_id}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all shadow-sm"
                         disabled={isLoadingHorarios}
                         required
                     >
-                        <option value="">Selecciona el horario a reprogramar</option>
-                        {horarios.map(h => (
+                        <option value="">
+                            {isLoadingHorarios ? "Cargando horarios..." : `Selecciona el horario (${filteredHorarios.length} encontrados)`}
+                        </option>
+                        {filteredHorarios.map(h => (
                             <option key={h.id} value={h.id}>
                                 {`Día: ${diasSemana[h.dia_semana]} | ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | Nivel: ${h.nivel?.nombre || 'General'} | Sede: ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
                             </option>
                         ))}
                     </select>
+                    {filteredHorarios.length === 0 && !isLoadingHorarios && (
+                        <p className="text-xs text-red-500 mt-1">No se encontraron horarios con los filtros aplicados.</p>
+                    )}
                 </div>
 
                 {/* Date Picker - Origen (Ahora es Select) */}
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Fecha Original (Día que falló) *</label>
+                    <label htmlFor="fecha_origen" className="block text-sm font-semibold text-slate-700 mb-1">Fecha Original (Día que falló) *</label>
                     <div className="relative">
                         <select
+                            id="fecha_origen"
                             name="fecha_origen"
                             value={formData.fecha_origen}
                             onChange={handleChange}
@@ -204,12 +255,13 @@ const MassRescheduleForm = () => {
 
                 {/* Date Picker - Destino */}
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Nueva Fecha (Día de reposición) *</label>
+                    <label htmlFor="fecha_destino" className="block text-sm font-semibold text-slate-700 mb-1">Nueva Fecha (Día de reposición) *</label>
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <CalendarRange size={18} className="text-slate-400" />
                         </div>
                         <input
+                            id="fecha_destino"
                             type="date"
                             name="fecha_destino"
                             value={formData.fecha_destino}
@@ -223,8 +275,9 @@ const MassRescheduleForm = () => {
 
                 {/* Time Picker - Inicio */}
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Hora Inicio Revisada</label>
+                    <label htmlFor="hora_inicio_destino" className="block text-sm font-semibold text-slate-700 mb-1">Hora Inicio Revisada</label>
                     <input
+                        id="hora_inicio_destino"
                         type="time"
                         name="hora_inicio_destino"
                         value={formData.hora_inicio_destino}
@@ -235,8 +288,9 @@ const MassRescheduleForm = () => {
 
                 {/* Time Picker - Fin */}
                 <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Hora Fin Revisada</label>
+                    <label htmlFor="hora_fin_destino" className="block text-sm font-semibold text-slate-700 mb-1">Hora Fin Revisada</label>
                     <input
+                        id="hora_fin_destino"
                         type="time"
                         name="hora_fin_destino"
                         value={formData.hora_fin_destino}
@@ -247,8 +301,9 @@ const MassRescheduleForm = () => {
 
                 {/* Motivo */}
                 <div className="col-span-1 md:col-span-2">
-                    <label className="block text-sm font-semibold text-slate-700 mb-1">Motivo Institucional *</label>
+                    <label htmlFor="motivo" className="block text-sm font-semibold text-slate-700 mb-1">Motivo Institucional *</label>
                     <textarea
+                        id="motivo"
                         name="motivo"
                         value={formData.motivo}
                         onChange={handleChange}
