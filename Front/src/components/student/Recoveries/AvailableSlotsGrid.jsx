@@ -23,7 +23,7 @@ const AvailableSlotsGrid = ({ slots, onSlotClick, loading }) => {
             {slots.map((slot) => {
                 const horario = slot.horarioData;
                 const fechaObj = new Date(slot.fecha);
-                const coordinatorName = horario.coordinadores?.usuarios?.nombres || "Coach Gema";
+                const coordinatorName = horario.coordinador?.nombre_completo || "Coach Gema";
                 const horaInicio = horario.hora_inicio.substring(0, 5);
 
                 return (
@@ -60,14 +60,14 @@ const AvailableSlotsGrid = ({ slots, onSlotClick, loading }) => {
                                 <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
                                     <MapPin size={14} />
                                 </div>
-                                <span className="uppercase font-black text-[10px] tracking-[0.1em] italic">{horario.canchas?.nombre}</span>
+                                <span className="uppercase font-black text-[10px] tracking-[0.1em] italic">{horario.cancha?.nombre}</span>
                             </div>
 
                             <div className="flex items-center gap-3 text-slate-600">
                                 <div className="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
                                     <Star size={14} fill="currentColor" />
                                 </div>
-                                <span className="uppercase font-black text-[10px] tracking-[0.1em] italic">{horario.niveles_entrenamiento?.nombre}</span>
+                                <span className="uppercase font-black text-[10px] tracking-[0.1em] italic">{horario.nivel?.nombre}</span>
                             </div>
 
                             <div className="flex items-center gap-3 text-slate-600">

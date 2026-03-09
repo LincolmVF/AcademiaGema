@@ -16,7 +16,7 @@ const TeacherProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      const response = await apiFetch.get(API_ROUTES.AUTH.USER);
+      const response = await apiFetch.get(API_ROUTES.COORDINADORES.BY_ID(authUser.user.id));
       const result = await response.json();
       if (response.ok) setProfileData(result.data);
     } catch (error) {
@@ -36,7 +36,7 @@ const TeacherProfile = () => {
 
   // El endpoint AUTH.USER devuelve directo los datos del usuario logueado en data.user o data
   const user = profileData?.user || profileData || {};
-  const coordinadorData = user.coordinador || {};
+  const coordinadorData = user.coordinadores || {};
 
   const coordinatorFullName = authUser?.user ? `${authUser.user.nombres} ${authUser.user.apellidos}` : 'Coordinador Gema';
   const userInitial = authUser?.user?.nombres?.charAt(0).toUpperCase() || 'G';
@@ -113,7 +113,7 @@ const TeacherProfile = () => {
 
       {/* Grid de Datos: Diseño Horizontal y Robusto */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-        
+
         {/* Columna Izquierda: Contacto */}
         <section className="space-y-6">
           <SectionHeader icon={<User size={16} />} title="Información Personal" />
@@ -124,11 +124,11 @@ const TeacherProfile = () => {
         {/* Columna Derecha: Datos Profesionales */}
         <section className="space-y-6">
           <SectionHeader icon={<Shield size={16} />} title="Datos Profesionales" />
-          <InfoCard 
-            icon={<User />} 
-            label="Especialización" 
-            value={coordinadorData.especializacion || 'Por definir'} 
-            color="blue" 
+          <InfoCard
+            icon={<User />}
+            label="Especialización"
+            value={coordinadorData.especializacion || 'Por definir'}
+            color="blue"
           />
         </section>
       </div>
