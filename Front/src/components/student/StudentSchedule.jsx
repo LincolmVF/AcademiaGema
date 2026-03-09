@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar, RefreshCw, CalendarX } from 'lucide-react';
+import { Clock, MapPin, User, Star, Zap, CheckCircle2, CircleDashed, Calendar, RefreshCw, CalendarX, ArrowRight, Sparkles, History } from 'lucide-react';
 
 const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
   const diasSemana = ["DOM", "LUN", "MAR", "MIE", "JUE", "VIE", "SAB"];
@@ -113,9 +113,17 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
               return (
                 <div key={esRecuperacion ? `recu-${sesion.id}` : `asist-${sesion.id}`} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
                   esFalta ? 'bg-red-50/50 border-red-200 shadow-sm' :
-                    esReprogramado ? 'bg-slate-100/50 border-slate-200 opacity-60 grayscale-[0.5]' :
-                      'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
+                    esReprogramado ? 'bg-slate-50/30 border-slate-200 border-dashed opacity-60 grayscale-[0.5]' :
+                      sesion.fecha_original ? 'bg-gradient-to-br from-violet-50/80 to-indigo-50/80 border-violet-200 shadow-md hover:shadow-indigo-100' :
+                        'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
                   }`}>
+                  
+                  {/* ✨ INDICADOR DE SESIÓN RECIÉN AGREGADA (REPROGRAMADA) */}
+                  {sesion.fecha_original && !esReprogramado && (
+                    <div className="absolute -top-2 -left-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-1.5 rounded-full shadow-lg border-2 border-white z-20 animate-bounce-slow">
+                      <Sparkles size={12} />
+                    </div>
+                  )}
                   {/* 🔥 BADGE VISUAL DE RECUPERACIÓN */}
                   {esRecuperacion && (
                     <div className="absolute top-0 right-0 bg-blue-500 text-white flex items-center gap-1 text-[8px] font-black px-4 py-1.5 rounded-bl-2xl italic tracking-tighter z-10">
@@ -141,18 +149,27 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                             {formatTimeDirect(horaInicioMostrar)}
                           </span>
                         </div>
-                        <h4 className="text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">
-                          {esReprogramado ? 'Clase Movida' : 'Sesión Técnica'}
+                        <h4 className="flex items-center gap-1.5 text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">
+                          {esReprogramado ? (
+                            <>
+                              Clase Movida <ArrowRight size={10} className="text-slate-400" />
+                            </>
+                          ) : 'Sesión Técnica'}
                         </h4>
                         {esReprogramado && sesion.comentario && (
-                          <p className="text-[8px] text-slate-400 font-bold mt-0.5 line-clamp-1 italic">
-                            {sesion.comentario.split(' al ')[1] ? `Hacia el ${sesion.comentario.split(' al ')[1].split(' por ')[0]}` : ''}
-                          </p>
+                          <div className="mt-1 flex items-center gap-1.5">
+                            <span className="bg-slate-100 text-slate-500 text-[8px] font-black px-2 py-0.5 rounded-full uppercase italic border border-slate-200">
+                              {sesion.comentario.split(' al ')[1] ? `Hacia el ${sesion.comentario.split(' al ')[1].split(' por ')[0]}` : 'Fecha Modificada'}
+                            </span>
+                          </div>
                         )}
                         {sesion.fecha_original && !esReprogramado && (
-                          <p className="text-[8px] text-indigo-500 font-black mt-0.5 italic uppercase tracking-tighter">
-                            Original: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
-                          </p>
+                          <div className="mt-1 flex items-center gap-1.5 text-indigo-600">
+                             <History size={10} />
+                             <span className="text-[8px] font-black italic uppercase tracking-tighter">
+                               Originalmente: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
+                             </span>
+                          </div>
                         )}
                       </div>
                     </div>
