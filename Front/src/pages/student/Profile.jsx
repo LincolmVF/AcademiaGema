@@ -44,7 +44,7 @@ const Profile = () => {
   const userInitial = user.nombres?.charAt(0).toUpperCase() || 'G';
 
   const userBirth = user.fecha_nacimiento
-    ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric' })
+    ? new Date(user.fecha_nacimiento).toLocaleDateString('es-PE', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' })
     : 'No registrada';
 
   const handleProfileUpdate = (newData) => {
