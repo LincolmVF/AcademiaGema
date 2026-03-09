@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { apiFetch } from '../interceptors/api';
 import { API_ROUTES } from '../constants/apiRoutes';
 
+
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
