@@ -54,7 +54,7 @@ const DashboardTeacher = () => {
       setLoading(true);
       const data = await asistenciaService.getAgenda();
       const todasLasSesiones = [];
-      const hoy = new Date().toISOString().split('T')[0];
+      const hoy = new Date(Date.now() - (5 * 60 * 60 * 1000)).toISOString().split('T')[0];
 
       data.forEach(horario => {
         const fechasUnicas = {};
