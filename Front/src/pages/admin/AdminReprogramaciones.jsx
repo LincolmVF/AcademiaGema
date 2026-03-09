@@ -11,9 +11,9 @@ import {
 
 const AdminReprogramaciones = () => {
     return (
-        <div className="min-h-screen bg-slate-50/50 pb-20">
+        <div className="min-h-screen bg-slate-50/50 pb-20 overflow-x-hidden">
             {/* Hero Section */}
-            <div className="relative overflow-hidden bg-[#1e3a8a] py-16 mb-12">
+            <div className="relative overflow-hidden bg-[#1e3a8a] py-10 md:py-16 mb-8 md:mb-12">
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10">
                     <div className="w-96 h-96 rounded-full border-[40px] border-white animate-pulse"></div>
@@ -29,10 +29,10 @@ const AdminReprogramaciones = () => {
                                 <Cpu size={14} />
                                 Panel de Control Administrativo
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-tighter mb-4 drop-shadow-lg">
+                            <h1 className="text-3xl md:text-5xl font-black text-white italic tracking-tighter mb-4 drop-shadow-lg leading-none">
                                 REPROGRAMACIÓN <span className="text-blue-400">MASIVA</span>
                             </h1>
-                            <p className="text-blue-100/80 text-lg font-medium leading-relaxed">
+                            <p className="text-blue-100/80 text-base md:text-lg font-medium leading-relaxed">
                                 Gestiona cambios globales en el calendario de la academia. Mueve bloques completos de clases de manera eficiente y notifica automáticamente a todos los involucrados.
                             </p>
                         </div>
@@ -72,8 +72,8 @@ const AdminReprogramaciones = () => {
                         </div>
                     </div>
                     
-                    <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-                        <div className="p-8 md:p-12">
+                    <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                        <div className="p-4 sm:p-8 md:p-12">
                             <MassRescheduleForm />
                         </div>
                     </div>

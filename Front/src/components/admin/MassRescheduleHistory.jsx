@@ -152,7 +152,7 @@ const MassRescheduleHistory = () => {
                                                 {origen}
                                             </div>
                                         </div>
-                                        <div className="flex-shrink-0 bg-white p-1.5 rounded-full shadow-sm border border-slate-100">
+                                        <div className="flex-shrink-0 bg-white p-1.5 rounded-full shadow-sm border border-slate-100 rotate-90 sm:rotate-0">
                                             <ArrowRight size={14} className="text-blue-500" />
                                         </div>
                                         <div className="flex flex-col items-center flex-1">
@@ -169,11 +169,11 @@ const MassRescheduleHistory = () => {
 
                                     {/* Footer details */}
                                     <div className="pt-2 flex flex-col gap-2 border-t border-slate-50">
-                                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500">
+                                        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-bold text-slate-500">
                                             <MapPin size={12} className="text-slate-300" />
-                                            <span className="text-slate-600 font-black">{item.horarios_clases?.canchas?.nombre}</span>
-                                            <span className="opacity-40">|</span>
-                                            <span className="bg-slate-100 px-1.5 rounded uppercase tracking-tighter">{item.horarios_clases?.niveles_entrenamiento?.nombre}</span>
+                                            <span className="text-slate-600 font-black whitespace-nowrap">{item.horarios_clases?.canchas?.nombre}</span>
+                                            <span className="opacity-40 hidden sm:inline">|</span>
+                                            <span className="bg-slate-100 px-1.5 rounded uppercase tracking-tighter whitespace-nowrap">{item.horarios_clases?.niveles_entrenamiento?.nombre}</span>
                                         </div>
                                         <div className="flex gap-2">
                                             <AlertCircle size={12} className="text-slate-300 flex-shrink-0 mt-0.5" />
