@@ -9,7 +9,7 @@ import apiFetch from '../../interceptors/api.js';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
-// 1. 🔥 IMPORTAMOS EL CONTEXTO DE AUTENTICACIÓN
+// 1. IMPORTAMOS EL CONTEXTO DE AUTENTICACIÓN
 import { useAuth } from '../../context/AuthContext';
 
 const DIAS_NOMBRES = {
@@ -17,21 +17,17 @@ const DIAS_NOMBRES = {
 };
 
 const MyRegistrations = () => {
-  // 2. 🔥 OBTENEMOS EL USUARIO REAL
   const { user, userId } = useAuth();
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 3. 🔥 CREAMOS EL NOMBRE DINÁMICO
   const fullName = user?.user ? `${user.user.nombres} ${user.user.apellidos}` : "Alumno Gema";
 
   const fetchRegistrations = async () => {
-    // Si no hay ID en el contexto, no intentamos hacer la petición
     if (!userId) return; 
 
     try {
       setLoading(true);
-      // 🔥 UNA SOLA LLAMADA DIRECTA USANDO EL USER_ID DEL CONTEXTO
       const res = await apiFetch.get(`/inscripciones/alumno/${userId}`);
       const resultInsc = await res.json();
       
@@ -48,7 +44,7 @@ const MyRegistrations = () => {
 
   useEffect(() => { 
     fetchRegistrations(); 
-  }, [userId]); // Ejecuta cuando cambie/cargue el userId
+  }, [userId]);
 
   const formatTime = (isoString) => {
     if (!isoString) return "--:--";
@@ -59,40 +55,58 @@ const MyRegistrations = () => {
     return isoString.slice(0, 5);
   };
 
-  const handleFinalize = async (id) => {
+  // 🔥 LÓGICA MAESTRA: Maneja tanto la Finalización (Activos) como la Cancelación de Paquete (Pendientes)
+  const handleAction = async (reg) => {
+    const isPending = reg.estado === 'PENDIENTE_PAGO';
+    
     const result = await Swal.fire({
-      title: '<span class="italic font-black uppercase text-[#1e3a8a]">¿Finalizar Ciclo?</span>',
+      title: `<span class="italic font-black uppercase text-[#1e3a8a]">${isPending ? '¿CANCELAR PAQUETE?' : '¿FINALIZAR CICLO?'}</span>`,
       html: `
         <div class="text-left space-y-4 p-2">
           <div class="p-4 bg-orange-50 border-l-4 border-orange-500 rounded-r-2xl shadow-sm">
-            <p class="text-[10px] font-black text-orange-700 uppercase italic mb-1">Nota de Seguridad:</p>
-            <p class="text-sm text-orange-900 leading-relaxed">Tu salida es voluntaria. Las clases pagadas <b>se mantienen</b> hasta fin de mes, pero el cupo se liberará para nuevos atletas.</p>
+            <p class="text-[10px] font-black text-orange-700 uppercase italic mb-1">Aviso Importante:</p>
+            <p class="text-sm text-orange-900 leading-relaxed">
+              ${isPending 
+                ? 'Esta reserva es parte de un paquete. Al cancelar, <b>se eliminarán todos los horarios</b> asociados para anular la deuda correctamente.' 
+                : 'Tu salida es voluntaria. Las clases pagadas <b>se mantienen</b> hasta fin de mes, pero el cupo se liberará para nuevos atletas.'}
+            </p>
           </div>
-          <p class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center">¿Confirmas tu retiro del horario?</p>
+          <p class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center">¿Confirmas la operación?</p>
         </div>
       `,
       showCancelButton: true,
-      confirmButtonColor: '#f97316',
+      confirmButtonColor: isPending ? '#ef4444' : '#f97316',
       cancelButtonColor: '#cbd5e1',
-      confirmButtonText: 'SÍ, FINALIZAR',
+      confirmButtonText: isPending ? 'SÍ, ELIMINAR PAQUETE' : 'SÍ, FINALIZAR',
       cancelButtonText: 'MANTENER',
       customClass: { popup: 'rounded-[3rem] p-10 shadow-2xl border-4 border-white' }
     });
 
     if (result.isConfirmed) {
       try {
-        const res = await apiFetch.patch(`/inscripciones/${id}/finalizar`);
+        // Determinamos el endpoint según si es cancelación total de deuda o retiro de clases pagadas
+        const endpoint = isPending 
+          ? `/inscripciones/${reg.id}/cancelar-reserva` 
+          : `/inscripciones/${reg.id}/finalizar`;
+
+        const res = await apiFetch.patch(endpoint);
+        
         if (res.ok) {
-          toast.success("Horario finalizado correctamente");
-          fetchRegistrations();
+          toast.success(isPending ? "Paquete y deuda eliminados" : "Ciclo finalizado correctamente");
+          fetchRegistrations(); // Recargamos la lista
+        } else {
+          const errorData = await res.json();
+          toast.error(errorData.message || "Error al procesar la solicitud");
         }
-      } catch (error) { toast.error("Error al procesar"); }
+      } catch (error) { 
+        toast.error("Error de conexión con el servidor"); 
+      }
     }
   };
 
   const STATE_CONFIG = {
     ACTIVO: { label: 'En Curso', icon: <Target size={14} />, color: 'bg-green-500', bg: 'bg-green-50' },
-    POR_VALIDAR: { label: 'Validando', icon: <Clock size={14} />, color: 'bg-yellow-500', bg: 'bg-yellow-50' }, // 🔥 AGREGADO PARA QUE NO SE ROMPA LA VISTA
+    POR_VALIDAR: { label: 'Validando', icon: <Clock size={14} />, color: 'bg-yellow-500', bg: 'bg-yellow-50' },
     PENDIENTE_PAGO: { label: 'Por Pagar', icon: <Clock size={14} />, color: 'bg-orange-500', bg: 'bg-orange-50' },
     'PEN-RECU': { label: 'Liquidación', icon: <Activity size={14} />, color: 'bg-blue-500', bg: 'bg-blue-50' },
     FINALIZADO: { label: 'Historial', icon: <XCircle size={14} />, color: 'bg-slate-400', bg: 'bg-slate-50' }
@@ -107,13 +121,12 @@ const MyRegistrations = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-10 animate-fade-in-up pb-32">
       
-      {/* HEADER DINÁMICO CON STATS Y ARREGLO VISUAL */}
+      {/* HEADER DINÁMICO */}
       <div className="flex flex-col lg:flex-row justify-between lg:items-end gap-8 mb-12">
         <div>
           <h2 className="text-4xl md:text-5xl font-black text-[#1e3a8a] uppercase italic tracking-tighter leading-none">
             Mis <span className="text-orange-500">Inscripciones</span>
           </h2>
-          {/* 🔥 ADIÓS PAOLO GUERRERO */}
           <p className="text-[10px] md:text-xs font-black text-slate-400 uppercase tracking-[0.4em] mt-3 italic truncate">
             Expediente de Atleta Elite · {fullName} #{userId}
           </p>
@@ -165,10 +178,14 @@ const MyRegistrations = () => {
                               </div>
                             </div>
 
-                            {status === 'ACTIVO' && (
+                            {/* 🔥 BOTÓN DE ACCIÓN: Solo para Activos o Pendientes de Pago */}
+                            {(status === 'ACTIVO' || status === 'PENDIENTE_PAGO') && (
                               <button 
-                                onClick={() => handleFinalize(reg.id)}
-                                className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-[1.2rem] bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm border border-rose-100 active:scale-90 shrink-0"
+                                onClick={() => handleAction(reg)}
+                                className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-[1.2rem] flex items-center justify-center transition-all shadow-sm border active:scale-95 shrink-0
+                                  ${status === 'PENDIENTE_PAGO' 
+                                    ? 'bg-orange-50 text-orange-500 border-orange-100 hover:bg-orange-500 hover:text-white' 
+                                    : 'bg-rose-50 text-rose-500 border-rose-100 hover:bg-rose-500 hover:text-white'}`}
                               >
                                 <Trash2 size={18} strokeWidth={2.5} />
                               </button>
@@ -209,8 +226,6 @@ const MyRegistrations = () => {
     </div>
   );
 };
-
-/* --- Componentes UI Locales --- */
 
 const StatBox = ({ icon, value, label }) => (
   <div className="bg-white px-5 py-3 md:px-6 md:py-4 rounded-2xl md:rounded-[2rem] border border-slate-100 shadow-xl flex items-center gap-3 md:gap-4 flex-1 md:flex-none min-w-[140px]">
