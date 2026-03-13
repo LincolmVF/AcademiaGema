@@ -101,8 +101,8 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                 : 'COORDINATOR GEMA';
 
               // 🔥 EXTRACT TIME OVERRIDE FOR REPROGRAMMED SESSIONS
-              const horaInicioMostrar = sesion.reprogramaciones_clases 
-                ? sesion.reprogramaciones_clases.hora_inicio_destino + ":00" 
+              const horaInicioMostrar = sesion.reprogramaciones_clases
+                ? sesion.reprogramaciones_clases.hora_inicio_destino + ":00"
                 : horario?.hora_inicio;
 
               const fechaObj = parseLocalDate(sesion.fecha || sesion.fecha_programada);
@@ -117,10 +117,10 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                       sesion.fecha_original ? 'bg-gradient-to-br from-violet-50/80 to-indigo-50/80 border-violet-200 shadow-md hover:shadow-indigo-100' :
                         'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
                   }`}>
-                  
-                  {/* ✨ INDICADOR DE SESIÓN RECIÉN AGREGADA (REPROGRAMADA) */}
+
+                  {/* ✨ INDICADOR DE SESIÓN DE REPOSICIÓN (NUEVA) */}
                   {sesion.fecha_original && !esReprogramado && (
-                    <div className="absolute -top-2 -left-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white p-1.5 rounded-full shadow-lg border-2 border-white z-20 animate-bounce-slow">
+                    <div className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-600 to-amber-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white z-20 animate-bounce-slow">
                       <Sparkles size={12} />
                     </div>
                   )}
@@ -152,9 +152,9 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                         <h4 className="flex items-center gap-1.5 text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">
                           {esReprogramado ? (
                             <>
-                              Clase Movida <ArrowRight size={10} className="text-slate-400" />
+                              Clase Reprogramada <ArrowRight size={10} className="text-slate-400" />
                             </>
-                          ) : 'Sesión Técnica'}
+                          ) : sesion.fecha_original ? 'Reposición Académica' : 'Sesión Técnica'}
                         </h4>
                         {esReprogramado && sesion.comentario && (
                           <div className="mt-1 flex items-center gap-1.5">
@@ -165,10 +165,10 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                         )}
                         {sesion.fecha_original && !esReprogramado && (
                           <div className="mt-1 flex items-center gap-1.5 text-indigo-600">
-                             <History size={10} />
-                             <span className="text-[8px] font-black italic uppercase tracking-tighter">
-                               Originalmente: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
-                             </span>
+                            <History size={10} />
+                            <span className="text-[8px] font-black italic uppercase tracking-tighter">
+                              Originalmente: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -209,12 +209,13 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                           sesion.fecha_original ? 'bg-indigo-100 text-indigo-700 border-indigo-200' :
                             'bg-blue-50 text-blue-600 border-blue-100'
                       }`}>
-                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> : 
-                       esReprogramado ? <CalendarX size={14} strokeWidth={3} /> : 
-                       sesion.fecha_original ? <RefreshCw size={14} className="animate-pulse" /> :
-                       <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
-                      {sesion.estado === 'PROGRAMADA' && sesion.fecha_original ? 'REPROGRAMADA' : 
-                       sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
+                      {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> :
+                        esReprogramado ? <CalendarX size={14} strokeWidth={3} /> :
+                          sesion.fecha_original ? <RefreshCw size={14} className="animate-pulse" /> :
+                            <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
+                      {esReprogramado ? 'MOVIDA' :
+                        sesion.fecha_original ? 'REPOSICIÓN' :
+                          sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
                     </div>
                   </div>
                 </div>
