@@ -4,7 +4,6 @@ export const roleData = {
     admin: {
         stats: [
             { id: "alumnos", title: "Alumnos Activos", value: "0", icon: Users, color: "blue" },
-            { id: "ingresos", title: "Ingresos (Pagos)", value: "$0.00", icon: TrendingUp, color: "green" },
             { id: "coordinadores", title: "Cuerpo Técnico", value: "0", icon: GraduationCap, color: "orange" },
             { id: "sedes", title: "Sedes Gema", value: "0", icon: MapPin, color: "purple" },
             { id: "pendientes", title: "Deudas Pendientes", value: "$0.00", icon: AlertCircle, color: "gray" },
