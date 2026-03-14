@@ -8,18 +8,21 @@ import {
     Filter,
     Clock,
     ClipboardList,
-    Layers
+    Layers,
+    ShieldAlert
 } from 'lucide-react';
 import apiFetch from '../../interceptors/api';
 import { API_ROUTES } from '../../constants/apiRoutes';
 import toast from 'react-hot-toast';
+import ConfirmModal from './ConfirmModal.jsx'; 
 
-const MassRescheduleForm = () => {
+const MassRescheduleForm = ({ onSuccess }) => {
     const [horarios, setHorarios] = useState([]);
     const [isLoadingHorarios, setIsLoadingHorarios] = useState(true);
     const [fechasDisponibles, setFechasDisponibles] = useState([]);
     const [isLoadingFechas, setIsLoadingFechas] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [modalStep, setModalStep] = useState(0); 
 
     const [formData, setFormData] = useState({
         horario_origen_id: '',
@@ -49,8 +52,7 @@ const MassRescheduleForm = () => {
             const json = await response.json();
             setHorarios(json.data || json || []);
         } catch (error) {
-            console.error('Error fetching horarios:', error);
-            toast.error('No se pudieron cargar los horarios disponibles.');
+            toast.error('No se pudieron cargar los horarios.');
         } finally {
             setIsLoadingHorarios(false);
         }
@@ -63,8 +65,6 @@ const MassRescheduleForm = () => {
             const json = await response.json();
             setFechasDisponibles(json.data || json || []);
         } catch (error) {
-            console.error('Error fetching fechas:', error);
-            toast.error('No se pudieron cargar las fechas disponibles de este horario.');
             setFechasDisponibles([]);
         } finally {
             setIsLoadingFechas(false);
@@ -73,25 +73,20 @@ const MassRescheduleForm = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-
         if (!formData.horario_origen_id || !formData.fecha_origen || !formData.motivo) {
-            toast.error("Por favor completa todos los campos requeridos.");
+            toast.error("Por favor completa todos los campos.");
             return;
         }
+        setModalStep(1); 
+    };
 
-        if (formData.motivo.length < 3) {
-            toast.error("El motivo debe ser más descriptivo.");
-            return;
-        }
-
+    const executeReschedule = async () => {
+        setModalStep(0);
         setIsSubmitting(true);
 
         try {
@@ -101,258 +96,139 @@ const MassRescheduleForm = () => {
                 motivo: formData.motivo
             });
 
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Error en el servidor al reprogramar la clase.');
+            if (response.ok) {
+                toast.success('Reprogramación masiva exitosa.', { duration: 5000, icon: '🚀' });
+                setFormData({ horario_origen_id: '', fecha_origen: '', motivo: '' });
+                
+                // 🔥 AQUÍ SE DISPARA LA MAGIA:
+                if (onSuccess) onSuccess(); 
+            } else {
+                throw new Error('Error al procesar.');
             }
 
-            toast.success('Reprogramación masiva ejecutada con éxito. Los alumnos afectados han sido notificados.', {
-                duration: 5000
-            });
-
-            // Reset form
-            setFormData({
-                horario_origen_id: '',
-                fecha_origen: '',
-                motivo: ''
-            });
-
         } catch (error) {
-            console.error("Error reprogramando:", error);
-            toast.error(error.message || 'Error al ejecutar la reprogramación masiva.');
+            toast.error(error.message || 'Error al ejecutar.');
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    const diasSemana = {
-        1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves',
-        5: 'Viernes', 6: 'Sábado', 7: 'Domingo'
-    };
+    const diasSemana = { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' };
 
     const getFechaOrigenPlaceholder = () => {
         if (!formData.horario_origen_id) return "Esperando horario...";
         if (isLoadingFechas) return "Buscando fechas...";
-        if (fechasDisponibles.length === 0) return "Sin clases programadas";
         return "Elige el día que falló";
     };
 
     const filteredHorarios = horarios.filter(h => {
         const matchesDay = filterDay === '' || h.dia_semana.toString() === filterDay;
         const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = searchTerm === '' ||
+        return matchesDay && (searchTerm === '' || 
             diasSemana[h.dia_semana].toLowerCase().includes(searchLower) ||
             h.nivel?.nombre?.toLowerCase().includes(searchLower) ||
-            h.cancha?.nombre?.toLowerCase().includes(searchLower) ||
-            h.cancha?.sede?.nombre?.toLowerCase().includes(searchLower);
-
-        return matchesDay && matchesSearch;
+            h.cancha?.nombre?.toLowerCase().includes(searchLower));
     });
 
     return (
         <div className="max-w-5xl mx-auto">
-            {/* Header Section */}
-            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md">
+            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-orange-100 text-orange-600 rounded-2xl shadow-inner">
                         <CalendarRange size={32} />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black text-slate-800 tracking-tight">Reprogramación Masiva</h2>
-                        <p className="text-slate-500 text-sm font-medium">Reasigna clases completas por motivos institucionales</p>
+                        <h2 className="text-2xl font-black text-slate-800 tracking-tight uppercase italic">REPROGRAMACIÓN MASIVA</h2>
+                        <p className="text-slate-500 text-sm font-medium">Club Gema - Control de Contingencias</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
                     <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{filteredHorarios.length} Horarios Listos</span>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{filteredHorarios.length} ACTIVOS</span>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-500">
-
-                {/* Warning Alert */}
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 p-6 rounded-r-2xl shadow-sm">
                     <div className="flex gap-4">
-                        <div className="flex-shrink-0">
-                            <AlertTriangle className="h-6 w-6 text-orange-500" />
-                        </div>
+                        <AlertTriangle className="h-6 w-6 text-orange-500 shrink-0" />
                         <div>
-                            <h4 className="text-sm font-bold text-orange-800 uppercase tracking-wider mb-1">Advertencia Crítica</h4>
-                            <p className="text-sm text-orange-700/90 leading-relaxed italic">
-                                Esta acción modificará permanentemente las asistencias de todos los alumnos inscritos. Se enviará una notificación automática a cada uno de ellos informando el cambio y el motivo.
+                            <h4 className="text-sm font-black text-orange-800 uppercase tracking-wider mb-1">Advertencia Crítica</h4>
+                            <p className="text-xs text-orange-700 font-bold leading-relaxed italic">
+                                Esta acción modificará permanentemente las asistencias y notificará a todos los alumnos.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 space-y-8">
-                    {/* Filter Section */}
-                    <div className="p-6 bg-slate-50/80 rounded-2xl border border-slate-200/60 backdrop-blur-sm">
-                        <div className="flex items-center gap-2 mb-4">
-                            <Filter size={18} className="text-slate-400" />
-                            <span className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Filtros Rápidos</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="relative group">
-                                <label htmlFor="filterDay" className="absolute -top-2.5 left-3 px-2 bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-100 rounded-full group-focus-within:text-orange-500 transition-colors">Día</label>
-                                <select
-                                    id="filterDay"
-                                    value={filterDay}
-                                    onChange={(e) => setFilterDay(e.target.value)}
-                                    className="w-full pl-4 pr-10 py-3.5 rounded-xl border border-slate-200 bg-white group-focus-within:border-orange-400 focus:ring-4 focus:ring-orange-500/10 outline-none text-sm transition-all appearance-none font-semibold text-slate-600 shadow-sm"
-                                >
-                                    <option value="">Todos los días</option>
-                                    {Object.entries(diasSemana).map(([val, label]) => (
-                                        <option key={val} value={val}>{label}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
-                                    <Clock size={16} />
-                                </div>
-                            </div>
-                            <div className="md:col-span-2 relative group">
-                                <label htmlFor="searchTerm" className="absolute -top-2.5 left-3 px-2 bg-white text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-100 rounded-full group-focus-within:text-orange-500 transition-colors">Buscar</label>
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-orange-500 transition-colors">
-                                    <Search size={18} />
-                                </div>
-                                <input
-                                    id="searchTerm"
-                                    type="text"
-                                    placeholder="Nivel, Sede o Cancha..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white group-focus-within:border-orange-400 focus:ring-4 focus:ring-orange-500/10 outline-none text-sm transition-all font-semibold text-slate-600 placeholder:text-slate-300 shadow-sm"
-                                />
-                            </div>
-                        </div>
+                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-xl space-y-8">
+                    <div className="p-6 bg-slate-50 rounded-3xl border border-slate-200/60 flex flex-col md:flex-row gap-4">
+                        <select value={filterDay} onChange={(e) => setFilterDay(e.target.value)} className="flex-1 p-3 rounded-xl border-none shadow-sm text-xs font-bold uppercase">
+                            <option value="">Todos los días</option>
+                            {Object.entries(diasSemana).map(([val, label]) => <option key={val} value={val}>{label}</option>)}
+                        </select>
+                        <input type="text" placeholder="BUSCAR..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="flex-[2] p-3 rounded-xl border-none shadow-sm text-xs font-bold uppercase" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        {/* Horario Selector */}
-                        <div className="col-span-1 md:col-span-2 space-y-2">
-                            <label htmlFor="horario_origen_id" className="flex items-center gap-2 text-sm font-black text-slate-700 uppercase tracking-wider pl-1">
-                                <Layers size={16} className="text-orange-500" />
-                                Horario Afectado <span className="text-orange-500">*</span>
-                            </label>
-                            <select
-                                id="horario_origen_id"
-                                name="horario_origen_id"
-                                value={formData.horario_origen_id}
-                                onChange={handleChange}
-                                className="w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-200/50 outline-none transition-all font-bold text-slate-700 shadow-sm"
-                                disabled={isLoadingHorarios}
-                                required
-                            >
-                                <option value="">
-                                    {isLoadingHorarios ? "Cargando horarios..." : `Selecciona un horario (${filteredHorarios.length} disponibles)`}
-                                </option>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="col-span-full space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Horario Afectado</label>
+                            <select name="horario_origen_id" value={formData.horario_origen_id} onChange={handleChange} className="w-full p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:border-orange-500 transition-all font-black text-slate-700 text-xs uppercase" required>
+                                <option value="">Selecciona el horario</option>
                                 {filteredHorarios.map(h => (
-                                    <option key={h.id} value={h.id}>
-                                        {`[${diasSemana[h.dia_semana]}] ${h.hora_inicio.substring(0, 5)} - ${h.hora_fin.substring(0, 5)} | ${h.nivel?.nombre || 'General'} | ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
-                                    </option>
+                                    <option key={h.id} value={h.id}>{`[${diasSemana[h.dia_semana]}] ${h.hora_inicio} | ${h.nivel?.nombre} | ${h.cancha?.nombre}`}</option>
                                 ))}
                             </select>
-                            {filteredHorarios.length === 0 && !isLoadingHorarios && (
-                                <div className="flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-xl border border-red-100 animate-pulse">
-                                    <AlertTriangle size={14} />
-                                    <p className="text-[10px] font-black uppercase tracking-widest">No hay horarios que coincidan con los filtros</p>
-                                </div>
-                            )}
                         </div>
 
-                        {/* Date Picker - Origen */}
                         <div className="space-y-2">
-                            <label htmlFor="fecha_origen" className="flex items-center gap-2 text-sm font-black text-slate-700 uppercase tracking-wider pl-1">
-                                <CalendarRange size={16} className="text-orange-500" />
-                                Fecha Original <span className="text-orange-500">*</span>
-                            </label>
-                            <div className="relative">
-                                <select
-                                    id="fecha_origen"
-                                    name="fecha_origen"
-                                    value={formData.fecha_origen}
-                                    onChange={handleChange}
-                                    className={`w-full px-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-200/50 outline-none transition-all font-bold text-slate-700 shadow-sm appearance-none ${isLoadingFechas ? 'opacity-50 cursor-wait' : ''}`}
-                                    disabled={!formData.horario_origen_id || isLoadingFechas}
-                                    required
-                                >
-                                    <option value="">
-                                        {getFechaOrigenPlaceholder()}
-                                    </option>
-                                    {fechasDisponibles.map(fecha => (
-                                        <option key={fecha} value={fecha}>{fecha}</option>
-                                    ))}
-                                </select>
-                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
-                                    <CalendarRange size={20} />
-                                </div>
-                            </div>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight pl-1 italic">Solo fechas con asistencias generadas</p>
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Fecha a Cancelar</label>
+                            <select name="fecha_origen" value={formData.fecha_origen} onChange={handleChange} className="w-full p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:border-orange-500 transition-all font-black text-slate-700 text-xs uppercase" disabled={!formData.horario_origen_id || isLoadingFechas} required>
+                                <option value="">{getFechaOrigenPlaceholder()}</option>
+                                {fechasDisponibles.map(fecha => <option key={fecha} value={fecha}>{fecha}</option>)}
+                            </select>
                         </div>
 
-
-                        {/* Información Automática */}
-                        <div className="col-span-1 md:col-span-2 p-6 bg-blue-50/50 rounded-3xl border border-dashed border-blue-200 flex flex-col items-center gap-3 text-center">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-full">
-                                <Clock size={24} />
-                            </div>
-                            <div>
-                                <h4 className="text-sm font-black text-blue-800 uppercase tracking-wider mb-1">Reprogramación Inteligente</h4>
-                                <p className="text-xs text-blue-700/80 leading-relaxed font-medium">
-                                    El sistema calculará automáticamente la nueva fecha al final de la programación (+1 semana) y <span className="font-bold underline">extenderá 7 días el ciclo de facturación</span> de todos los alumnos afectados para evitar deudas prematuras.
-                                </p>
-                            </div>
+                        <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex flex-col justify-center text-center">
+                            <h4 className="text-[10px] font-black text-blue-800 uppercase italic mb-1">Efecto</h4>
+                            <p className="text-[10px] text-blue-600 font-bold uppercase">+7 Días al ciclo de pago</p>
                         </div>
 
-                        {/* Motivo */}
-                        <div className="col-span-1 md:col-span-2 space-y-2">
-                            <label htmlFor="motivo" className="flex items-center gap-2 text-sm font-black text-slate-700 uppercase tracking-wider pl-1">
-                                <ClipboardList size={18} className="text-orange-500" />
-                                Motivo Institucional <span className="text-orange-500">*</span>
-                            </label>
-                            <textarea
-                                id="motivo"
-                                name="motivo"
-                                value={formData.motivo}
-                                onChange={handleChange}
-                                rows="3"
-                                className="w-full px-6 py-5 rounded-3xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-orange-500 focus:ring-4 focus:ring-orange-200/50 outline-none transition-all resize-none shadow-sm font-medium text-slate-600 leading-relaxed placeholder:text-slate-300"
-                                placeholder="Describre brevemente la razón de este cambio masivo..."
-                                required
-                            ></textarea>
-                            <div className="flex items-center gap-2 pl-2">
-                                <div className="h-1.5 w-1.5 rounded-full bg-orange-400"></div>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest italic">Este texto será visible para todos los alumnos en el dashboard</p>
-                            </div>
+                        <div className="col-span-full space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Motivo Institucional</label>
+                            <textarea name="motivo" value={formData.motivo} onChange={handleChange} rows="3" className="w-full p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 focus:border-orange-500 transition-all text-xs font-bold text-slate-600 italic" placeholder="Escribe la razón..." required></textarea>
                         </div>
                     </div>
 
-                    <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="text-xs font-bold text-slate-400 italic bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
-                            ⚠️ Los campos con (*) son obligatorios
+                    <div className="pt-6 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div className="flex items-center gap-2 text-xs font-bold text-red-500 bg-red-50 px-4 py-2 rounded-full border border-red-100">
+                            <ShieldAlert size={14} /> <span>Validación de seguridad activa</span>
                         </div>
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="group relative flex items-center justify-center gap-3 bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] hover:from-blue-900 hover:to-slate-900 text-white px-10 py-4 rounded-2xl font-black uppercase tracking-[0.15em] transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20"
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="animate-spin" size={20} />
-                                    <span>Procesando Ejecución...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="p-1 bg-white/10 rounded-lg group-hover:bg-white/20 transition-colors">
-                                        <Send size={18} />
-                                    </div>
-                                    <span>Ejecutar Reprogramación</span>
-                                </>
-                            )}
+                        <button type="submit" disabled={isSubmitting} className="w-full md:w-auto bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-[1.03] disabled:grayscale">
+                            {isSubmitting ? <Loader2 className="animate-spin" /> : "EJECUTAR REPROGRAMACIÓN"}
                         </button>
                     </div>
                 </div>
             </form>
+
+            <ConfirmModal 
+                isOpen={modalStep === 1}
+                onClose={() => setModalStep(0)}
+                onConfirm={() => setModalStep(2)}
+                title="¿Reprogramar bloque?"
+                message="Se notificará a todos los alumnos vinculados. ¿Deseas continuar?"
+                confirmText="Sí, continuar"
+            />
+
+            <ConfirmModal 
+                isOpen={modalStep === 2}
+                onClose={() => setModalStep(0)}
+                onConfirm={executeReschedule}
+                title="🛑 ¡ACCIÓN PERMANENTE!"
+                message="Esta operación NO se puede deshacer. Los alumnos ganarán +7 días gratis. ¿Realmente confirmas?"
+                iconType="danger"
+                confirmText="EJECUTAR AHORA"
+            />
         </div>
     );
 };
