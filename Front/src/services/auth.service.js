@@ -5,7 +5,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const cookieConfig = {
   expires: 1,
-  secure: window.location.protocol === 'https:',
+  secure: globalThis.location.protocol === 'https:',
   sameSite: 'strict'
 };
 
@@ -23,15 +23,13 @@ export const loginService = async (identifier, password) => {
   if (!response.ok) throw new Error(result.message || "Error en el servidor");
 
   if (result.data) {
-    const { user, accessToken, refreshToken } = result.data;
+    const { user } = result.data;
     if (user) {
       Cookies.set('user_role', user.rol, cookieConfig);
       Cookies.set('user_name', user.nombres, cookieConfig);
       Cookies.set('user_lastname', user.apellidos || '', cookieConfig);
       Cookies.set('user_id', user.id, cookieConfig);
     }
-    if (accessToken) Cookies.set('auth_token', accessToken, cookieConfig);
-    if (refreshToken) Cookies.set('refresh_token', refreshToken, cookieConfig);
   }
 
   return result.data;
@@ -50,16 +48,13 @@ export const logoutService = async () => {
     Cookies.remove('user_name');
     Cookies.remove('user_lastname');
     Cookies.remove('user_id');
-    Cookies.remove('auth_token');
-    Cookies.remove('refresh_token');
 
     // Limpieza de datos antiguos cacheados para evitar confusiones
     localStorage.removeItem('auth_sync');
     localStorage.removeItem('logout_sync');
     localStorage.removeItem('last_viewed_news');
 
-
-    window.location.href = "/login";
+    globalThis.location.href = "/login";
   }
 };
 

@@ -61,15 +61,13 @@ export const apiFetch = async (endpoint, options = {}) => {
         processQueue(new Error('Refresh auth cookie failed'), null);
         throw new Error('No se pudo refrescar credenciales automáticas');
       }
-    } catch (error) {
+    } catch {
       Cookies.remove('user_role');
       Cookies.remove('user_name');
       Cookies.remove('user_id');
-      Cookies.remove('auth_token');
-      Cookies.remove('refresh_token');
       Cookies.remove('last_viewed_news');
       toast.error("Tu sesión ha expirado", { id: 'session-expired' });
-      window.location.href = '/login';
+      globalThis.location.href = '/login';
       return response;
     } finally {
       isRefreshing = false;

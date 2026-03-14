@@ -14,8 +14,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
         );
     }
 
-    // Verificar si hay autenticación mediante context o cookies
-    const isAuthenticated = user || Cookies.get('auth_token');
+    // Verificar si hay autenticación mediante context
+    const isAuthenticated = !!user;
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
