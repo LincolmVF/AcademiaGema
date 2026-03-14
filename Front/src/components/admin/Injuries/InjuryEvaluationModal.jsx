@@ -127,7 +127,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                                 {evalData.tipo === 'INDEFINIDO' && (
                                     <div className="text-[9px] font-black text-amber-700 bg-amber-50 p-4 rounded-2xl border border-amber-200/50 flex gap-3 items-center uppercase tracking-wider leading-relaxed">
                                         <AlertTriangle size={18} className="shrink-0 text-amber-500" />
-                                        <span>Suspensión de asistencia activa hasta alta médica manual.</span>
+                                        <span>Suspensión de asistencia hasta fin de ciclo.</span>
                                     </div>
                                 )}
                             </div>
