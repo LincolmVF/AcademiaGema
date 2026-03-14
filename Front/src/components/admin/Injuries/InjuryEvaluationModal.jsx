@@ -33,16 +33,16 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
     return (
         /* z-[110] para estar por encima de la barra móvil y el sidebar */
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-3 md:p-6 bg-[#0f172a]/80 backdrop-blur-md animate-in fade-in duration-300">
-            
+
             {/* AJUSTE CLAVE: 
                 - En móvil (default): max-h-[80vh] y overflow-y-auto (para que no lo tape la barra inferior).
                 - En PC (md:): max-h-none y h-auto (para que se vea completo y estirado).
             */}
             <div className="bg-white border border-slate-200 rounded-[2.5rem] w-full max-w-lg shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col max-h-[80vh] md:max-h-[95vh] lg:max-h-none h-auto overflow-hidden">
-                
+
                 {/* Botón Cerrar */}
-                <button 
-                    onClick={onClose} 
+                <button
+                    onClick={onClose}
                     className="absolute top-6 right-6 text-slate-400 hover:text-[#1e3a8a] z-[120] transition-colors p-2 hover:bg-slate-50 rounded-full"
                 >
                     <X size={20} />
@@ -50,7 +50,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
 
                 {/* Contenido con scroll condicional */}
                 <div className="p-6 md:p-10 overflow-y-auto md:overflow-visible custom-scrollbar">
-                    
+
                     {/* Header Informativo */}
                     <div className="mb-8">
                         <div className="flex items-center gap-3 mb-2">
@@ -61,7 +61,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                                 Evaluar <span className="text-orange-500">Solicitud</span>
                             </h2>
                         </div>
-                        
+
                         <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-[1.5rem] border border-slate-100 mt-4 shadow-inner">
                             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#1e3a8a] to-blue-700 flex items-center justify-center text-white font-black text-sm shadow-md italic">
                                 {solicitud?.alumnos?.usuarios?.nombres?.charAt(0) || 'A'}
@@ -118,7 +118,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                                     </div>
                                     {evalData.tipo === 'RANGO' && (
                                         <div className="space-y-2">
-                                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Retorno Estimado</label>
+                                            <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Fecha Final</label>
                                             <input type="date" required className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-slate-700 text-xs focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 outline-none transition-all font-bold shadow-sm" value={evalData.fechaFin} onChange={(e) => setEvalData({ ...evalData, fechaFin: e.target.value })} />
                                         </div>
                                     )}
@@ -155,7 +155,7 @@ const InjuryEvaluationModal = ({ isOpen, onClose, solicitud, onEvaluateSuccess }
                     </form>
                 </div>
             </div>
-            
+
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 5px;
