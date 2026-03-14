@@ -42,7 +42,7 @@ export const apiFetch = async (endpoint, options = {}) => {
       }).then(() => {
         return apiFetch(endpoint, { ...options, _retry: true });
       }).catch(err => {
-        return Promise.reject(err);
+        throw err;
       });
     }
 
