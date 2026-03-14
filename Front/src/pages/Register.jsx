@@ -89,7 +89,20 @@ function Register() {
         const toastId = toast.loading('Procesando inscripción...');
         setLoading(true);
         try {
-            const response = await registerService({ ...formData, rol_id: rolIdAlumno });
+
+            // Separamos los datos básicos de los específicos del rol
+            const { contacto_emergencia, parentesco, ...datosBasicos } = formData;
+
+            const payloadFinal = {
+                ...datosBasicos,
+                rol_id: rolIdAlumno,
+                datosRolEspecifico: {
+                    contacto_emergencia,
+                    parentesco
+                }
+            };
+
+            const response = await registerService(payloadFinal);
             const generatedUsername = response.data?.username || "Usuario";
             toast.success(
                 (t) => (<span>¡Bienvenido! Tu usuario es: <b>{generatedUsername}</b></span>),

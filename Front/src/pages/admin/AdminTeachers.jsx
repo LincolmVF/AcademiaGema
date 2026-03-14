@@ -152,8 +152,8 @@ const AdminTeachers = ({ onBack }) => {
                         </div>
                         <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-1">
-                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Email Corporativo</label>
-                                <input name="email" type="email" placeholder="coordinador.nuevo@gema.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
+                                <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Email</label>
+                                <input name="email" type="email" placeholder="coordinador.nuevo@gmail.com" onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/20" />
                             </div>
                             <div className="space-y-1">
                                 <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Teléfono Personal</label>
@@ -185,7 +185,7 @@ const AdminTeachers = ({ onBack }) => {
                             <Lock size={28} className="text-orange-500 mb-4" />
                             <h4 className="font-black uppercase italic tracking-tighter text-lg leading-tight">Clave Temporal</h4>
                             <p className="text-[10px] text-slate-400 font-bold uppercase mt-3 leading-relaxed">
-                                Una vez registrado, el coordinador podrá ingresar usando su número de documento como contraseña inicial. <br></br> Recibirá sus credenciales de acceso en su correo electrónico.
+                                Una vez registrado, el coordinador podrá ingresar usando su número de documento como contraseña inicial. <br></br><br></br> <span className='text-white'>¡Importante! <br></br> Recibirá sus credenciales de acceso en el EMAIL registrado.</span>
                             </p>
                         </div>
                         <ShieldCheck size={100} className="absolute -right-6 -bottom-6 opacity-5 rotate-12" />

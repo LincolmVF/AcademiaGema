@@ -10,7 +10,7 @@ const AdminStudentsManager = () => {
     const [alumnos, setAlumnos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    
+
     // Paginación
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -34,6 +34,8 @@ const AdminStudentsManager = () => {
                     telefono_personal: user.telefono_personal || 'No registrado',
                     fecha_nacimiento: user.fecha_nacimiento ? new Date(user.fecha_nacimiento).toLocaleDateString() : '---',
                     genero: user.genero,
+                    contacto_emergencia: user.alumnos.alumnos_contactos[0]?.telefono ?? 'S/N',
+                    parentesco: user.alumnos.alumnos_contactos[0]?.relacion ?? 'S/N',
                     // Extraemos los datos del objeto 'alumnos' que viene de Prisma
                     datosRolEspecifico: {
                         condiciones_medicas: user.alumnos?.condiciones_medicas || 'Ninguna conocida',
@@ -156,6 +158,20 @@ const AdminStudentsManager = () => {
                                         <div className="flex items-center gap-2 font-bold text-slate-700">
                                             <Phone size={14} className="text-slate-400" />
                                             <span>{selectedAlumno.telefono_personal}</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Contacto de Emergencia</span>
+                                        <div className="flex items-center gap-2 font-bold text-slate-700">
+                                            <Phone size={14} className="text-slate-400" />
+                                            <span>{selectedAlumno.contacto_emergencia}</span>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Parentesco</span>
+                                        <div className="flex items-center gap-2 font-bold text-slate-700">
+                                            <User size={14} className="text-slate-400" />
+                                            <span className='uppercase'>{selectedAlumno.parentesco}</span>
                                         </div>
                                     </div>
                                 </div>

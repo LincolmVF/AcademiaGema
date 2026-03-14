@@ -28,7 +28,7 @@ const AdminTeacherEdit = ({ teacherData, onBack, onSuccess }) => {
         try {
             // 🔥 Usamos la nueva ruta dinámica que configuramos
             const response = await apiFetch.patch(API_ROUTES.COORDINADORES.BY_ID(teacherData.id), formData);
-            
+
             if (response.ok) {
                 toast.success("¡Expediente técnico actualizado!");
                 onSuccess(); // Refresca la lista y vuelve al inicio
@@ -55,8 +55,8 @@ const AdminTeacherEdit = ({ teacherData, onBack, onSuccess }) => {
                         Editar <span className="text-orange-500">Expediente</span>
                     </h1>
                 </div>
-                <button 
-                    onClick={handleUpdate} 
+                <button
+                    onClick={handleUpdate}
                     disabled={loading}
                     className="bg-[#1e3a8a] text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-orange-500 transition-all shadow-lg"
                 >
@@ -83,7 +83,7 @@ const AdminTeacherEdit = ({ teacherData, onBack, onSuccess }) => {
                                 <input name="apellidos" value={formData.apellidos} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500/10" />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[9px] font-black text-slate-400 uppercase ml-1">Email Corporativo</label>
+                                <label className="text-[9px] font-black text-slate-400 uppercase ml-1">Email</label>
                                 <input name="email" value={formData.email} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold outline-none" />
                             </div>
                             <div className="space-y-1">
@@ -101,15 +101,15 @@ const AdminTeacherEdit = ({ teacherData, onBack, onSuccess }) => {
                             <GraduationCap className="text-orange-500" size={20} />
                             <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Área Técnica</span>
                         </div>
-                        <textarea 
-                            name="especializacion" 
-                            value={formData.especializacion} 
+                        <textarea
+                            name="especializacion"
+                            value={formData.especializacion}
                             onChange={handleChange}
                             className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm font-bold outline-none h-40 resize-none focus:ring-2 focus:ring-orange-500/10"
                             placeholder="Actualizar especialidad..."
                         />
                     </div>
-                    
+
                     <div className="bg-slate-900 p-6 rounded-3xl text-white">
                         <ShieldCheck className="text-orange-500 mb-3" size={24} />
                         <h4 className="text-xs font-black uppercase italic tracking-tighter">Seguridad de Datos</h4>
