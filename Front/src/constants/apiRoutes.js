@@ -122,4 +122,8 @@ export const API_ROUTES = {
     BASE: "/coordinadores",
     BY_ID: (id) => `/coordinadores/${id}`,
   },
+  FERIADOS: {
+    BASE: "/feriados",
+    BY_ID: (id) => `/feriados/${id}`,
+  },
 };
