@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-// Agrega DollarSign aquí (línea 2 aprox.)
-import { Search, Loader2, User, ChevronRight, AlertCircle, Calendar, Filter, DollarSign } from 'lucide-react';
+// 🔥 Añadimos Mail, Phone y FileText para los datos del usuario
+import { Search, Loader2, User, ChevronRight, AlertCircle, Calendar, Filter, DollarSign, Mail, Phone, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { apiFetch } from '../../interceptors/api';
 import AdminPaymentValidation from './AdminPaymentValidation';
-import AdminPaymentStats from './AdminPaymentStats'; // Importamos el componente nuevo
+import AdminPaymentStats from './AdminPaymentStats'; 
 import toast from 'react-hot-toast';
 import { API_ROUTES } from '../../constants/apiRoutes';
 
@@ -61,26 +61,21 @@ const statsData = useMemo(() => {
     const recaudacionMes = {};
     let pendientesTotalAno = 0;
 
-    // Procesamos todos los pagos del año seleccionado para la gráfica y el contador operativo
     payments.forEach(p => {
         const date = new Date(p.fecha_pago);
         
-        // Filtro estricto por año seleccionado
         if (date.getFullYear().toString() !== selectedYear) return;
 
-        // Contador para la tarjeta "Por Validar" (Solo pendientes del año actual)
         if (p.estado_validacion === 'PENDIENTE') {
             pendientesTotalAno++;
         }
 
-        // Acumulador para la gráfica de barras (Solo aprobados)
         if (p.estado_validacion === 'APROBADO') {
             const mesIdx = date.getMonth();
             recaudacionMes[mesIdx] = (recaudacionMes[mesIdx] || 0) + parseFloat(p.monto_pagado);
         }
     });
 
-    // Construcción del array para las barras
     const chartData = mesesNombres.map((name, index) => ({
         name,
         total: recaudacionMes[index] || 0
@@ -88,8 +83,8 @@ const statsData = useMemo(() => {
 
     return {
         chartData,
-        pendientes: pendientesTotalAno, // Valor para la tarjeta izquierda
-        maxRecaudacion: Math.max(...chartData.map(d => d.total), 1) // Base para la altura de las barras
+        pendientes: pendientesTotalAno, 
+        maxRecaudacion: Math.max(...chartData.map(d => d.total), 1) 
     };
 }, [payments, selectedYear]);
 
@@ -118,7 +113,6 @@ const statsData = useMemo(() => {
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic ml-1">Monitor de pagos - Club Gema</p>
                 </div>
 
-                {/* Selector de Año Rápido */}
                 <div className="flex bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
                     {['2025', '2026'].map(year => (
                         <button
@@ -132,10 +126,8 @@ const statsData = useMemo(() => {
                 </div>
             </header>
 
-            {/* DASHBOARD SEPARADO */}
             <AdminPaymentStats stats={statsData} />
 
-            {/* BARRA DE FILTROS AVANZADA */}
             <div className="bg-white p-3 rounded-[2rem] border border-slate-200 shadow-sm flex flex-col xl:flex-row gap-3">
                 <div className="flex-1 relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
@@ -149,7 +141,6 @@ const statsData = useMemo(() => {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    {/* Filtro Mes */}
                     <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
                         <Calendar size={14} className="text-slate-400" />
                         <select
@@ -164,7 +155,6 @@ const statsData = useMemo(() => {
                         </select>
                     </div>
 
-                    {/* Filtro Estado */}
                     <div className="flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-2xl border border-slate-100">
                         <Filter size={14} className="text-slate-400" />
                         <select
@@ -181,7 +171,6 @@ const statsData = useMemo(() => {
                 </div>
             </div>
 
-            {/* LISTADO DE PAGOS */}
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-4">
                     <Loader2 className="animate-spin text-[#1e3a8a]" size={40} />
@@ -189,7 +178,11 @@ const statsData = useMemo(() => {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <AnimatePresence>
-                        {filteredPayments.map((p) => (
+                        {filteredPayments.map((p) => {
+                            // 🔥 Extraemos el usuario para que el código quede más limpio
+                            const usuario = p.cuentas_por_cobrar?.alumnos?.usuarios;
+
+                            return (
                             <motion.div
                                 layout
                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -209,20 +202,37 @@ const statsData = useMemo(() => {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-blue-50 text-[#1e3a8a] rounded-2xl group-hover:bg-[#1e3a8a] group-hover:text-white transition-colors duration-300">
+                                    {/* 🔥 AQUÍ ESTÁ LA NUEVA SECCIÓN DEL ALUMNO CON DNI, CORREO Y TELÉFONO */}
+                                    <div className="flex items-start gap-4">
+                                        <div className="p-3 bg-blue-50 text-[#1e3a8a] rounded-2xl group-hover:bg-[#1e3a8a] group-hover:text-white transition-colors duration-300 shrink-0">
                                             <User size={22} />
                                         </div>
-                                        <div className="min-w-0">
+                                        <div className="min-w-0 flex-1">
                                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alumno</p>
-                                            <h3 className="text-sm font-black text-slate-800 truncate uppercase tracking-tighter italic">
-                                                {p.cuentas_por_cobrar?.alumnos?.usuarios?.nombres} {p.cuentas_por_cobrar?.alumnos?.usuarios?.apellidos}
+                                            <h3 className="text-sm font-black text-slate-800 truncate uppercase tracking-tighter italic leading-tight">
+                                                {usuario?.nombres} {usuario?.apellidos}
                                             </h3>
+                                            
+                                            {/* Sub-datos del usuario */}
+                                            <div className="mt-2 flex flex-col gap-1.5">
+                                                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase">
+                                                    <FileText size={12} className="text-slate-400"/>
+                                                    <span>{usuario?.numero_documento || 'S/N'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold truncate">
+                                                    <Mail size={12} className="text-slate-400 shrink-0"/>
+                                                    <span className="truncate">{usuario?.email || 'Sin correo'}</span>
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-bold uppercase">
+                                                    <Phone size={12} className="text-slate-400"/>
+                                                    <span>{usuario?.telefono_personal || 'Sin teléfono'}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl">
+                                    <div className="flex items-center gap-4 pt-2">
+                                        <div className="p-3 bg-orange-50 text-orange-600 rounded-2xl shrink-0">
                                             <DollarSign size={22} />
                                         </div>
                                         <div>
@@ -242,7 +252,8 @@ const statsData = useMemo(() => {
                                 </div>
                                 <AlertCircle className="absolute -right-8 -bottom-8 text-slate-50 group-hover:text-blue-50/30 transition-colors duration-500" size={140} />
                             </motion.div>
-                        ))}
+                            );
+                        })}
                     </AnimatePresence>
                 </div>
             )}

@@ -39,7 +39,14 @@ const AdminPaymentValidation = ({ onBack, paymentData, onSuccess }) => {
                 if (onSuccess) onSuccess(); // Recarga la lista principal
                 onBack();
             } else {
-                toast.error(result.message || "Error al validar el pago");
+                // =================================================================
+                // 🔥 AQUÍ ESTÁ EL CAMBIO PARA ATRAPAR EL ERROR DEL BACKEND 🔥
+                // =================================================================
+                toast.error(result.message || result.error || "Error al validar el pago", {
+                    duration: 7000, // Lo dejamos 7 segundos para que el admin lo lea
+                    style: { maxWidth: '500px', fontSize: '14px' } // Lo hacemos más ancho
+                });
+                // =================================================================
             }
         } catch (e) {
             toast.error("Error de conexión con el servidor");
