@@ -156,7 +156,9 @@ const Pricing = () => {
                     <div className="flex items-start gap-0.5">
                       <span className="text-sm font-black text-slate-900 mt-1">S/</span>
                       <span className={`text-5xl xl:text-6xl font-black tracking-tighter leading-none ${opt.textColor}`}>{Math.round(opt.precio_base)}</span>
-                      <span className="text-slate-400 text-[8px] font-bold uppercase tracking-widest self-end mb-1.5 ml-0.5">/ mes</span>
+                      <span className="text-slate-400 text-[8px] font-bold uppercase tracking-widest self-end mb-1.5 ml-0.5">
+                        {opt.nombre.toUpperCase().includes('UNITARIA') || opt.nombre.toUpperCase().includes('SESIÓN') || opt.nombre.toUpperCase().includes('SESION') ? '/ sesión' : '/ mes'}
+                      </span>
                     </div>
                   </div>
 
