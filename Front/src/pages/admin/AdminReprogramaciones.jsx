@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import MassRescheduleForm from '../../components/admin/MassRescheduleForm';
 import MassRescheduleHistory from '../../components/admin/MassRescheduleHistory';
+import FeriadoHistory from '../../components/Admin/FeriadoHistory'; 
 import {
     History,
     Info,
     Bell,
     ShieldCheck,
-    Cpu
+    Cpu,
+    Calendar
 } from 'lucide-react';
 
 const AdminReprogramaciones = () => {
     // 🔔 Señal para avisar al historial que debe recargarse
     const [refreshSignal, setRefreshSignal] = useState(0);
+    // 🗓️ Estado para mostrar/ocultar el modal de feriados
+    const [showFeriadoModal, setShowFeriadoModal] = useState(false);
 
     const handleRefresh = () => {
         setRefreshSignal(prev => prev + 1);
@@ -19,6 +23,12 @@ const AdminReprogramaciones = () => {
 
     return (
         <div className="min-h-screen bg-slate-50/50 pb-20 overflow-x-hidden">
+            
+            {/* 🎭 MODAL DE FERIADOS (Renderizado condicional) */}
+            {showFeriadoModal && (
+                <FeriadoHistory onClose={() => setShowFeriadoModal(false)} />
+            )}
+
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-[#1e3a8a] py-10 md:py-16 mb-8 md:mb-12">
                 <div className="absolute top-0 right-0 -mt-20 -mr-20 opacity-10">
@@ -78,22 +88,46 @@ const AdminReprogramaciones = () => {
 
                     <div className="bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                         <div className="p-4 sm:p-8 md:p-12">
-                            {/* 📤 Enviamos la función de éxito */}
                             <MassRescheduleForm onSuccess={handleRefresh} />
                         </div>
                     </div>
                 </div>
 
                 <aside className="lg:col-span-4 space-y-8">
+                    {/* 🗓️ SECCIÓN: GESTIÓN DE FERIADOS */}
+                    <section className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-[2rem] p-6 text-white shadow-lg shadow-orange-200/50 border border-orange-400/20">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-2.5 bg-white/20 backdrop-blur-md rounded-xl">
+                                <Calendar size={20} className="text-white" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-black text-orange-200 uppercase tracking-[0.2em]">Configuración</p>
+                                <h3 className="font-bold text-lg leading-none">Días Feriados</h3>
+                            </div>
+                        </div>
+                        <p className="text-orange-100/90 text-xs font-medium leading-relaxed mb-5">
+                            Registra los días no laborables para que el sistema bloquee asistencias automáticamente.
+                        </p>
+                        <button
+                            onClick={() => setShowFeriadoModal(true)}
+                            className="w-full py-3.5 bg-white text-orange-600 rounded-2xl font-black text-[11px] uppercase tracking-wider hover:bg-orange-50 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-sm"
+                        >
+                            Gestionar Calendario
+                        </button>
+                    </section>
+
+                    {/* 📜 HISTORIAL CON SCROLL Y ORDEN DESCENDENTE */}
                     <section className="space-y-4">
                         <div className="flex items-center gap-3 pl-2">
                             <History size={20} className="text-[#1e3a8a]" />
-                            <h2 className="text-sm font-black text-slate-700 uppercase tracking-widest underline decoration-blue-500/30 underline-offset-8">Historial de Lotes</h2>
+                            <h2 className="text-sm font-black text-slate-700 uppercase tracking-widest underline decoration-blue-500/30 underline-offset-8">
+                                Historial de Lotes
+                            </h2>
                         </div>
 
-                        <div className="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden min-h-[400px]">
-                            <div className="p-2">
-                                {/* 📥 Enviamos la señal de refresco */}
+                        <div className="bg-white rounded-[2rem] shadow-lg border border-slate-100 overflow-hidden">
+                            {/* 🛡️ CONTENEDOR CON SCROLL: Limita el crecimiento infinito */}
+                            <div className="p-2 overflow-y-auto max-h-[500px] scrollbar-hide">
                                 <MassRescheduleHistory refreshSignal={refreshSignal} />
                             </div>
                         </div>
