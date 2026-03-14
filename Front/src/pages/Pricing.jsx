@@ -201,18 +201,6 @@ const Pricing = () => {
           </>
         )}
 
-        {/* Garantía - Paleta Azul/Naranja */}
-        <div className="mt-20 flex justify-center">
-          <div className="flex items-center gap-4 bg-white p-3 pr-10 rounded-full border border-blue-100 shadow-xl">
-             <div className="w-12 h-12 bg-[#1e3a8a] rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-900/30">
-                <ShieldCheck size={24} />
-             </div>
-             <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f97316]">Promoción Especial</p>
-                <p className="text-sm text-[#1e3a8a] font-bold tracking-tight">Matrícula 100% bonificada en tu primera inscripción</p>
-             </div>
-          </div>
-        </div>
       </section>
 
       {/* --- SECCIÓN INFERIOR --- */}
