@@ -17,9 +17,10 @@ const Pricing = () => {
         if (response.success) {
           // Mapeamos los datos de la DB a los estilos del front
           const planesConfigurados = response.data.map((plan, index) => {
-            // Lógica para asignar iconos y badges según el plan (ejm: por índice o nombre)
+            const isUnitario = plan.nombre.toUpperCase().includes('UNITARIA') || plan.nombre.toUpperCase().includes('SESIÓN') || plan.nombre.toUpperCase().includes('SESION');
+            
             let config = {
-              badge: "Membresía",
+              badge: isUnitario ? "Pago Único" : "Membresía",
               icon: <Rocket className="text-blue-600" size={26} />,
               features: [plan.nombre, "Acceso prioritario", "Comunidad oficial"],
               color: "border-slate-200 bg-white",
