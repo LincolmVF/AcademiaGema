@@ -110,7 +110,7 @@ const Pricing = () => {
       </section>
 
       {/* --- GRID DE PRECIOS --- */}
-      <section className="relative z-20 -mt-24 md:-mt-28 max-w-[95rem] mx-auto px-4 pb-24">
+      <section className="relative z-20 -mt-16 md:-mt-28 max-w-[95rem] mx-auto px-4 pb-24">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white/10 backdrop-blur-md rounded-[3rem] border border-white/10">
             <Loader2 className="text-orange-500 animate-spin mb-4" size={48} />
@@ -125,7 +125,7 @@ const Pricing = () => {
             <div 
               ref={scrollRef}
               onScroll={handleScroll}
-              className="flex overflow-x-auto pb-10 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0 scroll-smooth px-[10%] sm:px-[15%] lg:px-0 gap-6"
+              className="flex overflow-x-auto pt-6 pb-10 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0 lg:pt-0 scroll-smooth px-[10%] sm:px-[15%] lg:px-0 gap-6"
             >
               {planes.map((opt) => (
                 <div 
