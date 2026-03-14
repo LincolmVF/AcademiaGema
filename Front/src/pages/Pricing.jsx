@@ -71,9 +71,15 @@ const Pricing = () => {
 
   const handleScroll = (e) => {
     if (!scrollRef.current) return;
-    const scrollLeft = e.target.scrollLeft;
-    const itemWidth = e.target.offsetWidth;
-    const index = Math.round(scrollLeft / itemWidth);
+    const { scrollLeft, scrollWidth, offsetWidth } = e.target;
+    // El scroll total disponible
+    const maxScroll = scrollWidth - offsetWidth;
+    if (maxScroll <= 0) return;
+    
+    // Calculamos el progreso del scroll y lo mapeamos a la cantidad de planes
+    const progress = scrollLeft / maxScroll;
+    const index = Math.round(progress * (planes.length - 1));
+    
     setActiveTab(index);
   };
 
@@ -119,12 +125,12 @@ const Pricing = () => {
             <div 
               ref={scrollRef}
               onScroll={handleScroll}
-              className="flex overflow-x-auto pb-10 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0 scroll-smooth px-2 sm:px-4"
+              className="flex overflow-x-auto pb-10 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0 scroll-smooth px-[10%] sm:px-[15%] lg:px-0 gap-6"
             >
               {planes.map((opt) => (
                 <div 
                   key={opt.id} 
-                  className={`relative p-6 xl:p-8 rounded-[2.5rem] border-2 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 snap-center min-w-[300px] sm:min-w-[340px] lg:min-w-0 ${opt.color} mx-3 lg:mx-0 shadow-xl lg:shadow-none`}
+                  className={`relative p-6 xl:p-8 rounded-[2.5rem] border-2 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 snap-center min-w-[80vw] sm:min-w-[60vw] lg:min-w-0 ${opt.color} shadow-xl lg:shadow-none mb-4 lg:mb-0`}
                 >
                   {opt.recommended && (
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#f97316] text-white px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-20 whitespace-nowrap">
