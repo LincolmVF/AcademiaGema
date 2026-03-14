@@ -83,6 +83,7 @@ export const API_ROUTES = {
   CATALOGO: {
     BASE: "/catalogo",
     ACTIVOS: "/catalogo/activos",
+    VIGENTES: "/catalogo/vigentes",
     BY_ID: (id) => `/catalogo/${id}`,
   },
   PARAMETROS: {
