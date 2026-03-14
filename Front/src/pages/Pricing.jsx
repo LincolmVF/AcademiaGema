@@ -219,9 +219,9 @@ const Pricing = () => {
               Visítanos en cualquiera de nuestras sedes y descubre el plan perfecto para tu nivel.
             </p>
             <div className="flex justify-center">
-              <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-3xl text-[10px] md:text-xs transition-all shadow-2xl shadow-orange-500/40 hover:-translate-y-2 flex items-center gap-4 border-2 border-transparent hover:border-orange-500">
-                ¡Ubica tu sede más cercana aquí!
-                <MapPin size={20} fill="currentColor" className="animate-bounce" />
+              <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-8 md:px-12 py-5 md:py-8 rounded-2xl md:rounded-3xl text-[10px] md:text-sm transition-all shadow-2xl shadow-orange-500/40 hover:-translate-y-2 flex items-center justify-center text-center gap-4 border-2 border-transparent hover:border-orange-500 max-w-2xl">
+                ¡Acercate a una de nuestras sedes y pregunta por nuestros planes!
+                <MapPin size={24} fill="currentColor" className="animate-bounce flex-shrink-0" />
               </Link>
             </div>
           </div>
