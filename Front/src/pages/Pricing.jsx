@@ -7,6 +7,8 @@ const Pricing = () => {
   const [planes, setPlanes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const scrollRef = React.useRef(null);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     const fetchPlanes = async () => {
@@ -67,11 +69,19 @@ const Pricing = () => {
     fetchPlanes();
   }, []);
 
+  const handleScroll = (e) => {
+    if (!scrollRef.current) return;
+    const scrollLeft = e.target.scrollLeft;
+    const itemWidth = e.target.offsetWidth;
+    const index = Math.round(scrollLeft / itemWidth);
+    setActiveTab(index);
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen font-sans text-slate-900">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative pt-24 pb-48 bg-[#0f172a] px-6 overflow-hidden">
+      <section className="relative pt-20 pb-40 md:pt-24 md:pb-48 bg-[#0f172a] px-6 overflow-hidden">
         {/* Unificación de luces de fondo con la paleta */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           <div className="absolute -top-24 -right-24 w-96 h-96 bg-orange-500/10 blur-[120px] rounded-full"></div>
@@ -79,22 +89,22 @@ const Pricing = () => {
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6 md:mb-8 backdrop-blur-md">
             <Trophy size={14} className="text-orange-400" />
             <span className="text-white text-[10px] font-black uppercase tracking-[0.3em]">Temporada 2026</span>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black text-white uppercase italic tracking-tighter leading-none mb-6">
             Elige tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Plan de Juego</span>
           </h1>
-          <p className="text-slate-400 max-w-2xl mx-auto text-lg md:text-xl font-medium leading-relaxed">
+          <p className="text-slate-400 max-w-2xl mx-auto text-base md:text-xl font-medium leading-relaxed px-4">
             Formación de alto rendimiento con la misma pasión en cada nivel.
           </p>
         </div>
       </section>
 
       {/* --- GRID DE PRECIOS --- */}
-      <section className="relative z-20 -mt-28 max-w-[90rem] mx-auto px-4 pb-24">
+      <section className="relative z-20 -mt-24 md:-mt-28 max-w-[95rem] mx-auto px-4 pb-24">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 bg-white/10 backdrop-blur-md rounded-[3rem] border border-white/10">
             <Loader2 className="text-orange-500 animate-spin mb-4" size={48} />
@@ -105,65 +115,81 @@ const Pricing = () => {
             <p className="text-red-400 font-bold">{error}</p>
           </div>
         ) : (
-          <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0">
-            {planes.map((opt) => (
-              <div 
-                key={opt.id} 
-                className={`relative p-6 xl:p-8 rounded-[2.5rem] border-2 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 snap-center min-w-[280px] sm:min-w-[320px] lg:min-w-0 ${opt.color} mx-2 lg:mx-0`}
-              >
-                {opt.recommended && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#f97316] text-white px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-20 whitespace-nowrap">
-                    <Zap size={10} fill="currentColor" /> RECOMENDADO
-                  </div>
-                )}
-
-                {/* Icon & Badge - Unificados */}
-                <div className="flex justify-between items-center mb-8">
-                  <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 flex-shrink-0">
-                    {React.cloneElement(opt.icon, { size: 22 })}
-                  </div>
-                  <span className="bg-slate-100 text-slate-500 text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-widest border border-slate-200/50 truncate ml-2">
-                    {opt.badge}
-                  </span>
-                </div>
-
-                {/* Area de Precio - Consistente con el Azul */}
-                <div className="mb-6">
-                  <h3 className={`text-base xl:text-lg font-black uppercase italic tracking-tighter mb-1 leading-tight ${opt.textColor} line-clamp-2 min-h-[2.5rem]`}>
-                    {opt.nombre}
-                  </h3>
-                  <div className="flex items-start gap-0.5">
-                    <span className="text-sm font-black text-slate-900 mt-1">S/</span>
-                    <span className={`text-5xl xl:text-6xl font-black tracking-tighter leading-none ${opt.textColor}`}>{Math.round(opt.precio_base)}</span>
-                    <span className="text-slate-400 text-[8px] font-bold uppercase tracking-widest self-end mb-1.5 ml-0.5">/ mes</span>
-                  </div>
-                </div>
-
-                {/* Features - Iconos verdes unificados */}
-                <div className="space-y-3 mb-8 flex-grow">
-                  {opt.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-start gap-2">
-                      <div className="flex-shrink-0 w-4 h-4 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mt-0.5">
-                        <Check size={10} strokeWidth={4} />
-                      </div>
-                      <p className="text-[12px] xl:text-sm font-bold text-slate-600 tracking-tight italic leading-snug">
-                        {feature}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Botones con paleta unificada */}
-                <Link 
-                  to="/register" 
-                  className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[9px] text-center transition-all active:scale-95 flex items-center justify-center gap-2 group/btn ${opt.btnStyle} mt-auto overflow-hidden text-ellipsis whitespace-nowrap`}
+          <>
+            <div 
+              ref={scrollRef}
+              onScroll={handleScroll}
+              className="flex overflow-x-auto pb-10 snap-x snap-mandatory hide-scrollbar lg:grid lg:grid-cols-5 lg:gap-4 xl:gap-6 lg:overflow-visible lg:pb-0 scroll-smooth px-2 sm:px-4"
+            >
+              {planes.map((opt) => (
+                <div 
+                  key={opt.id} 
+                  className={`relative p-6 xl:p-8 rounded-[2.5rem] border-2 transition-all duration-500 flex flex-col h-full hover:-translate-y-2 snap-center min-w-[300px] sm:min-w-[340px] lg:min-w-0 ${opt.color} mx-3 lg:mx-0 shadow-xl lg:shadow-none`}
                 >
-                  Inscribirme 
-                  <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform flex-shrink-0" />
-                </Link>
-              </div>
-            ))}
-          </div>
+                  {opt.recommended && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#f97316] text-white px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest shadow-lg flex items-center gap-1 z-20 whitespace-nowrap">
+                      <Zap size={10} fill="currentColor" /> RECOMENDADO
+                    </div>
+                  )}
+
+                  {/* Icon & Badge - Unificados */}
+                  <div className="flex justify-between items-center mb-8">
+                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 flex-shrink-0">
+                      {React.cloneElement(opt.icon, { size: 22 })}
+                    </div>
+                    <span className="bg-slate-100 text-slate-500 text-[9px] font-black px-2 py-1 rounded-lg uppercase tracking-widest border border-slate-200/50 truncate ml-2">
+                      {opt.badge}
+                    </span>
+                  </div>
+
+                  {/* Area de Precio - Consistente con el Azul */}
+                  <div className="mb-6">
+                    <h3 className={`text-base xl:text-lg font-black uppercase italic tracking-tighter mb-1 leading-tight ${opt.textColor} line-clamp-2 min-h-[2.5rem]`}>
+                      {opt.nombre}
+                    </h3>
+                    <div className="flex items-start gap-0.5">
+                      <span className="text-sm font-black text-slate-900 mt-1">S/</span>
+                      <span className={`text-5xl xl:text-6xl font-black tracking-tighter leading-none ${opt.textColor}`}>{Math.round(opt.precio_base)}</span>
+                      <span className="text-slate-400 text-[8px] font-bold uppercase tracking-widest self-end mb-1.5 ml-0.5">/ mes</span>
+                    </div>
+                  </div>
+
+                  {/* Features - Iconos verdes unificados */}
+                  <div className="space-y-3 mb-8 flex-grow">
+                    {opt.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-start gap-2">
+                        <div className="flex-shrink-0 w-4 h-4 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mt-0.5">
+                          <Check size={10} strokeWidth={4} />
+                        </div>
+                        <p className="text-[12px] xl:text-sm font-bold text-slate-600 tracking-tight italic leading-snug">
+                          {feature}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Botones con paleta unificada */}
+                  <Link 
+                    to="/register" 
+                    className={`w-full py-4 rounded-xl font-black uppercase tracking-widest text-[9px] text-center transition-all active:scale-95 flex items-center justify-center gap-2 group/btn ${opt.btnStyle} mt-auto overflow-hidden text-ellipsis whitespace-nowrap`}
+                  >
+                    Inscribirme 
+                    <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform flex-shrink-0" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Dots for Mobile */}
+            <div className="flex justify-center gap-2 mt-4 lg:hidden">
+              {planes.map((_, i) => (
+                <div 
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${activeTab === i ? 'w-6 bg-orange-500' : 'w-2 bg-slate-300'}`}
+                />
+              ))}
+            </div>
+          </>
         )}
 
         {/* Garantía - Paleta Azul/Naranja */}
