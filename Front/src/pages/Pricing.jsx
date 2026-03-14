@@ -220,7 +220,7 @@ const Pricing = () => {
             </p>
             <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-12 py-6 rounded-3xl text-sm transition-all shadow-2xl shadow-orange-500/20 hover:-translate-y-2 inline-flex items-center gap-3">
               ¡Acercate a una de nuestras sedes y pregunta por nuestros planes!
-              <Rocket size={18} />
+              <MapPin size={18} />
             </Link>
           </div>
         </div>
