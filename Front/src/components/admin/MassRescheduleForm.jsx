@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    CalendarRange, 
-    Send, 
-    AlertTriangle, 
-    Loader2, 
-    Search, 
-    Filter, 
-    Clock, 
+import {
+    CalendarRange,
+    Send,
+    AlertTriangle,
+    Loader2,
+    Search,
+    Filter,
+    Clock,
     ClipboardList,
     Layers
 } from 'lucide-react';
@@ -24,9 +24,6 @@ const MassRescheduleForm = () => {
     const [formData, setFormData] = useState({
         horario_origen_id: '',
         fecha_origen: '',
-        fecha_destino: '',
-        hora_inicio_destino: '',
-        hora_fin_destino: '',
         motivo: ''
     });
 
@@ -40,17 +37,9 @@ const MassRescheduleForm = () => {
     useEffect(() => {
         if (formData.horario_origen_id) {
             fetchFechasDisponibles(formData.horario_origen_id);
-            const selectedHorario = horarios.find(h => h.id.toString() === formData.horario_origen_id.toString());
-            if (selectedHorario) {
-                setFormData(prev => ({
-                    ...prev,
-                    hora_inicio_destino: selectedHorario.hora_inicio.substring(0, 5),
-                    hora_fin_destino: selectedHorario.hora_fin.substring(0, 5)
-                }));
-            }
         } else {
             setFechasDisponibles([]);
-            setFormData(prev => ({ ...prev, fecha_origen: '', hora_inicio_destino: '', hora_fin_destino: '' }));
+            setFormData(prev => ({ ...prev, fecha_origen: '' }));
         }
     }, [formData.horario_origen_id, horarios]);
 
@@ -92,9 +81,9 @@ const MassRescheduleForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if (!formData.horario_origen_id || !formData.fecha_origen || !formData.fecha_destino || !formData.motivo) {
-            toast.error("Por favor completa todos los campos.");
+
+        if (!formData.horario_origen_id || !formData.fecha_origen || !formData.motivo) {
+            toast.error("Por favor completa todos los campos requeridos.");
             return;
         }
 
@@ -109,9 +98,6 @@ const MassRescheduleForm = () => {
             const response = await apiFetch.post(API_ROUTES.CLASES.REPROGRAMAR_MASIVO, {
                 horario_origen_id: Number.parseInt(formData.horario_origen_id),
                 fecha_origen: formData.fecha_origen,
-                fecha_destino: formData.fecha_destino,
-                hora_inicio_destino: formData.hora_inicio_destino || undefined,
-                hora_fin_destino: formData.hora_fin_destino || undefined,
                 motivo: formData.motivo
             });
 
@@ -123,14 +109,11 @@ const MassRescheduleForm = () => {
             toast.success('Reprogramación masiva ejecutada con éxito. Los alumnos afectados han sido notificados.', {
                 duration: 5000
             });
-            
+
             // Reset form
             setFormData({
                 horario_origen_id: '',
                 fecha_origen: '',
-                fecha_destino: '',
-                hora_inicio_destino: '',
-                hora_fin_destino: '',
                 motivo: ''
             });
 
@@ -157,12 +140,12 @@ const MassRescheduleForm = () => {
     const filteredHorarios = horarios.filter(h => {
         const matchesDay = filterDay === '' || h.dia_semana.toString() === filterDay;
         const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
             diasSemana[h.dia_semana].toLowerCase().includes(searchLower) ||
             h.nivel?.nombre?.toLowerCase().includes(searchLower) ||
             h.cancha?.nombre?.toLowerCase().includes(searchLower) ||
             h.cancha?.sede?.nombre?.toLowerCase().includes(searchLower);
-        
+
         return matchesDay && matchesSearch;
     });
 
@@ -186,7 +169,7 @@ const MassRescheduleForm = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-8 animate-in fade-in duration-500">
-                
+
                 {/* Warning Alert */}
                 <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-l-4 border-orange-500 p-6 rounded-r-2xl shadow-sm">
                     <div className="flex gap-4">
@@ -265,7 +248,7 @@ const MassRescheduleForm = () => {
                                 </option>
                                 {filteredHorarios.map(h => (
                                     <option key={h.id} value={h.id}>
-                                        {`[${diasSemana[h.dia_semana]}] ${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)} | ${h.nivel?.nombre || 'General'} | ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
+                                        {`[${diasSemana[h.dia_semana]}] ${h.hora_inicio.substring(0, 5)} - ${h.hora_fin.substring(0, 5)} | ${h.nivel?.nombre || 'General'} | ${h.cancha?.sede?.nombre} (${h.cancha?.nombre})`}
                                     </option>
                                 ))}
                             </select>
@@ -307,61 +290,17 @@ const MassRescheduleForm = () => {
                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight pl-1 italic">Solo fechas con asistencias generadas</p>
                         </div>
 
-                        {/* Date Picker - Destino */}
-                        <div className="space-y-2">
-                            <label htmlFor="fecha_destino" className="flex items-center gap-2 text-sm font-black text-slate-700 uppercase tracking-wider pl-1">
-                                <CalendarRange size={16} className="text-blue-500" />
-                                Nueva Fecha <span className="text-blue-500">*</span>
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-blue-500">
-                                    <CalendarRange size={20} />
-                                </div>
-                                <input
-                                    id="fecha_destino"
-                                    type="date"
-                                    name="fecha_destino"
-                                    value={formData.fecha_destino}
-                                    onChange={handleChange}
-                                    className="w-full pl-14 pr-5 py-4 rounded-2xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all font-bold text-slate-700 shadow-sm"
-                                    required
-                                />
-                            </div>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight pl-1 italic">Día de la reposición oficial</p>
-                        </div>
 
-                        {/* Revised Time - Container */}
-                        <div className="col-span-1 md:col-span-2 p-6 bg-blue-50/30 rounded-3xl border border-dashed border-blue-200 flex flex-col md:flex-row gap-6">
-                            {/* Time Picker - Inicio */}
-                            <div className="flex-1 space-y-2">
-                                <label htmlFor="hora_inicio_destino" className="flex items-center gap-2 font-bold text-slate-600 uppercase tracking-wider pl-1 text-[10px]">
-                                    <Clock size={14} className="text-blue-400" />
-                                    Hora Inicio
-                                </label>
-                                <input
-                                    id="hora_inicio_destino"
-                                    type="time"
-                                    name="hora_inicio_destino"
-                                    value={formData.hora_inicio_destino}
-                                    onChange={handleChange}
-                                    className="w-full px-5 py-3 rounded-xl border border-blue-100 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-bold text-blue-600 shadow-sm text-center"
-                                />
+                        {/* Información Automática */}
+                        <div className="col-span-1 md:col-span-2 p-6 bg-blue-50/50 rounded-3xl border border-dashed border-blue-200 flex flex-col items-center gap-3 text-center">
+                            <div className="p-3 bg-blue-100 text-blue-600 rounded-full">
+                                <Clock size={24} />
                             </div>
-
-                            {/* Time Picker - Fin */}
-                            <div className="flex-1 space-y-2">
-                                <label htmlFor="hora_fin_destino" className="flex items-center gap-2 font-bold text-slate-600 uppercase tracking-wider pl-1 text-[10px]">
-                                    <Clock size={14} className="text-blue-400" />
-                                    Hora Fin
-                                </label>
-                                <input
-                                    id="hora_fin_destino"
-                                    type="time"
-                                    name="hora_fin_destino"
-                                    value={formData.hora_fin_destino}
-                                    onChange={handleChange}
-                                    className="w-full px-5 py-3 rounded-xl border border-blue-100 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 outline-none transition-all font-bold text-blue-600 shadow-sm text-center"
-                                />
+                            <div>
+                                <h4 className="text-sm font-black text-blue-800 uppercase tracking-wider mb-1">Reprogramación Inteligente</h4>
+                                <p className="text-xs text-blue-700/80 leading-relaxed font-medium">
+                                    El sistema calculará automáticamente la nueva fecha al final de la programación (+1 semana) y <span className="font-bold underline">extenderá 7 días el ciclo de facturación</span> de todos los alumnos afectados para evitar deudas prematuras.
+                                </p>
                             </div>
                         </div>
 
@@ -390,7 +329,7 @@ const MassRescheduleForm = () => {
 
                     <div className="pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
                         <div className="text-xs font-bold text-slate-400 italic bg-slate-50 px-4 py-2 rounded-full border border-slate-100">
-                             ⚠️ Los campos con (*) son obligatorios
+                            ⚠️ Los campos con (*) son obligatorios
                         </div>
                         <button
                             type="submit"
