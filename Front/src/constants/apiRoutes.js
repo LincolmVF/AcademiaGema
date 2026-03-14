@@ -106,6 +106,7 @@ export const API_ROUTES = {
   ALUMNOS: {
     BASE: "/alumnos",
     MI_PERFIL: "/alumno/mi-perfil",
+    DIA_CORTE : "/alumno/gestion/resumen-cortes",
   },
   PUBLICACIONES: {
     BASE: "/publicaciones",

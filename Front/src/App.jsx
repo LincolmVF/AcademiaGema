@@ -28,6 +28,7 @@ import Dashboard from "./pages/Dashboard"; // Admin: Resumen General
 import DashboardEstudiante from "./pages/DashboardEstudiante"; // Estudiante: Inicio
 import DashboardTeacher from "./pages/DashboardTeacher"; // Coordinador: Asistencia
 import TeacherProfile from "./pages/teacher/Profile"; // Coordinador: Perfil
+import DiaCorte from "./pages/teacher/DiaCorte"
 
 // 4. Nuevas Páginas de Gestión (Admin)
 import AdminLocationsManager from "./pages/admin/AdminLocationsManager";
@@ -147,6 +148,7 @@ function App() {
             <Route element={<TeacherLayout />}>
               <Route path="teacher" element={<DashboardTeacher />} />
               <Route path="teacher/profile" element={<TeacherProfile />} />
+              <Route path="teacher/DiaCorte" element={<DiaCorte />} />
             </Route>
           </Route>
 
