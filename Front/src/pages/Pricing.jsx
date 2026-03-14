@@ -212,16 +212,18 @@ const Pricing = () => {
           </div>
           
           <div className="relative z-10 max-w-3xl mx-auto">
-            <h3 className="text-4xl md:text-6xl font-black text-white uppercase italic leading-tight mb-8 tracking-tighter">
+            <h3 className="text-4xl md:text-6xl font-black text-white uppercase italic leading-tight mb-6 tracking-tighter">
               ¿Quieres sentir la <span className="text-orange-500 text-glow">Energía</span>?
             </h3>
-            <p className="text-slate-400 mb-12 text-lg md:text-xl font-medium leading-relaxed">
-              Agenda una clase de prueba y conoce por qué somos el club #1 en alto rendimiento. Sin compromiso, solo deporte.
+            <p className="text-slate-400 mb-10 text-base md:text-lg font-medium leading-relaxed max-w-xl mx-auto">
+              Visítanos en cualquiera de nuestras sedes y descubre el plan perfecto para tu nivel.
             </p>
-            <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-12 py-6 rounded-3xl text-sm transition-all shadow-2xl shadow-orange-500/20 hover:-translate-y-2 inline-flex items-center gap-3">
-              ¡Acercate a una de nuestras sedes y pregunta por nuestros planes!
-              <MapPin size={18} />
-            </Link>
+            <div className="flex justify-center">
+              <Link to="/register" className="bg-[#f97316] text-white hover:bg-white hover:text-[#0f172a] font-black uppercase tracking-[0.2em] px-8 md:px-12 py-5 md:py-6 rounded-2xl md:rounded-3xl text-[10px] md:text-xs transition-all shadow-2xl shadow-orange-500/40 hover:-translate-y-2 flex items-center gap-4 border-2 border-transparent hover:border-orange-500">
+                ¡Ubica tu sede más cercana aquí!
+                <MapPin size={20} fill="currentColor" className="animate-bounce" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
