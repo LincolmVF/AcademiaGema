@@ -189,20 +189,20 @@ const MassRescheduleForm = ({ onSuccess }) => {
                             </select>
                         </div>
 
-                        <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100 flex flex-col justify-center text-center">
-                            <h4 className="text-[10px] font-black text-blue-800 uppercase italic mb-1">Efecto</h4>
-                            <p className="text-[10px] text-blue-600 font-bold uppercase">+7 Días al ciclo de pago</p>
+                        <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100 flex flex-col justify-center text-center">
+                            <h4 className="text-[10px] font-black text-indigo-800 uppercase italic mb-1">Algoritmo Gema V2</h4>
+                            <p className="text-[10px] text-indigo-600 font-bold uppercase">Reposición Individual x Próximo Día</p>
                         </div>
 
                         <div className="col-span-full space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Motivo Institucional</label>
-                            <textarea name="motivo" value={formData.motivo} onChange={handleChange} rows="3" className="w-full p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 focus:border-orange-500 transition-all text-xs font-bold text-slate-600 italic" placeholder="Escribe la razón..." required></textarea>
+                            <textarea name="motivo" value={formData.motivo} onChange={handleChange} rows="3" className="w-full p-6 rounded-[2rem] border-2 border-slate-100 bg-slate-50 focus:border-orange-500 transition-all text-xs font-bold text-slate-600 italic" placeholder="Ej: Mantenimiento Preventivo de Canchas, Indisposición técnica..." required></textarea>
                         </div>
                     </div>
 
                     <div className="pt-6 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-2 text-xs font-bold text-red-500 bg-red-50 px-4 py-2 rounded-full border border-red-100">
-                            <ShieldAlert size={14} /> <span>Validación de seguridad activa</span>
+                        <div className="flex items-center gap-2 text-xs font-bold text-blue-500 bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
+                            <ShieldAlert size={14} /> <span>Calculando próximo día x alumno</span>
                         </div>
                         <button type="submit" disabled={isSubmitting} className="w-full md:w-auto bg-gradient-to-br from-[#1e3a8a] to-[#0f172a] text-white px-12 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] transition-all hover:scale-[1.03] disabled:grayscale">
                             {isSubmitting ? <Loader2 className="animate-spin" /> : "EJECUTAR REPROGRAMACIÓN"}
@@ -216,7 +216,7 @@ const MassRescheduleForm = ({ onSuccess }) => {
                 onClose={() => setModalStep(0)}
                 onConfirm={() => setModalStep(2)}
                 title="¿Reprogramar bloque?"
-                message="Se notificará a todos los alumnos vinculados. ¿Deseas continuar?"
+                message="El sistema buscará el próximo día de clase disponible para cada alumno individualmente. ¿Deseas continuar?"
                 confirmText="Sí, continuar"
             />
 
@@ -224,8 +224,8 @@ const MassRescheduleForm = ({ onSuccess }) => {
                 isOpen={modalStep === 2}
                 onClose={() => setModalStep(0)}
                 onConfirm={executeReschedule}
-                title="🛑 ¡ACCIÓN PERMANENTE!"
-                message="Esta operación NO se puede deshacer. Los alumnos ganarán +7 días gratis. ¿Realmente confirmas?"
+                title="🛑 ¡ACCIÓN MASIVA!"
+                message="Se crearán reposiciones automáticas y se ajustarán las fechas de pago proporcionalmente al desfase. ¿Confirmas?"
                 iconType="danger"
                 confirmText="EJECUTAR AHORA"
             />

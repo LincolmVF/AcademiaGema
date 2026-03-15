@@ -114,18 +114,18 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                 <div key={esRecuperacion ? `recu-${sesion.id}` : `asist-${sesion.id}`} className={`group relative rounded-[2rem] border transition-all duration-300 ${esPresente ? 'bg-green-50/50 border-green-200 shadow-sm' :
                   esFalta ? 'bg-red-50/50 border-red-200 shadow-sm' :
                     esReprogramado ? 'bg-slate-50/30 border-slate-200 border-dashed opacity-60 grayscale-[0.5]' :
-                      sesion.fecha_original ? 'bg-gradient-to-br from-violet-50/80 to-indigo-50/80 border-violet-200 shadow-md hover:shadow-indigo-100' :
+                      sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION' ? 'bg-gradient-to-br from-violet-50/80 to-indigo-50/80 border-violet-200 shadow-md hover:shadow-indigo-100' :
                         'bg-white border-slate-100 hover:border-blue-300 hover:shadow-2xl'
                   }`}>
 
                   {/* ✨ INDICADOR DE SESIÓN DE REPOSICIÓN (NUEVA) */}
-                  {sesion.fecha_original && !esReprogramado && (
+                  {(sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION') && !esReprogramado && (
                     <div className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-600 to-amber-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white z-20 animate-bounce-slow">
                       <Sparkles size={12} />
                     </div>
                   )}
                   {/* 🔥 BADGE VISUAL DE RECUPERACIÓN */}
-                  {esRecuperacion && (
+                  {(esRecuperacion || sesion.tipo_sesion === 'RECUPERACION') && (
                     <div className="absolute top-0 right-0 bg-blue-500 text-white flex items-center gap-1 text-[8px] font-black px-4 py-1.5 rounded-bl-2xl italic tracking-tighter z-10">
                       <RefreshCw size={10} /> RECUPERACIÓN
                     </div>
@@ -152,9 +152,9 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                         <h4 className="flex items-center gap-1.5 text-[11px] font-black text-[#1e3a8a] uppercase italic leading-tight">
                           {esReprogramado ? (
                             <>
-                              Clase Reprogramada <ArrowRight size={10} className="text-slate-400" />
+                              Clase Movida <ArrowRight size={10} className="text-slate-400" />
                             </>
-                          ) : sesion.fecha_original ? 'Reposición Académica' : 'Sesión Técnica'}
+                          ) : (sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION') ? 'Reposición de Clase' : 'Sesión Regular'}
                         </h4>
                         {esReprogramado && sesion.comentario && (
                           <div className="mt-1 flex items-center gap-1.5">
@@ -163,11 +163,11 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                             </span>
                           </div>
                         )}
-                        {sesion.fecha_original && !esReprogramado && (
+                        {(sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION') && !esReprogramado && (
                           <div className="mt-1 flex items-center gap-1.5 text-indigo-600">
                             <History size={10} />
                             <span className="text-[8px] font-black italic uppercase tracking-tighter">
-                              Originalmente: {parseLocalDate(sesion.fecha_original).toLocaleDateString()}
+                              Original: {parseLocalDate(sesion.fecha_original || sesion.fecha).toLocaleDateString()}
                             </span>
                           </div>
                         )}
@@ -211,10 +211,10 @@ const StudentSchedule = ({ attendance = [], filtroMes, filtroAnio }) => {
                       }`}>
                       {esPresente ? <CheckCircle2 size={14} strokeWidth={3} /> :
                         esReprogramado ? <CalendarX size={14} strokeWidth={3} /> :
-                          sesion.fecha_original ? <RefreshCw size={14} className="animate-pulse" /> :
+                          (sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION') ? <RefreshCw size={14} className="animate-pulse" /> :
                             <CircleDashed size={14} className={sesion.estado === 'PROGRAMADA' ? "animate-spin-slow" : ""} />}
                       {esReprogramado ? 'MOVIDA' :
-                        sesion.fecha_original ? 'REPOSICIÓN' :
+                        (sesion.fecha_original || sesion.tipo_sesion === 'REPOSICION') ? 'REPOSICIÓN' :
                           sesion.estado === 'PROGRAMADA' ? 'PRÓXIMA' : sesion.estado}
                     </div>
                   </div>

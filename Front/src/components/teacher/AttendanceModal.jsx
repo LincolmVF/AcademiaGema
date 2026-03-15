@@ -1,21 +1,32 @@
 import React, { useState } from 'react';
-import { X, Check, UserMinus, Save, Loader2, ShieldAlert, RefreshCw } from 'lucide-react';
+import { X, Check, UserMinus, Loader2, ShieldAlert, RefreshCw } from 'lucide-react';
 import { asistenciaService } from '../../services/asistencia.service';
 import toast from 'react-hot-toast';
+import { format, addDays, isPast, isToday } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 const AttendanceModal = ({ clase, onClose, onRefresh }) => {
     const [isSaving, setIsSaving] = useState(false);
 
     // Inicialización basada en el desglose de fechas del Dashboard
     const [listaAsistencia, setListaAsistencia] = useState(
-        clase.inscripcionesEnEstaFecha?.map(ins => ({
-            asistenciaId: ins.registro_especifico?.id,
-            nombreCompleto: `${ins.alumnos.usuarios.nombres} ${ins.alumnos.usuarios.apellidos}`,
-            dni: ins.alumnos.usuarios.numero_documento,
-            estado: ins.registro_especifico?.estado || 'PROGRAMADA',
-            esRecuperacion: ins.estado === 'RECUPERACION',
-            esLesion: ins.registro_especifico?.estado === 'JUSTIFICADO_LESION'
-        })) || []
+        clase.inscripcionesEnEstaFecha?.map(ins => {
+            const fechaInscripcion = ins.fecha_inscripcion ? new Date(ins.fecha_inscripcion) : null;
+            const fechaCorte = fechaInscripcion ? addDays(fechaInscripcion, 30) : null;
+
+            return {
+                asistenciaId: ins.registro_especifico?.id,
+                nombreCompleto: `${ins.alumnos.usuarios.nombres} ${ins.alumnos.usuarios.apellidos}`,
+                dni: ins.alumnos.usuarios.numero_documento,
+                estado: ins.registro_especifico?.estado || 'PROGRAMADA',
+                esRecuperacion: ins.tipo_sesion === 'RECUPERACION' || ins.estado === 'RECUPERACION',
+                esReposicion: ins.tipo_sesion === 'REPOSICION' || ins.registro_especifico?.fecha_original != null,
+                esLesion: ins.registro_especifico?.estado === 'JUSTIFICADO_LESION',
+                fechaCorte: fechaCorte,
+                vencido: fechaCorte && isPast(fechaCorte) && !isToday(fechaCorte),
+                esHoyCorte: fechaCorte && isToday(fechaCorte)
+            };
+        }) || []
     );
 
     const handleLocalUpdate = (asistenciaId, nuevoEstado) => {
@@ -72,13 +83,29 @@ const AttendanceModal = ({ clase, onClose, onRefresh }) => {
                                 <p className="font-black text-[#1e3a8a] uppercase text-sm tracking-tight leading-tight">
                                     {alumno.nombreCompleto}
                                 </p>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">
-                                    DNI: {alumno.dni}
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic flex items-center gap-2">
+                                    DNI: {alumno.dni} 
+                                    {alumno.fechaCorte && (
+                                        <span className={`px-2 py-0.5 rounded-lg border font-black tracking-tighter ${
+                                            alumno.vencido 
+                                                ? 'bg-red-50 text-red-600 border-red-100 animate-pulse' 
+                                                : alumno.esHoyCorte 
+                                                    ? 'bg-orange-50 text-orange-600 border-orange-100'
+                                                    : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                                        }`}>
+                                            CORTE: {format(alumno.fechaCorte, "dd/MM", { locale: es })}
+                                        </span>
+                                    )}
                                 </span>
                                 <div className="flex gap-2">
                                     {alumno.esRecuperacion && (
                                         <span className="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-blue-100 flex items-center gap-1 italic">
                                             <RefreshCw size={10} /> RECUPERACIÓN
+                                        </span>
+                                    )}
+                                    {alumno.esReposicion && (
+                                        <span className="bg-indigo-50 text-indigo-600 text-[8px] font-black px-2 py-0.5 rounded-lg uppercase tracking-widest border border-indigo-100 flex items-center gap-1 italic">
+                                            <RefreshCw size={10} className="animate-spin-slow" /> REPOSICIÓN
                                         </span>
                                     )}
                                     {alumno.esLesion && (

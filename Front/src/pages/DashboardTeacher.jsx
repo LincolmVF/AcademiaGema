@@ -105,16 +105,22 @@ const DashboardTeacher = () => {
         });
 
         Object.values(fechasUnicas).forEach(sesion => {
-          const reprogramada = sesion.inscripcionesEnEstaFecha.length > 0 && sesion.inscripcionesEnEstaFecha.every(al => al.registro_especifico.estado === 'REPROGRAMADO');
-          const completada = sesion.inscripcionesEnEstaFecha.length > 0 && sesion.inscripcionesEnEstaFecha.every(al =>
+          const inscripciones = sesion.inscripcionesEnEstaFecha;
+          const esReprogramadaTotal = inscripciones.length > 0 && inscripciones.every(al => al.tipo_sesion === 'REPROGRAMADO');
+          const esReposicionTotal = inscripciones.length > 0 && inscripciones.every(al => al.tipo_sesion === 'REPOSICION');
+          const tieneRecuperadores = inscripciones.some(al => al.tipo_sesion === 'RECUPERACION');
+          
+          const completada = inscripciones.length > 0 && inscripciones.every(al =>
             al.registro_especifico.estado !== 'PROGRAMADA' && al.registro_especifico.estado !== 'PENDIENTE'
           );
 
           todasLasSesiones.push({
             ...sesion,
-            attended: completada && !reprogramada,
-            isReprogramada: reprogramada,
-            totalStudents: sesion.inscripcionesEnEstaFecha.length
+            attended: completada && !esReprogramadaTotal,
+            isReprogramada: esReprogramadaTotal,
+            isReposicion: esReposicionTotal,
+            tieneRecuperadores,
+            totalStudents: inscripciones.length
           });
         });
       });
@@ -244,16 +250,23 @@ const DashboardTeacher = () => {
                       <span className="bg-orange-50 text-orange-600 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-widest border border-orange-100 italic">
                         {item.level}
                       </span>
-                      {item.attended && !item.isReprogramada && (
+                      {item.isReprogramada ? (
+                        <span className="bg-slate-50 text-slate-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-slate-100 italic">
+                          <ShieldAlert size={14} strokeWidth={3} /> SESIÓN MOVIDA
+                        </span>
+                      ) : item.isReposicion ? (
+                        <span className="bg-violet-50 text-indigo-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-violet-100 italic">
+                          <RefreshCw size={14} className="animate-spin-slow" /> REPOSICIÓN ACADÉMICA
+                        </span>
+                      ) : item.tieneRecuperadores ? (
+                        <span className="bg-blue-50 text-blue-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-blue-100 italic">
+                          <RefreshCw size={14} /> RECUPERACIONES PRESENTES
+                        </span>
+                      ) : item.attended ? (
                         <span className="bg-green-50 text-green-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-green-100 italic">
                           <CheckCircle size={14} strokeWidth={3} /> SESIÓN FINALIZADA
                         </span>
-                      )}
-                      {item.isReprogramada && (
-                        <span className="bg-orange-50 text-orange-700 text-[10px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 uppercase tracking-widest border border-orange-100 italic">
-                          <ShieldAlert size={14} strokeWidth={3} /> REPROGRAMADA (ADMIN)
-                        </span>
-                      )}
+                      ) : null}
                     </div>
                     <h3 className={`text-2xl font-black uppercase tracking-tight italic mb-3 leading-none transition-colors ${item.isToday ? 'text-orange-600' : 'text-[#1e3a8a]'}`}>
                       {item.title}
