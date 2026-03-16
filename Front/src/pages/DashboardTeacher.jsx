@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Users, Clock, MapPin, CheckCircle, Calendar, Loader2, ChevronRight, Filter, Info, ShieldAlert } from 'lucide-react';
+import { Users, Clock, MapPin, CheckCircle, Calendar, Loader2, ChevronRight, Filter, Info, ShieldAlert, RefreshCw } from 'lucide-react';
 import AttendanceModal from '../components/teacher/AttendanceModal';
 import { useAuth } from '../context/AuthContext';
 import { asistenciaService } from '../services/asistencia.service';
@@ -109,7 +109,7 @@ const DashboardTeacher = () => {
           const esReprogramadaTotal = inscripciones.length > 0 && inscripciones.every(al => al.tipo_sesion === 'REPROGRAMADO');
           const esReposicionTotal = inscripciones.length > 0 && inscripciones.every(al => al.tipo_sesion === 'REPOSICION');
           const tieneRecuperadores = inscripciones.some(al => al.tipo_sesion === 'RECUPERACION');
-          
+
           const completada = inscripciones.length > 0 && inscripciones.every(al =>
             al.registro_especifico.estado !== 'PROGRAMADA' && al.registro_especifico.estado !== 'PENDIENTE'
           );
