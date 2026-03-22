@@ -2,8 +2,8 @@ import React from 'react';
 import { QrCode, Copy, ShieldCheck } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const PaymentMethodCard = ({ phoneNumber = "999123456", owner = "Club Gema S.A.C." }) => {
-  
+const PaymentMethodCard = ({ phoneNumber = "902 585 995", owner = "Club Gema S.A.C." }) => {
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(phoneNumber);
     toast.success('Número copiado al portapapeles', {
@@ -32,7 +32,7 @@ const PaymentMethodCard = ({ phoneNumber = "999123456", owner = "Club Gema S.A.C
           <div className="inline-flex items-center gap-2 bg-orange-500 text-white text-[9px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-orange-500/30">
             <ShieldCheck size={14} /> Recaudación Segura
           </div>
-          
+
           <h3 className="text-3xl font-black uppercase italic tracking-tighter mb-2">Yape / Plin</h3>
           <p className="text-sm text-blue-100/60 mb-6 font-medium italic">
             Realiza tu transferencia y reporta el comprobante en la sección de pendientes.
@@ -53,7 +53,7 @@ const PaymentMethodCard = ({ phoneNumber = "999123456", owner = "Club Gema S.A.C
               <Copy size={22} />
             </button>
           </div>
-          
+
           <p className="text-[10px] mt-4 font-black text-blue-200/30 uppercase tracking-[0.4em]">
             Titular: {owner}
           </p>
